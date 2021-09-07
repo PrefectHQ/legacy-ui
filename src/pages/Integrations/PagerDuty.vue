@@ -16,7 +16,7 @@ export default {
   },
   data() {
     return {
-      integration_keys: JSON.parse(this.pdData).integration_keys,
+      integrationKeys: [...JSON.parse(this.pdData).integration_keys],
       account: JSON.parse(this.pdData).account,
       steps: {
         openToConfig: { name: 'openToConfig', complete: false },
@@ -30,7 +30,7 @@ export default {
       actionConfigArray: [],
       newSaveAs: '',
       routingKey: '',
-      severity: '',
+      severity: { text: 'Info', value: 'info' },
       severityLevels: [
         { text: 'Info', value: 'info' },
         { text: 'Warning', value: 'warning' },
@@ -55,10 +55,7 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('user', ['user']),
     allowSave() {
-      let allow = this.isPagerDuty
-        ? !!this.actionType && !!this.routingKey && !!this.severity
-        : !!this.actionType && !!this.actionConfigArray.length
-      return allow
+      return !!this.severity
     },
     saveAs: {
       get() {
@@ -124,9 +121,8 @@ export default {
       const input = { name: name, config }
       this.$emit('new-action', input)
     },
-    deleteItemFromList() {
-      //TODO to delete item from a list to not include in save
-      return true
+    deleteItemFromList(item, index) {
+      this.integrationKeys.splice(index, 1)
     }
   }
 }
@@ -136,7 +132,7 @@ export default {
   <v-card elevation="0">
     <v-card-text>
       <div>Props: {{ pdData }} </div>
-      <div>Integration Keys: {{ integration_keys }} </div>
+      <div>Integration Keys: {{ integrationKeys }} </div>
       <div> Account: {{ account }} </div>
     </v-card-text>
     <v-card-text class="text-h6 font-weight-light">
@@ -182,13 +178,14 @@ export default {
           integration.
         </span>
         <v-row
-          v-for="(key, index) in [...integration_keys]"
+          v-for="(key, index) in integrationKeys"
           :key="index"
           class="mt-2"
         >
           <v-col cols="12" md="3">
             <v-select
               v-model="severity"
+              required
               :items="severityLevels"
               outlined
               label="Severity"
@@ -197,7 +194,7 @@ export default {
           <v-col cols="12" md="4">
             <v-text-field
               v-model="key.integration_key"
-              :label="key.integration_key"
+              label="Integration Key"
               outlined
               class="mb-8"
             />
@@ -219,12 +216,13 @@ export default {
                   x-small
                   color="error"
                   v-on="on"
-                  @click="deleteItemFromList()"
+                  @click="deleteItemFromList(key, index)"
+                  class="mt-3"
                 >
                   <v-icon>delete</v-icon>
                 </v-btn>
               </template>
-              Revoke token
+              Remove action
             </v-tooltip>
           </v-col>
         </v-row>
