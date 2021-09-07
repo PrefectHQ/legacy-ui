@@ -304,7 +304,7 @@ export default {
       :loading="isRemovingAction"
       :title="
         `Are you sure you want to delete ${
-          selectedAction.name ? selectAction.name : 'this action'
+          this.selectedAction.name ? this.selectedAction.name : 'this action'
         }?`
       "
       @cancel="closeActionDialog"
