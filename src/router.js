@@ -436,6 +436,20 @@ export const routes = [
         /* webpackChunkName: "dashboard" */ '@/pages/Dashboard/Dashboard.vue'
       )
   },
+  // ---------------------------//
+  //
+  // Integrations
+  //
+  // ----------------------------//
+  {
+    name: 'pagerduty',
+    path: '/:tenant?/pagerduty/:config?',
+    props: route => ({ pdData: route.query.config }),
+    component: () =>
+      import(
+        /* webpackChunkName: "test" */ '@/pages/Integrations/PagerDuty.vue'
+      )
+  },
   {
     path: '*',
     redirect: '404'
