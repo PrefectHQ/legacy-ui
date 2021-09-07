@@ -11,7 +11,11 @@ export default {
   },
   data() {
     return {
-      integrationKeys: [...JSON.parse(this.pdData).integration_keys],
+      integrationKeys: [
+        ...JSON.parse(this.pdData).integration_keys,
+        //FOR TESTING ONLY - MUST REMOVE
+        { name: 'bill', integration_key: '12345' }
+      ],
       account: JSON.parse(this.pdData).account,
       saving: false,
       enableSave: false,
@@ -73,8 +77,7 @@ export default {
         })
       } finally {
         this.saving = false
-        if (success?.data?.create_action?.id)
-          this.$router.push({ name: 'dashboard', query: 'automations' })
+        if (success?.data?.create_action?.id) this.actionCreated = true
       }
     },
     deleteItemFromList(item, index) {

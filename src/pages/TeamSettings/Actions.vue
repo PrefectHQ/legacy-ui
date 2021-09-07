@@ -23,11 +23,12 @@ export default {
       // Loading states
       isLoadingTable: true,
       isRemovingAction: false,
+      isTestingAction: false,
 
       // Dialogs
       dialogRemoveAction: false,
 
-      // Store copied project ID
+      // Store copied action ID
       // Useful to render feedback that copy was successful
       copiedActionId: null,
 
@@ -67,6 +68,14 @@ export default {
           mobile: true,
           text: '',
           value: 'remove',
+          align: 'end',
+          sortable: false,
+          width: '10%'
+        },
+        {
+          mobile: true,
+          text: '',
+          value: 'test',
           align: 'end',
           sortable: false,
           width: '10%'
@@ -151,6 +160,23 @@ export default {
 
       this.dialogRemoveAction = false
       this.isRemovingAction = false
+    },
+    async testAction() {
+      this.isTestingAction = true
+      try {
+        await this.$apollo.mutate({
+          mutation: require('@/graphql/TeamSettings/test-action.gql'),
+          variables: {
+            actionId: this.selectedAction.id
+          }
+        })
+
+        this.$apollo.queries.actions.refetch()
+        this.handleAlert('success', 'Test sent')
+      } catch (e) {
+        this.handleAlert('error', `${e}`)
+      }
+      this.isTestingAction = false
     },
     selectAction(action) {
       this.selectedAction = action
@@ -241,15 +267,9 @@ export default {
 
           <!-- ACTION NAME -->
           <template #item.name="{ item }">
-            <v-tooltip v-if="item.name" top>
-              <template #activator="{ on }">
-                <div class="hidewidth" v-on="on">
-                  {{ item.name }}
-                </div>
-              </template>
-              <span>{{ item.name }}</span>
-            </v-tooltip>
-            <span v-else>-</span>
+            <div class="hidewidth" v-on="on">
+              {{ item.name }}
+            </div>
           </template>
 
           <template #item.type="{ item }">
@@ -287,7 +307,28 @@ export default {
                   <v-icon>delete</v-icon>
                 </v-btn>
               </template>
-              Delete this action
+              Delete action
+            </v-tooltip>
+          </template>
+
+          <!-- TEST ACTION --->
+          <template v-if="permissionsCheck" #item.test="{ item }">
+            <v-tooltip bottom>
+              <template #activator="{ on }">
+                <v-btn
+                  text
+                  fab
+                  x-small
+                  v-on="on"
+                  @click="
+                    selectAction(item)
+                    testAction(item)
+                  "
+                >
+                  <v-icon>bug_report</v-icon>
+                </v-btn>
+              </template>
+              Test action
             </v-tooltip>
           </template>
         </v-data-table>
