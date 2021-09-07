@@ -135,10 +135,7 @@ export default {
       this.alertMessage = message
       this.alertShow = true
     },
-    pluralize(count, word) {
-      if (count === 1) return word
-      return `${word}s`
-    },
+
     async removeAction() {
       this.isRemovingAction = true
       try {
@@ -162,7 +159,7 @@ export default {
       this.isRemovingAction = false
     },
     async testAction() {
-      this.isTestingAction = true
+      this.isTestingAction = this.selectedAction.id
       try {
         await this.$apollo.mutate({
           mutation: require('@/graphql/TeamSettings/test-action.gql'),
@@ -173,10 +170,11 @@ export default {
 
         this.$apollo.queries.actions.refetch()
         this.handleAlert('success', 'Test sent')
+        this.isTestingAction = null
       } catch (e) {
         this.handleAlert('error', `${e}`)
+        this.isTestingAction = null
       }
-      this.isTestingAction = false
     },
     selectAction(action) {
       this.selectedAction = action
@@ -267,7 +265,7 @@ export default {
 
           <!-- ACTION NAME -->
           <template #item.name="{ item }">
-            <div class="hidewidth" v-on="on">
+            <div class="hidewidth">
               {{ item.name }}
             </div>
           </template>
@@ -291,45 +289,36 @@ export default {
 
           <!-- REMOVE ACTIONS -->
           <template v-if="permissionsCheck" #item.remove="{ item }">
-            <v-tooltip bottom>
-              <template #activator="{ on }">
-                <v-btn
-                  text
-                  fab
-                  x-small
-                  color="error"
-                  v-on="on"
-                  @click="
-                    selectAction(item)
-                    dialogRemoveAction = true
-                  "
-                >
-                  <v-icon>delete</v-icon>
-                </v-btn>
-              </template>
-              Delete action
-            </v-tooltip>
+            <v-btn
+              text
+              fab
+              x-small
+              color="error"
+              title="Delete Action"
+              @click="
+                selectAction(item)
+                dialogRemoveAction = true
+              "
+            >
+              <v-icon>delete</v-icon>
+            </v-btn>
           </template>
 
           <!-- TEST ACTION --->
           <template v-if="permissionsCheck" #item.test="{ item }">
-            <v-tooltip bottom>
-              <template #activator="{ on }">
-                <v-btn
-                  text
-                  fab
-                  x-small
-                  v-on="on"
-                  @click="
-                    selectAction(item)
-                    testAction(item)
-                  "
-                >
-                  <v-icon>bug_report</v-icon>
-                </v-btn>
-              </template>
-              Test action
-            </v-tooltip>
+            <v-btn
+              text
+              fab
+              :loading="isTestingAction === item.id"
+              x-small
+              title="Test Action"
+              @click="
+                selectAction(item)
+                testAction(item)
+              "
+            >
+              <v-icon>bug_report</v-icon>
+            </v-btn>
           </template>
         </v-data-table>
       </v-card-text>
@@ -345,7 +334,7 @@ export default {
       :loading="isRemovingAction"
       :title="
         `Are you sure you want to delete ${
-          this.selectedAction.name ? this.selectedAction.name : 'this action'
+          selectedAction.name ? selectedAction.name : 'this action'
         }?`
       "
       @cancel="closeActionDialog"

@@ -14,8 +14,9 @@ export default {
       integrationKeys: [
         ...JSON.parse(this.pdData).integration_keys,
         //FOR TESTING ONLY - MUST REMOVE
-        { name: 'bill', integration_key: '12345' }
+        { name: 'Tester', integration_key: '12345' }
       ],
+      successIds: [],
       account: JSON.parse(this.pdData).account,
       saving: false,
       enableSave: false,
@@ -39,6 +40,10 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    pluralize(count, word) {
+      if (count === 1) return word
+      return `${word}s`
+    },
     createAllConfigs() {
       this.integrationKeys.map(key => {
         this.saveConfig(key)
@@ -77,7 +82,9 @@ export default {
         })
       } finally {
         this.saving = false
-        if (success?.data?.create_action?.id) this.actionCreated = true
+        if (success?.data?.create_action?.id) {
+          this.successIds.push(success?.data?.create_action?.id)
+        }
       }
     },
     deleteItemFromList(item, index) {
@@ -99,7 +106,12 @@ export default {
         <v-col cols="9" lg="10">
           <span class="mr-1">Some Text Here</span>
         </v-col>
-        <v-col cols="3" lg="2" class="text-right">
+        <v-col
+          v-if="successIds.length !== integrationKeys.length"
+          cols="3"
+          lg="2"
+          class="text-right"
+        >
           <v-btn
             color="primary"
             elevation="0"
@@ -137,6 +149,30 @@ export default {
           </div>
         </v-row>
         <v-row
+          v-else-if="
+            integrationKeys && integrationKeys.length == successIds.length
+          "
+        >
+          <div
+            class="text-center position-absolute center-absolute text-h5 utilGrayDark--text mt-10"
+            :style="{ 'z-index': 1, width: '100%' }"
+          >
+            <div> {{ pluralize(successIds.length, 'Action') }} Created</div>
+            <div class="mt-4">
+              <v-btn
+                color="primary"
+                outlined
+                class="mr-4"
+                :to="{ name: 'actions' }"
+                >Go to Actions Page</v-btn
+              >
+              <v-btn outlined color="primary" :to="{ name: 'dashboard' }"
+                >Go to Dashboard</v-btn
+              >
+            </div>
+          </div>
+        </v-row>
+        <v-row
           v-for="(key, index) in integrationKeys"
           v-else
           :key="index"
@@ -156,16 +192,10 @@ export default {
               v-model="key.integration_key"
               label="Integration Key"
               outlined
-              class="mb-8"
             />
           </v-col>
           <v-col cols="12" md="4">
-            <v-text-field
-              v-model="key.name"
-              label="Action Name"
-              outlined
-              class="mb-8"
-            />
+            <v-text-field v-model="key.name" label="Action Name" outlined />
           </v-col>
           <v-col cols="12" md="1">
             <!-- <v-tooltip bottom>
