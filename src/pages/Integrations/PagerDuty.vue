@@ -26,13 +26,7 @@ export default {
         { text: 'Critical', value: 'critical' }
       ],
       menu: false,
-      errorMessage: '',
-      rules: {
-        PAGERDUTY: () => true,
-        required: val => !!val || 'Required',
-        requiredCombo: val =>
-          (!!val && val.length > 0) || 'At least one number is required'
-      }
+      errorMessage: ''
     }
   },
   computed: {
@@ -51,7 +45,7 @@ export default {
       this.actionConfig = {
         routing_key: item.integration_key,
         severity: this.severity,
-        //Hack to get around staging backend
+        //Temp hack to get around staging backend
         api_token_secret: 'test'
       }
       let config = {
@@ -62,8 +56,9 @@ export default {
       this.createAction(input)
     },
     async createAction(input) {
+      let success
       try {
-        await this.$apollo.mutate({
+        success = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-action.gql'),
           variables: {
             input: { config: input.config, name: input.name }
@@ -78,6 +73,8 @@ export default {
         })
       } finally {
         this.saving = false
+        if (success?.data?.create_action?.id)
+          this.$router.push({ name: 'dashboard', query: 'automations' })
       }
     },
     deleteItemFromList(item, index) {
