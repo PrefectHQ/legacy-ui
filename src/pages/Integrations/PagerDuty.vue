@@ -135,10 +135,9 @@ export default {
 <template>
   <v-card elevation="0">
     <v-card-text>
-      <span
-        >Props: {{ this.pdData }} Integration Keys:
-        {{ integration_keys }} Account: {{ account }}
-      </span>
+      <div>Props: {{ pdData }} </div>
+      <div>Integration Keys: {{ integration_keys }} </div>
+      <div> Account: {{ account }} </div>
     </v-card-text>
     <v-card-text class="text-h6 font-weight-light">
       <v-row>
@@ -182,7 +181,11 @@ export default {
           >
           integration.
         </span>
-        <v-row v-for="i in [1, 2, 3, 4]" :key="i" class="mt-2">
+        <v-row
+          v-for="(key, index) in [...integration_keys]"
+          :key="index"
+          class="mt-2"
+        >
           <v-col cols="12" md="3">
             <v-select
               v-model="severity"
@@ -193,15 +196,15 @@ export default {
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
-              v-model="routingKey"
-              label="Integration key"
+              :placeholder="key.integration_key"
+              :label="key.integration_key"
               outlined
               class="mb-8"
             />
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
-              v-model="saveAs"
+              v-model="key.name"
               label="Action Name"
               outlined
               class="mb-8"
