@@ -1,0 +1,5 @@
+mutation DeleteAction ($actionId: UUID!) {
+  delete_action (input: {action_id: $actionId}) {
+    success
+  }
+}

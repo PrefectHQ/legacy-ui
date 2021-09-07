@@ -1,14 +1,9 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   components: {},
   props: {
-    eventType: {
-      type: String,
-      required: false,
-      default: ''
-    },
     pdData: {
       type: String,
       default: null
@@ -18,19 +13,13 @@ export default {
     return {
       integrationKeys: [...JSON.parse(this.pdData).integration_keys],
       account: JSON.parse(this.pdData).account,
-      steps: {
-        openToConfig: { name: 'openToConfig', complete: false },
-        addName: { name: 'addName', complete: false }
-      },
       saving: false,
       enableSave: false,
-      actionType: { title: 'Send' },
-      step: null,
       actionConfig: null,
       actionConfigArray: [],
       newSaveAs: '',
       routingKey: '',
-      severity: { text: 'Info', value: 'info' },
+      severity: 'info',
       severityLevels: [
         { text: 'Info', value: 'info' },
         { text: 'Warning', value: 'warning' },
@@ -43,83 +32,54 @@ export default {
         PAGERDUTY: () => true,
         required: val => !!val || 'Required',
         requiredCombo: val =>
-          (!!val && val.length > 0) || 'At least one number is required',
-        url: val => {
-          const pattern = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/
-          return pattern.test(val) || 'Invalid URL.'
-        }
+          (!!val && val.length > 0) || 'At least one number is required'
       }
     }
   },
   computed: {
     ...mapGetters('api', ['isCloud']),
-    ...mapGetters('user', ['user']),
-    allowSave() {
-      return !!this.severity
-    },
-    saveAs: {
-      get() {
-        const whoTo = this.actionConfigArray.length
-          ? this.actionConfigArray
-          : this.webhookURLString
-        return `${this.actionType.verb} ${whoTo}`
-      },
-      set(x) {
-        this.newSaveAs = x
-      }
-    }
-  },
-  created() {
-    this.step = this.steps['openToConfig']
+    ...mapGetters('user', ['user'])
   },
   methods: {
-    buttonColor(selectedStep) {
-      return this.step.name === selectedStep ? 'codePink' : 'utilGrayDark'
+    ...mapActions('alert', ['setAlert']),
+    createAllConfigs() {
+      this.integrationKeys.map(key => {
+        this.saveConfig(key)
+      })
     },
-    handleClose() {
-      this.$emit('close-action')
-    },
-    saveConfig() {
-      const type = this.actionType.type
-      const checked =
-        type != 'EMAIL'
-          ? this.rules[type](this.actionConfigArray)
-          : this.actionConfigArray.filter(
-              email => this.rules['EMAIL'](email) !== true
-            ).length < 1
-      if (checked === true) {
-        if (this.actionConfigArray) {
-          switch (this.actionType.type) {
-            case 'PAGERDUTY':
-              {
-                this.actionConfig = {
-                  routing_key: this.routingKey,
-                  severity: this.severity
-                }
-              }
-              break
-          }
-        }
-      } else {
-        this.errorMessage = checked
-      }
-    },
-    createAction() {
+    saveConfig(item) {
       this.saving = true
-      this.saveConfig()
-      let config
-      switch (this.actionType.type) {
-        case 'PAGERDUTY':
-          config = {
-            pagerduty_notification: this.actionConfig
-          }
-          break
-        default:
-          config = {}
+      this.actionConfig = {
+        routing_key: item.integration_key,
+        severity: this.severity,
+        //Hack to get around staging backend
+        api_token_secret: 'test'
+      }
+      let config = {
+        pagerduty_notification: this.actionConfig
       }
       const name = this.newSaveAs || this.saveAs
       const input = { name: name, config }
-      this.$emit('new-action', input)
+      this.createAction(input)
+    },
+    async createAction(input) {
+      try {
+        await this.$apollo.mutate({
+          mutation: require('@/graphql/Mutations/create-action.gql'),
+          variables: {
+            input: { config: input.config, name: input.name }
+          }
+        })
+      } catch (error) {
+        const errString = `${error}`
+        this.setAlert({
+          alertShow: true,
+          alertMessage: errString,
+          alertType: 'error'
+        })
+      } finally {
+        this.saving = false
+      }
     },
     deleteItemFromList(item, index) {
       this.integrationKeys.splice(index, 1)
@@ -142,18 +102,10 @@ export default {
         </v-col>
         <v-col cols="3" lg="2" class="text-right">
           <v-btn
-            text
-            color="utilGrayMid"
-            class="light-weight-text mr-1 px-2"
-            @click="handleClose"
-          >
-            <span style="text-transform: none;">Cancel</span></v-btn
-          ><v-btn
             color="primary"
             elevation="0"
             :loading="saving"
-            :disabled="!allowSave"
-            @click="createAction"
+            @click="createAllConfigs"
             ><span style="text-transform: none;">Save</span></v-btn
           ></v-col
         >
@@ -208,16 +160,30 @@ export default {
             />
           </v-col>
           <v-col cols="12" md="1">
+            <!-- <v-tooltip bottom>
+              <template #activator="{ on }">
+                <v-btn
+                  class="mt-3"
+                  x-small
+                  color="primary"
+                  v-on="on"
+                  @click="saveConfig(key)"
+                >
+                  Save
+                </v-btn>
+              </template>
+              Save action
+            </v-tooltip> -->
             <v-tooltip bottom>
               <template #activator="{ on }">
                 <v-btn
+                  class="mt-3"
                   text
                   fab
                   x-small
                   color="error"
                   v-on="on"
                   @click="deleteItemFromList(key, index)"
-                  class="mt-3"
                 >
                   <v-icon>delete</v-icon>
                 </v-btn>

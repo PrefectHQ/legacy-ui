@@ -83,6 +83,14 @@ export const routes = [
           )
       },
       {
+        name: 'actions',
+        path: 'actions',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--actions" */ '@/pages/TeamSettings/Actions.vue'
+          )
+      },
+      {
         name: 'flow-groups',
         path: 'flow-groups',
         component: () =>
