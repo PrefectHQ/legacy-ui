@@ -17,7 +17,6 @@ export default {
       enableSave: false,
       actionConfig: null,
       actionConfigArray: [],
-      newSaveAs: '',
       routingKey: '',
       severity: 'info',
       severityLevels: [
@@ -58,7 +57,7 @@ export default {
       let config = {
         pagerduty_notification: this.actionConfig
       }
-      const name = this.newSaveAs || this.saveAs
+      const name = item.name
       const input = { name: name, config }
       this.createAction(input)
     },
@@ -129,8 +128,17 @@ export default {
           >
           integration.
         </span>
+        <v-row v-if="!integrationKeys || !integrationKeys.length">
+          <div
+            class="text-center position-absolute center-absolute text-h5 utilGrayDark--text mt-10"
+            :style="{ 'z-index': 1, width: '100%' }"
+          >
+            No integration keys
+          </div>
+        </v-row>
         <v-row
           v-for="(key, index) in integrationKeys"
+          v-else
           :key="index"
           class="mt-2"
         >
