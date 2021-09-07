@@ -196,7 +196,7 @@ export default {
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
-              :placeholder="key.integration_key"
+              v-model="key.integration_key"
               :label="key.integration_key"
               outlined
               class="mb-8"
