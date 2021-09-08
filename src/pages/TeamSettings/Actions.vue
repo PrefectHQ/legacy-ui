@@ -5,12 +5,14 @@ import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import ExternalLink from '@/components/ExternalLink'
 import ManagementLayout from '@/layouts/ManagementLayout'
+import DictInput from '@/components/CustomInputs/DictInput'
 export default {
   components: {
     Alert,
     ConfirmDialog,
     ExternalLink,
-    ManagementLayout
+    ManagementLayout,
+    DictInput
   },
   mixins: [formatTime],
   data() {
@@ -41,28 +43,21 @@ export default {
           mobile: true,
           text: 'Name',
           value: 'name',
-          width: '15%'
+          width: '25%'
         },
         {
           mobile: false,
           text: 'Type',
           value: 'action_type',
           align: 'left',
-          width: '20%'
-        },
-        {
-          mobile: false,
-          text: 'Config',
-          value: 'action_config',
-          align: 'left',
-          width: '20%'
+          width: '25%'
         },
         {
           mobile: false,
           text: 'Action ID',
           value: 'id',
           align: 'center',
-          width: '15%'
+          width: '25%'
         },
         {
           mobile: true,
@@ -70,7 +65,7 @@ export default {
           value: 'remove',
           align: 'end',
           sortable: false,
-          width: '10%'
+          width: '8%'
         },
         {
           mobile: true,
@@ -78,7 +73,7 @@ export default {
           value: 'test',
           align: 'end',
           sortable: false,
-          width: '10%'
+          width: '8%'
         }
       ],
 
@@ -232,6 +227,7 @@ export default {
           :items="actions"
           :items-per-page="10"
           :sort-by.sync="sortBy"
+          show-expand
           :sort-desc.sync="sortDesc"
           class="elevation-2 rounded-0 truncate-table"
           :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"
@@ -275,16 +271,15 @@ export default {
           </template>
 
           <!-- ACTION CONFIG -->
-          <template #item.action_config="{ item }">
-            <v-tooltip v-if="item.action_config" top>
-              <template #activator="{ on }">
-                <div class="hidewidth" v-on="on">
-                  {{ item.action_config }}
-                </div>
-              </template>
-              <span>{{ item.action_config }}</span>
-            </v-tooltip>
-            <span v-else>-</span>
+          <template v-slot:expanded-item="{ headers, item }">
+            <td :colspan="headers.length">
+              <DictInput
+                :disableEdit="true"
+                disabled
+                :dict="item.action_config"
+                :rules="[1, 2]"
+              />
+            </td>
           </template>
 
           <!-- REMOVE ACTIONS -->
