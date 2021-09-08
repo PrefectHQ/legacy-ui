@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Update tutorial to use keys - [#1042](https://github.com/PrefectHQ/ui/pull/1042)
 
 ### Bugfixes
 
