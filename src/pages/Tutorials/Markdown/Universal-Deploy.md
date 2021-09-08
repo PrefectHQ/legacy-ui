@@ -48,32 +48,10 @@ To authenticate, you'll need to create an [API Key](/user/keys) and save it.
 
 - In the user menu in the top right corner go to **Account Settings -> API Keys -> Create An API Key**.
 - Copy the created key
-- Save the key locally either in your `~/.prefect/config.toml` config file, or as an environment variable:
+- Login with the Prefect CLI:
 
 ```bash
-# ~/.prefect/config.toml
-[cloud]
-auth_token = <API_KEY>
-```
-
-```bash
-export PREFECT__CLOUD__AUTH_TOKEN=<API_KEY>
-```
-
-# Create a Service Account Key
-
-Running deployed Flows with an [Agent](https://docs.prefect.io/orchestration/agents/overview.html) also requires an API key for the Agent. You can create one in the [Service Accounts](/team/service-accounts) page of the UI.
-
-You'll need this token later in the tutorial. You can save it locally either in your `~/.prefect/config.toml` config file, or as an environment variable:
-
-```bash
-# ~/.prefect/config.toml
-[cloud.agent]
-auth_token = <SERVICE_ACCOUNT_API_KEY>
-```
-
-```bash
-export PREFECT__CLOUD__AGENT__AUTH_TOKEN=<SERVICE_ACCOUNT_API_KEY>
+prefect auth login --key <YOUR-KEY>
 ```
 
 # Creating a project
@@ -105,21 +83,18 @@ def hello_task():
 
 flow = Flow("hello-flow", tasks=[hello_task])
 
-# flow.run() We could run our flow locally using the flow's run method but we'll be running this from Cloud!
-
 flow.register(project_name="tester")
-flow.run_agent()
 ```
 
-Paste the code into your interactive Python REPL session. If all goes well, you should see the local agent process start to run. If you're seeing the error message `"No agent API token provided"`, try passing your API key explicitly to the `run_agent()` method:
+And that's it! Your flow is now registered with Prefect Cloud.
 
-```python
-flow.run_agent(token="<SERVICE_ACCOUNT_API_KEY>")
+# Start your agent
+
+Start your agent using the CLI:
+
+```bash
+prefect agent local start
 ```
-
-And that's it! Your flow is now registered with Prefect Cloud, and an agent process is running on your local machine waiting to execute your flow runs. For now, your flow is stored on your local machine in your `~/.prefect directory`. You can configure this later through the use of Storage.
-
-We call this pattern `"Universal Deploy"` because all it requires is a working Python environment to create a Prefect Deployment!
 
 # Run Your Flow In Prefect Cloud
 
