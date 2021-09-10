@@ -272,13 +272,20 @@ export default {
 
           <!-- ACTION CONFIG -->
           <template v-slot:expanded-item="{ headers, item }">
-            <td :colspan="headers.length">
+            <td
+              v-if="Object.keys(item.action_config).length"
+              :colspan="headers.length"
+            >
               <DictInput
+                v-if="Object.keys(item.action_config).length"
                 :disableEdit="true"
                 disabled
                 :dict="item.action_config"
                 :rules="[1, 2]"
               />
+            </td>
+            <td v-else :colspan="headers.length">
+              No action config
             </td>
           </template>
 

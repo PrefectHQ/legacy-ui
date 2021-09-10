@@ -1,8 +1,9 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import DictInput from '@/components/CustomInputs/DictInput'
 
 export default {
-  components: {},
+  components: { DictInput },
   props: {
     pdData: {
       type: String,
@@ -11,6 +12,45 @@ export default {
   },
   data() {
     return {
+      // Table headers
+      headers: [
+        {
+          mobile: true,
+          text: 'Name',
+          value: 'name',
+          width: '25%'
+        },
+        {
+          mobile: false,
+          text: 'Type',
+          value: 'action_type',
+          align: 'left',
+          width: '25%'
+        },
+        {
+          mobile: false,
+          text: 'Action ID',
+          value: 'id',
+          align: 'center',
+          width: '25%'
+        },
+        {
+          mobile: true,
+          text: '',
+          value: 'remove',
+          align: 'end',
+          sortable: false,
+          width: '8%'
+        },
+        {
+          mobile: true,
+          text: '',
+          value: 'test',
+          align: 'end',
+          sortable: false,
+          width: '8%'
+        }
+      ],
       integrationKeys: [
         ...JSON.parse(this.pdData).integration_keys,
         //FOR TESTING ONLY - MUST REMOVE
@@ -31,12 +71,19 @@ export default {
         { text: 'Critical', value: 'critical' }
       ],
       menu: false,
-      errorMessage: ''
+      errorMessage: '',
+      loadingTable: 0
     }
   },
   computed: {
     ...mapGetters('api', ['isCloud']),
-    ...mapGetters('user', ['user'])
+    ...mapGetters('user', ['user']),
+    ...mapGetters('tenant', ['tenant']),
+    headersByViewport() {
+      return this.$vuetify.breakpoint.mdAndUp
+        ? this.headers
+        : this.headers.filter(header => header.mobile)
+    }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
@@ -90,6 +137,28 @@ export default {
     deleteItemFromList(item, index) {
       this.integrationKeys.splice(index, 1)
     }
+  },
+  apollo: {
+    actions: {
+      query: require('@/graphql/Integrations/PagerDutyActions.gql'),
+      result({ data }) {
+        if (!data) return
+        return data.action
+      },
+      variables() {
+        return {
+          includeIds: this.successIds
+        }
+      },
+      loadingKey: 'loadingTable',
+      error() {
+        this.handleAlert(
+          'error',
+          'Something went wrong while trying to fetch your actions. Please try again later.'
+        )
+      },
+      fetchPolicy: 'no-cache'
+    }
   }
 }
 </script>
@@ -106,13 +175,9 @@ export default {
         <v-col cols="9" lg="10">
           <span class="mr-1">Some Text Here</span>
         </v-col>
-        <v-col
-          v-if="successIds.length !== integrationKeys.length"
-          cols="3"
-          lg="2"
-          class="text-right"
-        >
+        <v-col cols="3" lg="2" class="text-right">
           <v-btn
+            v-if="!successIds.length"
             color="primary"
             elevation="0"
             :loading="saving"
@@ -150,7 +215,7 @@ export default {
         </v-row>
         <v-row
           v-else-if="
-            integrationKeys && integrationKeys.length == successIds.length
+            integrationKeys && integrationKeys.length === successIds.length
           "
         >
           <div
@@ -158,16 +223,76 @@ export default {
             :style="{ 'z-index': 1, width: '100%' }"
           >
             <div> {{ pluralize(successIds.length, 'Action') }} Created</div>
+            <v-data-table
+              fixed-header
+              :headers="headersByViewport"
+              :items="actions"
+              :items-per-page="10"
+              show-expand
+              :loading="loadingTable > 0"
+              class="elevation-2 rounded-0 truncate-table"
+              :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"
+              :footer-props="{
+                showFirstLastPage: true,
+                itemsPerPageOptions: [10, 15, 20, -1],
+                firstIcon: 'first_page',
+                lastIcon: 'last_page',
+                prevIcon: 'keyboard_arrow_left',
+                nextIcon: 'keyboard_arrow_right'
+              }"
+              no-data-text="No actions."
+            >
+              <!-- ACTION ID-->
+              <template #item.id="{ item }">
+                {{ item.id }}
+              </template>
+
+              <!-- ACTION NAME -->
+              <template #item.name="{ item }">
+                <div class="hidewidth">
+                  {{ item.name }}
+                </div>
+              </template>
+
+              <template #item.type="{ item }">
+                {{ item.action_type }}
+              </template>
+
+              <!-- ACTION CONFIG -->
+              <template v-slot:expanded-item="{ headers, item }">
+                <td
+                  v-if="Object.keys(item.action_config).length"
+                  :colspan="headers.length"
+                >
+                  <DictInput
+                    v-if="Object.keys(item.action_config).length"
+                    :disableEdit="true"
+                    disabled
+                    :dict="item.action_config"
+                    :rules="[1, 2]"
+                  />
+                </td>
+                <td v-else :colspan="headers.length">
+                  No action config
+                </td>
+              </template>
+            </v-data-table>
+
             <div class="mt-4">
               <v-btn
                 color="primary"
                 outlined
                 class="mr-4"
                 :to="{ name: 'actions' }"
-                >Go to Actions Page</v-btn
+                >Manage Actions</v-btn
               >
-              <v-btn outlined color="primary" :to="{ name: 'dashboard' }"
-                >Go to Dashboard</v-btn
+              <v-btn
+                outlined
+                color="primary"
+                :to="{
+                  path: `/${tenant.slug}?automations=`
+                }"
+                >Create Automation</v-btn
               >
             </div>
           </div>

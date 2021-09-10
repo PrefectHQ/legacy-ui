@@ -172,6 +172,7 @@ export default {
       if (this.projectId?.length > 0) this.activateProject(this.projectId)
     },
     getTab() {
+      console.log('route', this.$route)
       if ('flows' in this.$route.query) return 'flows'
       if ('calendar' in this.$route.query) return 'calendar'
       if ('automations' in this.$route.query) return 'automations'
