@@ -44,6 +44,12 @@ export default {
         this.flowRun.flow.parameters.length > 0
       )
     },
+    hasRunConfig() {
+      return (
+        this.flowRun?.run_config &&
+        Object.keys(this.flowRun.run_config).length > 0
+      )
+    },
     flowRunParams() {
       const flowParams = this.flowRun?.flow?.parameters.reduce(
         (accum, currentParam) => {
@@ -158,6 +164,29 @@ export default {
         >
           Context
           <v-icon small>list</v-icon>
+        </v-btn>
+
+        <v-btn
+          v-if="hasRunConfig"
+          depressed
+          small
+          tile
+          icon
+          class="button-transition w-100 d-flex justify-end"
+          :color="tab == 'run_config' ? 'primary' : ''"
+          :style="{
+            'border-right': `3px solid ${
+              tab == 'run_config'
+                ? 'var(--v-primary-base)'
+                : 'var(--v-appForeground-base)'
+            }`,
+            'box-sizing': 'content-box',
+            'min-width': '100px'
+          }"
+          @click="tab = 'run_config'"
+        >
+          Run Config
+          <v-icon small>notes</v-icon>
         </v-btn>
       </div>
     </CardTitle>
@@ -274,9 +303,7 @@ export default {
                   </v-col>
                 </v-row>
                 <v-row v-if="flowRun.end_time" no-gutters>
-                  <v-col cols="6">
-                    Ended
-                  </v-col>
+                  <v-col cols="6"> Ended </v-col>
                   <v-col cols="6" class="text-right font-weight-bold">
                     <v-tooltip top>
                       <template #activator="{ on }">
@@ -291,9 +318,7 @@ export default {
                   </v-col>
                 </v-row>
                 <v-row v-if="flowRun.start_time" no-gutters>
-                  <v-col cols="6">
-                    Duration
-                  </v-col>
+                  <v-col cols="6"> Duration </v-col>
                   <v-col cols="6" class="text-right font-weight-bold">
                     <!-- Check for isFinished improves duration handling for restarted flows  -->
                     <DurationSpan
@@ -332,6 +357,15 @@ export default {
           class="text-body-2 appForeground rounded-sm pa-5 code-block"
         >
           {{ formatJson(flowRun.context) }}
+        </div>
+      </v-fade-transition>
+
+      <v-fade-transition hide-on-leave>
+        <div
+          v-if="tab === 'run_config'"
+          class="text-body-2 appForeground rounded-sm pa-5 code-block"
+        >
+          {{ formatJson(flowRun.run_config) }}
         </div>
       </v-fade-transition>
     </v-card-text>
