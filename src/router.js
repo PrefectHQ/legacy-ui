@@ -250,6 +250,20 @@ export const routes = [
     component: () =>
       import(/* webpackChunkName: "agent" */ '@/pages/Agents/AgentPage.vue')
   },
+  // ---------------------------//
+  //
+  // Integrations
+  //
+  // ----------------------------//
+  {
+    name: 'pagerduty',
+    path: '/:tenant?/pagerduty/:config?',
+    props: route => ({ pdData: route.query.config }),
+    component: () =>
+      import(
+        /* webpackChunkName: "pagerduty" */ '@/pages/Integrations/PagerDuty.vue'
+      )
+  },
   // --------------------------- //
   //
   // Onboarding
@@ -444,20 +458,6 @@ export const routes = [
         /* webpackChunkName: "dashboard" */ '@/pages/Dashboard/Dashboard.vue'
       )
   },
-  // ---------------------------//
-  //
-  // Integrations
-  //
-  // ----------------------------//
-  {
-    name: 'pagerduty',
-    path: '/:tenant?/pagerduty/:config?',
-    props: route => ({ pdData: route.query.config }),
-    component: () =>
-      import(
-        /* webpackChunkName: "test" */ '@/pages/Integrations/PagerDuty.vue'
-      )
-  },
   {
     path: '*',
     redirect: '404'
@@ -506,6 +506,9 @@ export const createRouter = () => {
   })
 
   router.beforeEach((to, from, next) => {
+    console.log('something to', to)
+    console.log('something from', from)
+    console.log('something next', next)
     if (
       'tenant' in to?.params &&
       !to?.params?.tenant &&
