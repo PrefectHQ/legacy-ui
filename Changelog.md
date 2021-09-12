@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add RunConfig tab in FlowRun details - [#1047](https://github.com/PrefectHQ/ui/pull/1047)
 
 ### Bugfixes
 
