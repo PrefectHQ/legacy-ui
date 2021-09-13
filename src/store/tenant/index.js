@@ -173,7 +173,6 @@ const actions = {
 
       commit('setTenant')
     } catch (e) {
-      console.log('tenant', 'slug', slug)
       throw new Error(`Problem setting tenant: ${e}`)
     }
 

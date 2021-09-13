@@ -167,9 +167,11 @@ export default {
 <template>
   <v-card elevation="0">
     <v-card-text class="text-h4 font-weight-light">
-      <v-row>
+      <v-row class="pt-2">
         <v-col cols="9" lg="10">
-          <span class="mr-1">Pager Duty Actions</span>
+          <v-icon :style="{ 'max-height': '30px' }" size="150" class="pdicon"
+            >$newPagerDuty</v-icon
+          >
         </v-col>
         <v-col cols="3" lg="2" class="text-right">
           <v-btn
@@ -186,14 +188,12 @@ export default {
     <v-card-text>
       <div>
         <span>
-          Add some text here about setting up an action with the pager duty
-          information maybe
+          Create an action to use with Prefect Automations and the Pager Duty
           <a
             href="https://support.pagerduty.com/docs/services-and-integrations"
             target="_blank"
             >Events API v2</a
-          >
-          integration.
+          >.
         </span>
         <v-row v-if="!integrationKeys || !integrationKeys.length">
           <div
@@ -332,7 +332,7 @@ export default {
                   class="mt-3"
                   text
                   fab
-                  x-small
+                  small
                   color="error"
                   v-on="on"
                   @click="deleteItemFromList(key, index)"
