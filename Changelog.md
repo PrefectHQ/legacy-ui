@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- fix text color in flow details tile - [#1044](https://github.com/PrefectHQ/ui/pull/1044)
 
 ## 2021-09-07
 

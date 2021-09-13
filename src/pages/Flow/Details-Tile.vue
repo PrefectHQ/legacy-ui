@@ -143,7 +143,7 @@ export default {
             {{ flow.name }}
           </div>
           <div
-            class="grey--text text--darken-2 text-caption position-absolute font-weight-medium"
+            class="utilGrayDark--text text-caption position-absolute font-weight-medium"
             style="bottom: 2px;"
           >
             {{ `Version ${flow.version}` }}
@@ -246,7 +246,7 @@ export default {
         <v-list v-if="tab == 'details'" class="card-content">
           <v-list-item dense>
             <v-list-item-content>
-              <v-list-item-subtitle class="grey--text text--darken-3">
+              <v-list-item-subtitle class="utilGrayDark--text">
                 General
               </v-list-item-subtitle>
               <v-divider style="max-width: 50%;" />
@@ -353,7 +353,7 @@ export default {
 
           <v-list-item dense>
             <v-list-item-content v-if="flow.run_config">
-              <v-list-item-subtitle class="grey--text text--darken-3">
+              <v-list-item-subtitle class="utilGrayDark--text">
                 Run Config
               </v-list-item-subtitle>
               <v-divider style="max-width: 50%;" />
@@ -376,7 +376,7 @@ export default {
               </v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-content v-else>
-              <v-list-item-subtitle class="grey--text text--darken-3">
+              <v-list-item-subtitle class="utilGrayDark--text">
                 Environment
               </v-list-item-subtitle>
               <v-divider style="max-width: 50%;" />
@@ -404,7 +404,7 @@ export default {
 
           <v-list-item v-if="flow.storage" dense class="mt-2">
             <v-list-item-content>
-              <v-list-item-subtitle class="grey--text text--darken-3">
+              <v-list-item-subtitle class="utilGrayDArk--text">
                 Storage
               </v-list-item-subtitle>
               <v-divider style="max-width: 50%;" />
@@ -458,7 +458,7 @@ export default {
 
           <v-list-item v-if="flows" dense class="mt-2">
             <v-list-item-content>
-              <v-list-item-subtitle class="grey--text text--darken-3">
+              <v-list-item-subtitle class="utilGrayDark--text">
                 Flow Locations
               </v-list-item-subtitle>
               <v-divider style="max-width: 50%;" />
@@ -486,7 +486,7 @@ export default {
             two-line
           >
             <v-list-item-content>
-              <v-list-item-subtitle class="grey--text text--darken-3">
+              <v-list-item-subtitle class="utilGrayDark--text">
                 Parameters
                 <v-menu
                   v-model="paramInfoOpen"
