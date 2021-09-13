@@ -104,7 +104,7 @@ export default {
 
         <v-list-item :to="'/team/actions'">
           <v-list-item-avatar>
-            <span style="color: Dodgerblue;">
+            <span class="auto-icon">
               <i class="fad fa-random" style="width: 24px; height: 24px;"></i>
             </span>
           </v-list-item-avatar>
@@ -247,6 +247,11 @@ $dark-blue-icon: var(--v-primaryDark-base);
 }
 
 .fa-abacus {
+  --fa-primary-color: #{$dark-grey-icon};
+  --fa-secondary-color: #{$dark-blue-icon};
+}
+
+.fa-random {
   --fa-primary-color: #{$dark-grey-icon};
   --fa-secondary-color: #{$dark-blue-icon};
 }
