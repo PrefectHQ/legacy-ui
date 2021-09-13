@@ -72,7 +72,7 @@ export default {
       ],
       menu: false,
       errorMessage: '',
-      loadingTable: 0
+      loading: 0
     }
   },
   computed: {
@@ -83,6 +83,10 @@ export default {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.headers
         : this.headers.filter(header => header.mobile)
+    },
+    loadingTable() {
+      console.log('loading', this.loading)
+      return this.loading > 0
     }
   },
   methods: {
@@ -141,16 +145,13 @@ export default {
   apollo: {
     actions: {
       query: require('@/graphql/Integrations/PagerDutyActions.gql'),
-      result({ data }) {
-        if (!data) return
-        return data.action
-      },
+      update: data => data.actions,
       variables() {
         return {
           includeIds: this.successIds
         }
       },
-      loadingKey: 'loadingTable',
+      loadingKey: 'loading',
       error() {
         this.handleAlert(
           'error',
@@ -165,15 +166,10 @@ export default {
 
 <template>
   <v-card elevation="0">
-    <v-card-text>
-      <div>Props: {{ pdData }} </div>
-      <div>Integration Keys: {{ integrationKeys }} </div>
-      <div> Account: {{ account }} </div>
-    </v-card-text>
-    <v-card-text class="text-h6 font-weight-light">
+    <v-card-text class="text-h4 font-weight-light">
       <v-row>
         <v-col cols="9" lg="10">
-          <span class="mr-1">Some Text Here</span>
+          <span class="mr-1">Pager Duty Actions</span>
         </v-col>
         <v-col cols="3" lg="2" class="text-right">
           <v-btn
@@ -190,12 +186,6 @@ export default {
     <v-card-text>
       <div>
         <span>
-          Prefect Cloud will send a PagerDuty notification. Create your
-          <a
-            href="https://support.pagerduty.com/docs/generating-api-keys"
-            target="_blank"
-            >Pager Duty API token</a
-          >
           Add some text here about setting up an action with the pager duty
           information maybe
           <a
@@ -214,6 +204,7 @@ export default {
           </div>
         </v-row>
         <v-row
+          class="text-center"
           v-else-if="
             integrationKeys && integrationKeys.length === successIds.length
           "
@@ -222,14 +213,13 @@ export default {
             class="text-center position-absolute center-absolute text-h5 utilGrayDark--text mt-10"
             :style="{ 'z-index': 1, width: '100%' }"
           >
-            <div> {{ pluralize(successIds.length, 'Action') }} Created</div>
             <v-data-table
               fixed-header
               :headers="headersByViewport"
               :items="actions"
               :items-per-page="10"
               show-expand
-              :loading="loadingTable > 0"
+              :loading="loadingTable || !actions || !actions.length"
               class="elevation-2 rounded-0 truncate-table"
               :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"
               :footer-props="{
@@ -278,7 +268,7 @@ export default {
               </template>
             </v-data-table>
 
-            <div class="mt-4">
+            <div class="mt-4 text-center">
               <v-btn
                 color="primary"
                 outlined
@@ -287,7 +277,6 @@ export default {
                 >Manage Actions</v-btn
               >
               <v-btn
-                outlined
                 color="primary"
                 :to="{
                   path: `/${tenant.slug}?automations=`
