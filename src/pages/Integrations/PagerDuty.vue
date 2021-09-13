@@ -104,7 +104,7 @@ export default {
       this.actionConfig = {
         routing_key: item.integration_key,
         severity: this.severity,
-        //Temp hack to get around staging backend
+        //Temp hack to get around staging backend - MUST REMOVE!
         api_token_secret: 'test'
       }
       let config = {
