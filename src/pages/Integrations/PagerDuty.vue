@@ -85,7 +85,6 @@ export default {
         : this.headers.filter(header => header.mobile)
     },
     loadingTable() {
-      console.log('loading', this.loading)
       return this.loading > 0
     }
   },
