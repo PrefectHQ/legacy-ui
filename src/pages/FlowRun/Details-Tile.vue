@@ -88,7 +88,10 @@ export default {
       <!-- <v-icon>{{ flowRun.state }}</v-icon> -->
     </v-system-bar>
 
-    <CardTitle v-if="hasParameters || hasContext" icon="pi-flow-run">
+    <CardTitle
+      v-if="hasParameters || hasContext || hasRunConfig"
+      icon="pi-flow-run"
+    >
       <v-row slot="title" no-gutters class="d-flex align-center">
         <v-col cols="8">
           <div class="text-truncate pb-1">
