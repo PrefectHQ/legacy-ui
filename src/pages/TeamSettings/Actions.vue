@@ -62,7 +62,7 @@ export default {
         {
           mobile: true,
           text: '',
-          value: 'remove',
+          value: 'test',
           align: 'end',
           sortable: false,
           width: '8%'
@@ -70,7 +70,7 @@ export default {
         {
           mobile: true,
           text: '',
-          value: 'test',
+          value: 'remove',
           align: 'end',
           sortable: false,
           width: '8%'
@@ -101,9 +101,6 @@ export default {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.headers
         : this.headers.filter(header => header.mobile)
-    },
-    permissionsCheck() {
-      return this.hasPermission('delete', 'hook')
     }
   },
   watch: {
@@ -112,6 +109,9 @@ export default {
     }
   },
   methods: {
+    permissionsCheck(action) {
+      return this.hasPermission(action, 'hook')
+    },
     closeActionDialog() {
       this.selectedAction = null
     },
@@ -200,7 +200,7 @@ export default {
     <template #title>Automation Actions</template>
 
     <template #subtitle>
-      <span v-if="permissionsCheck">
+      <span v-if="permissionsCheck('delete')">
         View and manage your team's
         <ExternalLink
           href="https://docs.prefect.io/orchestration/concepts/automations.html#automations"
@@ -289,8 +289,26 @@ export default {
             </td>
           </template>
 
+          <!-- TEST ACTION --->
+          <template v-if="permissionsCheck('update')" #item.test="{ item }">
+            <v-btn
+              text
+              fab
+              color="primary"
+              :loading="isTestingAction === item.id"
+              x-small
+              title="Test Action"
+              @click="
+                selectAction(item)
+                testAction(item)
+              "
+            >
+              <v-icon>bug_report</v-icon>
+            </v-btn>
+          </template>
+
           <!-- REMOVE ACTIONS -->
-          <template v-if="permissionsCheck" #item.remove="{ item }">
+          <template v-if="permissionsCheck('delete')" #item.remove="{ item }">
             <v-btn
               text
               fab
@@ -303,23 +321,6 @@ export default {
               "
             >
               <v-icon>delete</v-icon>
-            </v-btn>
-          </template>
-
-          <!-- TEST ACTION --->
-          <template v-if="permissionsCheck" #item.test="{ item }">
-            <v-btn
-              text
-              fab
-              :loading="isTestingAction === item.id"
-              x-small
-              title="Test Action"
-              @click="
-                selectAction(item)
-                testAction(item)
-              "
-            >
-              <v-icon>bug_report</v-icon>
             </v-btn>
           </template>
         </v-data-table>
