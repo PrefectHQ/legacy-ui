@@ -33,29 +33,9 @@ export default {
           value: 'id',
           align: 'center',
           width: '25%'
-        },
-        {
-          mobile: true,
-          text: '',
-          value: 'remove',
-          align: 'end',
-          sortable: false,
-          width: '8%'
-        },
-        {
-          mobile: true,
-          text: '',
-          value: 'test',
-          align: 'end',
-          sortable: false,
-          width: '8%'
         }
       ],
-      integrationKeys: [
-        ...JSON.parse(this.pdData).integration_keys,
-        //FOR TESTING ONLY - MUST REMOVE
-        { name: 'Tester', integration_key: '12345' }
-      ],
+      integrationKeys: [...JSON.parse(this.pdData).integration_keys],
       successIds: [],
       account: JSON.parse(this.pdData).account,
       saving: false,
@@ -79,6 +59,10 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('user', ['user']),
     ...mapGetters('tenant', ['tenant']),
+    ...mapGetters('license', ['hasPermission']),
+    permissionsCheck() {
+      return this.hasPermission('create', 'hook')
+    },
     headersByViewport() {
       return this.$vuetify.breakpoint.mdAndUp
         ? this.headers
@@ -86,16 +70,22 @@ export default {
     },
     loadingTable() {
       return this.loading > 0
+    },
+    allowSave() {
+      return this.integrationKeys.every(key => !!key.integration_key)
     }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    addKey() {
+      this.integrationKeys.push({ name: '', integration_key: '' })
+    },
     pluralize(count, word) {
       if (count === 1) return word
       return `${word}s`
     },
     createAllConfigs() {
-      this.integrationKeys.map(key => {
+      this.integrationKeys.forEach(key => {
         this.saveConfig(key)
       })
     },
@@ -174,7 +164,7 @@ export default {
         </v-col>
         <v-col cols="3" lg="2" class="text-right">
           <v-btn
-            v-if="!successIds.length"
+            v-if="!successIds.length && permissionsCheck && allowSave"
             color="primary"
             elevation="0"
             :loading="saving"
@@ -294,7 +284,6 @@ export default {
           <v-col cols="12" md="3">
             <v-select
               v-model="severity"
-              required
               :items="severityLevels"
               outlined
               label="Severity"
@@ -304,6 +293,7 @@ export default {
             <v-text-field
               v-model="key.integration_key"
               label="Integration Key"
+              :rules="['Required']"
               outlined
             />
           </v-col>
@@ -341,6 +331,12 @@ export default {
               </template>
               Remove action
             </v-tooltip>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="1" md="11" />
+          <v-col cols="11" md="1">
+            <v-btn @click="addKey">Add</v-btn>
           </v-col>
         </v-row>
       </div>
