@@ -104,9 +104,7 @@ export default {
       this.saving = true
       this.actionConfig = {
         routing_key: item.integration_key,
-        severity: item.severity,
-        //Temp hack to get around staging backend - MUST REMOVE!
-        api_token_secret: 'test'
+        severity: item.severity
       }
       let config = {
         pagerduty_notification: this.actionConfig

@@ -46,14 +46,14 @@ export default {
           width: '25%'
         },
         {
-          mobile: false,
+          mobile: true,
           text: 'Type',
           value: 'action_type',
           align: 'left',
           width: '25%'
         },
         {
-          mobile: false,
+          mobile: true,
           text: 'Action ID',
           value: 'id',
           align: 'center',
