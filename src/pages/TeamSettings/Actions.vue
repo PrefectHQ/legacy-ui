@@ -62,18 +62,10 @@ export default {
         {
           mobile: true,
           text: '',
-          value: 'test',
+          value: 'actions',
           align: 'end',
           sortable: false,
-          width: '8%'
-        },
-        {
-          mobile: true,
-          text: '',
-          value: 'remove',
-          align: 'end',
-          sortable: false,
-          width: '8%'
+          width: '15%'
         }
       ],
 
@@ -291,8 +283,9 @@ export default {
           </template>
 
           <!-- TEST ACTION --->
-          <template v-if="permissionsCheck('update')" #item.test="{ item }">
+          <template #item.actions="{ item }">
             <v-btn
+              v-if="permissionsCheck('update')"
               text
               fab
               color="primary"
@@ -306,11 +299,9 @@ export default {
             >
               <v-icon>bug_report</v-icon>
             </v-btn>
-          </template>
 
-          <!-- REMOVE ACTIONS -->
-          <template v-if="permissionsCheck('delete')" #item.remove="{ item }">
             <v-btn
+              v-if="permissionsCheck('delete')"
               text
               fab
               x-small
