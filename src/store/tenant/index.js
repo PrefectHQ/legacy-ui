@@ -171,7 +171,7 @@ const actions = {
         tenant.role = 'TENANT_ADMIN'
       }
 
-      commit('setTenant')
+      commit('setTenant', tenant)
     } catch (e) {
       throw new Error(`Problem setting tenant: ${e}`)
     }
