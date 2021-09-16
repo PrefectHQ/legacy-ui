@@ -506,9 +506,6 @@ export const createRouter = () => {
   })
 
   router.beforeEach((to, from, next) => {
-    console.log('something to', to)
-    console.log('something from', from)
-    console.log('something next', next)
     if (
       'tenant' in to?.params &&
       !to?.params?.tenant &&
