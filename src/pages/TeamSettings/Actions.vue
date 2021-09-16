@@ -167,7 +167,8 @@ export default {
         this.handleAlert('success', 'Test sent')
         this.isTestingAction = null
       } catch (e) {
-        this.handleAlert('error', `${e}`)
+        if (`${e}`.includes('202')) this.handleAlert('success', 'Test accepted')
+        else this.handleAlert('error', `${e}`)
         this.isTestingAction = null
       }
     },
