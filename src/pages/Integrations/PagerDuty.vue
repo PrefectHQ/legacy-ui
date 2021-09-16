@@ -52,7 +52,12 @@ export default {
       ],
       menu: false,
       errorMessage: '',
-      loading: 0
+      loading: 0,
+      rules: [
+        val => {
+          return !!val || 'Required'
+        }
+      ]
     }
   },
   computed: {
@@ -72,13 +77,19 @@ export default {
       return this.loading > 0
     },
     allowSave() {
-      return this.integrationKeys.every(key => !!key.integration_key)
+      return this.integrationKeys.every(
+        key => !!key.integration_key && !!key.severity
+      )
     }
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
     addKey() {
-      this.integrationKeys.push({ name: '', integration_key: '' })
+      this.integrationKeys.push({
+        name: '',
+        integration_key: '',
+        severity: 'Info'
+      })
     },
     pluralize(count, word) {
       if (count === 1) return word
@@ -93,7 +104,7 @@ export default {
       this.saving = true
       this.actionConfig = {
         routing_key: item.integration_key,
-        severity: this.severity,
+        severity: item.severity,
         //Temp hack to get around staging backend - MUST REMOVE!
         api_token_secret: 'test'
       }
@@ -164,8 +175,9 @@ export default {
         </v-col>
         <v-col cols="3" lg="2" class="text-right">
           <v-btn
-            v-if="!successIds.length && permissionsCheck && allowSave"
+            v-if="!successIds.length && permissionsCheck"
             color="primary"
+            :disabled="!allowSave"
             elevation="0"
             :loading="saving"
             @click="createAllConfigs"
@@ -283,17 +295,18 @@ export default {
         >
           <v-col cols="12" md="3">
             <v-select
-              v-model="severity"
+              v-model="key.severity"
               :items="severityLevels"
               outlined
+              :rules="rules"
               label="Severity"
             />
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
               v-model="key.integration_key"
+              :rules="rules"
               label="Integration Key"
-              :rules="['Required']"
               outlined
             />
           </v-col>
@@ -334,9 +347,11 @@ export default {
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="1" md="11" />
-          <v-col cols="11" md="1">
-            <v-btn @click="addKey">Add</v-btn>
+          <v-col cols="0" md="11" />
+          <v-col cols="12" md="1">
+            <v-btn text icon color="primary" @click="addKey"
+              ><v-icon large>add</v-icon></v-btn
+            >
           </v-col>
         </v-row>
       </div>
