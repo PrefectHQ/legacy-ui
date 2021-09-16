@@ -4,11 +4,13 @@
 
 ### Features and Improvements
 
+- Add Automation Actions management page - [#1038](https://github.com/PrefectHQ/ui/pull/1038)
+- Add Pager Duty integration page - [#1038](https://github.com/PrefectHQ/ui/pull/1038)
 - Update tutorial to use keys - [#1042](https://github.com/PrefectHQ/ui/pull/1042)
 
 ### Bugfixes
 
-- fix text color in flow details tile - [#1044](https://github.com/PrefectHQ/ui/pull/1044)
+- Fix text color in flow details tile - [#1044](https://github.com/PrefectHQ/ui/pull/1044)
 
 ## 2021-09-07
 
