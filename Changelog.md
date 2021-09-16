@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Add RunConfig tab in FlowRun details - [#1047](https://github.com/PrefectHQ/ui/pull/1047)
 - Update tutorial to use keys - [#1042](https://github.com/PrefectHQ/ui/pull/1042)
 
 ### Bugfixes
