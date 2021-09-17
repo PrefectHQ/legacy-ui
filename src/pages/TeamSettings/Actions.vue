@@ -282,7 +282,6 @@ export default {
             </td>
           </template>
 
-          <!-- TEST ACTION --->
           <template #item.actions="{ item }">
             <v-btn
               v-if="permissionsCheck('update')"
@@ -319,7 +318,6 @@ export default {
       </v-card-text>
     </v-card>
 
-    <!-- DELETE ACTION -->
     <ConfirmDialog
       v-if="selectedAction"
       v-model="dialogRemoveAction"
