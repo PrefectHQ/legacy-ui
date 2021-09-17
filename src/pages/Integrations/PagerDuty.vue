@@ -163,7 +163,7 @@ export default {
 </script>
 
 <template>
-  <v-card elevation="0">
+  <v-card class="ma-8 pdcard" max-height="60vh">
     <v-card-text class="text-h4 font-weight-light">
       <v-row class="pt-2">
         <v-col cols="9" lg="10">
@@ -358,46 +358,9 @@ export default {
 </template>
 
 <style scoped>
-.no-top {
-  margin-top: 1px;
+.pdcard {
+  overflow: auto;
 }
 </style>
 
-<style lang="scss" scoped>
-.chip-bigger {
-  border: 1px solid;
-  border-color: var(--v-utilGrayLight-base) !important;
-  border-radius: 5px;
-  height: 60px;
-  transition: all 50ms;
-  width: 100%;
-
-  &.active {
-    border-color: var(--v-codePink-base) !important;
-  }
-
-  &:hover,
-  &:focus {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-}
-
-.chip-small {
-  border: 1px solid;
-  border-color: var(--v-utilGrayLight-base) !important;
-  border-radius: 5px;
-  height: 35px;
-  max-width: fit-content;
-  transition: all 50ms;
-  width: 100%;
-
-  &.active {
-    border-color: var(--v-codePink-base) !important;
-  }
-
-  &:hover,
-  &:focus {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-}
-</style>
+<style lang="scss" scoped></style>
