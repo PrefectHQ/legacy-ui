@@ -259,6 +259,10 @@ export const routes = [
     name: 'pagerduty',
     path: '/:tenant?/pagerduty/:config?',
     props: route => ({ pdData: route.query.config }),
+    beforeEnter(to, from, next) {
+      if (to?.query?.config) next()
+      else next('/')
+    },
     component: () =>
       import(
         /* webpackChunkName: "pagerduty" */ '@/pages/Integrations/PagerDuty.vue'
