@@ -36,6 +36,7 @@ export default function(isCloud) {
         state_timestamp
         parameters
         context
+        run_config
         agent_id
 
         states {
