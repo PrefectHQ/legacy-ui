@@ -215,8 +215,9 @@ export default {
           :items="actions"
           :items-per-page="10"
           show-expand
+          hide-default-footer
           :loading="loadingTable || !actions || !actions.length"
-          class="elevation-2 rounded-0 truncate-table"
+          class="elevation-0"
           :class="{ 'fixed-table': $vuetify.breakpoint.smAndUp }"
           :footer-props="{
             showFirstLastPage: true,
