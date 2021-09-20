@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-09-20
+
+### Features and Improvements
+
 - Add Automation Actions management page - [#1038](https://github.com/PrefectHQ/ui/pull/1038)
 - Add Pager Duty integration page - [#1038](https://github.com/PrefectHQ/ui/pull/1038)
 - Add RunConfig tab in FlowRun details - [#1047](https://github.com/PrefectHQ/ui/pull/1047)
