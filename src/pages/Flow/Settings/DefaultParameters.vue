@@ -208,7 +208,6 @@ export default {
                       :new-parameter-input="newParameterInput"
                       :disabled="selectedFlow.archived"
                       data-cy="flow-group-parameter-input"
-                      @input="errorInParameterInput = false"
                     ></JsonInput>
                   </v-card-text>
                   <v-card-actions>

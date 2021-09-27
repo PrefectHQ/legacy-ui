@@ -20,8 +20,6 @@ export const parametersMixin = {
       loading: false,
       flowParameters: [],
       newParameterInput: null,
-      extraParameters: [],
-      missingRequiredParameters: [],
       alertMessage: '',
       alertType: '',
       updatedParameters: null
@@ -42,11 +40,15 @@ export const parametersMixin = {
         this.newParameterInput = val
       }
     },
+    optionalParameters() {
+      return this.selectedFlow.parameters
+        .filter(parameter => !parameter.required)
+        .map(parameter => parameter.name)
+    },
     requiredParameters() {
-      return this.selectedFlow.parameters.reduce((accum, currentParam) => {
-        if (currentParam.required) accum.push(currentParam.name)
-        return accum
-      }, [])
+      return this.selectedFlow.parameters
+        .filter(parameter => parameter.required)
+        .map(parameter => parameter.name)
     },
     permissionsCheck() {
       return !this.hasPermission('update', 'run')
@@ -112,71 +114,85 @@ export const parametersMixin = {
   methods: {
     ...mapActions('alert', ['setAlert']),
     validParameters() {
-      this.extraParameters = []
-      this.missingRequiredParameters = []
       if (!this.$refs.parameterRef) {
         return true
       }
-      // Check JSON using the JsonInput component's validation
-      const jsonValidationResult = Array.isArray(this.$refs.parameterRef)
-        ? this.$refs.parameterRef[0].validateJson()
-        : this.$refs.parameterRef.validateJson()
-      if (jsonValidationResult === 'SyntaxError') {
-        this.errorInParameterInput = true
-        this.setAlert({
-          alertShow: true,
-          alertMessage: `There is a syntax error in your flow parameters JSON.
-          Please correct the error and try again.`,
-          alertType: 'error'
-        })
 
-        return false
-      }
-      if (jsonValidationResult === 'MissingError') {
-        this.errorInParameterInput = true
-        this.setAlert({
-          alertShow: true,
-          alertMessage: 'Please enter your flow parameters as a JSON object.',
-          alertType: 'error'
-        })
+      if (!this.validateJsonInput()) {
         return false
       }
 
       const parameters = JSON.parse(
         this.newParameterInput || this.parameterInput
       )
-      // Collect any missing required parameters
-      this.missingRequiredParameters = difference(
-        this.requiredParameters,
-        Object.keys(parameters)
-      )
-      // Collect any extra parameters.
-      this.extraParameters = difference(
-        Object.keys(parameters),
-        this.selectedFlow.parameters.map(param => param.name)
-      )
-      if (
-        this.missingRequiredParameters.length === 0 &&
-        this.extraParameters.length === 0
-      ) {
-        return true
+
+      if (!this.validateAllRequiredParametersExist(parameters)) {
+        return false
       }
-      this.errorInParameterInput = true
-      if (this.missingRequiredParameters.length > 0) {
+
+      if (!this.validateNoExtraParametersExist(parameters)) {
+        return false
+      }
+
+      return false
+    },
+    validateJsonInput() {
+      const jsonValidationResult = Array.isArray(this.$refs.parameterRef)
+        ? this.$refs.parameterRef[0].validateJson()
+        : this.$refs.parameterRef.validateJson()
+
+      if (['SyntaxError', 'MissingError'].includes(jsonValidationResult)) {
+        this.setAlert({
+          alertShow: true,
+          alertMessage: {
+            SyntaxError: `There is a syntax error in your flow parameters JSON.
+            Please correct the error and try again.`,
+            MissingError: 'Please enter your flow parameters as a JSON object.'
+          }[jsonValidationResult],
+          alertType: 'error'
+        })
+
+        return false
+      }
+
+      return true
+    },
+    validateAllRequiredParametersExist(parameters) {
+      if (
+        this.requiredParameters.some(
+          requiredParameter => !parameters.hasOwnKey(requiredParameter)
+        )
+      ) {
         this.setAlert({
           alertShow: true,
           alertMessage: `There are required flow parameters missing in the JSON payload.
-          Please specify values for the missing parameters.`,
+        Please specify values for the missing parameters.`,
           alertType: 'error'
         })
-      } else {
+
+        return false
+      }
+
+      return true
+    },
+    validateNoExtraParametersExist(parameters) {
+      const extraParameters = Object.keys(parameters).filter(
+        parameter =>
+          !this.requiredParameters.includes(parameter) &&
+          !this.optionalParameters.includes(parameter)
+      )
+
+      if (extraParameters.length > 0) {
         this.setAlert({
           alertShow: true,
-          alertMessage: `You have parameters which were not part of your original flow: ${this.extraParameters}. Please remove them to continue.`,
+          alertMessage: `You have parameters which were not part of your original flow: ${extraParameters}. Please remove them to continue.`,
           alertType: 'error'
         })
+
+        return false
       }
-      return false
+
+      return true
     },
     formatParameterInput() {
       this.parameterInput = jsBeautify(this.parameterInput, jsonFormatOptions)
