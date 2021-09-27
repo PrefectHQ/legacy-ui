@@ -52,7 +52,7 @@ export const parametersMixin = {
       return !this.hasPermission('update', 'run')
     },
     selectedFlow() {
-      return this.flow || this.flowGroup.flows.find(flow => !flow.archived)
+      return this.flowGroup.flows.find(flow => !flow.archived)
     },
     flowGroupParameters() {
       const fgParamObjArray = []
