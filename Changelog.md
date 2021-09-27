@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix member invitation bug - [#1062](https://github.com/PrefectHQ/ui/pull/1062)
 
 ## 2021-09-20
 
