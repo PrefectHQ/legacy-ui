@@ -48,7 +48,7 @@ export default {
       tabs,
       paramInfoOpen: false,
       copiedText: {},
-      configDisplayFieldsMap: {
+      typeFieldMap: {
         LocalRun: ['type', 'working_dir'],
         DockerRun: ['type', 'image'],
         KubernetesRun: [
@@ -76,9 +76,9 @@ export default {
         .reduce((obj, key) => ({ ...obj, [key]: this.flow.storage[key] }), {})
     },
     runConfigDisplayFields() {
-      if (!this.flow.run_config || !this.flow.run_config.type) return []
+      if (!this.flow.run_config?.type) return []
 
-      return this.configDisplayFieldsMap[this.flow.run_config.type].filter(
+      return this.typeFieldMap[this.flow.run_config.type].filter(
         field => this.flow.run_config[field] != null
       )
     },
@@ -93,6 +93,9 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    clickAndCopyable(field) {
+      return ['image_tag', 'image_name', 'registry_url'].includes(field)
+    },
     copyToClipboard(value) {
       this.copiedText = {}
       this.copiedText[value] = true
@@ -102,9 +105,6 @@ export default {
         this.copiedText = {}
         this.copiedText[value] = false
       }, 600)
-    },
-    clickAndCopyable(field) {
-      return ['image_tag', 'image_name', 'registry_url'].includes(field)
     }
   }
 }
@@ -529,39 +529,46 @@ export default {
 </template>
 
 <style lang="scss">
-.card-content {
-  max-height: 207px;
-  overflow-y: auto;
-}
-
-.mb-2px {
-  margin-bottom: 2px;
-}
-
-.pa-2px {
-  padding: 2px;
-}
-
 .bg-gray-transition {
   background-color: var(--v-appBackground-base);
   transition: background-color 300ms;
 }
-
 .bg-white-transition {
   background-color: var(--v-appForeground-base);
   transition: background-color 300ms;
 }
-
+.card-content {
+  max-height: 207px;
+  overflow-y: auto;
+}
+.label-search {
+  border-radius: 0 !important;
+  font-size: 0.85rem !important;
+  .v-icon {
+    font-size: 20px !important;
+  }
+}
+.max-h-300 {
+  max-height: 300px;
+}
+.mb-2px {
+  margin-bottom: 2px;
+}
+.pa-2px {
+  padding: 2px;
+}
 .show-icon-hover-focus-only {
   .v-icon {
     visibility: hidden;
   }
-
   &:hover,
   &:focus {
     .v-icon {
       visibility: visible;
     }
   }
+}
+.w-100 {
+  width: 100% !important;
 }
 </style>

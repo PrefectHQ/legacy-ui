@@ -418,7 +418,12 @@ export default {
 a {
   text-decoration: none !important;
 }
-
+.button-transition {
+  transition: border-right 150ms linear;
+}
+.w-100 {
+  width: 100% !important;
+}
 .card-content {
   height: 100%;
   max-height: 179px;
