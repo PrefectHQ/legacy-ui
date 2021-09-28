@@ -16,7 +16,7 @@ export default {
     },
     runs: {
       type: Array,
-      required: true
+      default: () => []
     }
   }
 }
