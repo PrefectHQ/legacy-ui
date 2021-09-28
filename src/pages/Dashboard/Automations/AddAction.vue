@@ -175,7 +175,7 @@ export default {
       get() {
         const whoTo = this.actionConfigArray.length
           ? this.actionConfigArray
-          : this.secretName || this.webhookURLString
+          : this.secretName || this.webhookURLString || this.apiToken
         return `${this.actionType.verb} ${whoTo}`
       },
       set(x) {
