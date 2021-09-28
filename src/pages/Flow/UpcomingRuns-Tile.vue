@@ -37,8 +37,8 @@ export default {
   },
   data() {
     const tabs = {
-      upcoming: 'upcoming',
-      late: 'late'
+      upcoming: 0,
+      late: 1
     }
 
     return {
@@ -139,10 +139,6 @@ export default {
     }, 10000)
   },
   methods: {
-    changeTab(tab) {
-      this.tab = tab
-      this.pristine = false
-    },
     runIsLate(run) {
       return this.getTimeOverdue(run.scheduled_start_time) > 20000
     },
@@ -214,67 +210,6 @@ export default {
           />
         </v-col>
       </v-row>
-
-      <div slot="action" class="d-flex align-end flex-column">
-        <v-btn
-          depressed
-          small
-          tile
-          icon
-          class="button-transition w-100 d-flex justify-end"
-          :color="tab == tabs.upcoming ? 'primary' : ''"
-          :style="{
-            'border-right': `3px solid ${
-              tab == tabs.upcoming
-                ? 'var(--v-primary-base)'
-                : 'var(--v-appForeground-base)'
-            }`,
-            'box-sizing': 'content-box',
-            'min-width': '100px'
-          }"
-          @click="changeTab(tabs.upcoming)"
-        >
-          {{
-            upcomingRuns && upcomingRuns.length > 0 && tab === tabs.late
-              ? `(${upcomingRuns.length})`
-              : ''
-          }}
-          Upcoming
-          <v-icon small>access_time</v-icon>
-        </v-btn>
-
-        <v-btn
-          depressed
-          small
-          tile
-          icon
-          class="button-transition w-100 d-flex justify-end"
-          :color="tab == tabs.late ? 'primary' : ''"
-          :style="{
-            'border-right': `3px solid ${
-              tab == tabs.late
-                ? lateRuns && lateRuns.length > 0
-                  ? 'var(--v-deepRed-base)'
-                  : 'var(--v-primary-base)'
-                : 'var(--v-appForeground-base)'
-            }`,
-            'box-sizing': 'content-box',
-            'min-width': '100px'
-          }"
-          @click="changeTab(tabs.late)"
-        >
-          <v-icon v-if="lateRuns && lateRuns.length > 0" small color="deepRed">
-            warning
-          </v-icon>
-          {{
-            lateRuns && lateRuns.length > 0 && tab === tabs.upcoming
-              ? `(${lateRuns.length})`
-              : ''
-          }}
-          Late
-          <v-icon small>timelapse</v-icon>
-        </v-btn>
-      </div>
     </CardTitle>
 
     <v-card-text v-show="overlay" class="pa-0">
@@ -286,23 +221,49 @@ export default {
       </v-overlay>
     </v-card-text>
 
-    <upcoming-runs-tile-upcoming
-      v-show="tab == tabs.upcoming"
-      :loading="loading"
-      :runs="upcomingRuns"
-    />
+    <v-tabs
+      v-model="tab"
+      tabs-border-bottom
+      :color="titleIconColor"
+      class="flex-grow-0"
+      @change="pristine = false"
+    >
+      <v-tab :key="tabs.upcoming" data-cy="upcoming-runs-tile-upcoming">
+        {{
+          upcomingRuns && upcomingRuns.length > 0 && tab === tabs.late
+            ? `(${upcomingRuns.length})`
+            : ''
+        }}
+        Upcoming
+      </v-tab>
+      <v-tab :key="tabs.late" data-cy="upcoming-runs-tile-late">
+        <v-icon
+          v-if="lateRuns && lateRuns.length > 0"
+          class="mr-1"
+          small
+          color="deepRed"
+        >
+          warning
+        </v-icon>
+        {{
+          lateRuns && lateRuns.length > 0 && tab === tabs.upcoming
+            ? `(${lateRuns.length})`
+            : ''
+        }}
+        Late
+      </v-tab>
+    </v-tabs>
 
-    <upcoming-runs-tile-late
-      v-show="tab == tabs.late"
-      :loading="loading"
-      :runs="lateRuns"
-    />
+    <v-tabs-items v-model="tab" class="flex-grow-1">
+      <v-tab-item :key="tabs.upcoming">
+        <upcoming-runs-tile-upcoming :loading="loading" :runs="upcomingRuns" />
+      </v-tab-item>
+      <v-tab-item :key="tabs.late">
+        <upcoming-runs-tile-late :loading="loading" :runs="lateRuns" />
+      </v-tab-item>
+    </v-tabs-items>
 
-    <v-spacer />
-
-    <v-card-actions class="py-0">
-      <v-spacer />
-
+    <v-card-actions class="py-0 justify-end">
       <v-btn
         v-if="!overlay && lateRuns && lateRuns.length > 0"
         small
@@ -331,24 +292,3 @@ export default {
     </v-card-actions>
   </v-card>
 </template>
-
-<style lang="scss" scoped>
-a {
-  text-decoration: none !important;
-}
-
-.button-transition {
-  transition: border-right 150ms linear;
-}
-
-.w-100 {
-  width: 100% !important;
-}
-
-.card-content {
-  height: 100%;
-  max-height: 226px;
-  overflow-y: auto;
-  position: relative;
-}
-</style>

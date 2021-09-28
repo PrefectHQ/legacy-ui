@@ -90,3 +90,16 @@ export default {
     </v-list>
   </v-card-text>
 </template>
+
+<style lang="scss" scoped>
+a {
+  text-decoration: none !important;
+}
+
+.card-content {
+  height: 100%;
+  max-height: 179px;
+  overflow-y: auto;
+  position: relative;
+}
+</style>
