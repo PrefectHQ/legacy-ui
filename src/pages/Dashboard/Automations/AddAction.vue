@@ -137,13 +137,7 @@ export default {
     },
     disableNext() {
       if (this.step.name === 'openToConfig') {
-        if (
-          this.isPagerDuty &&
-          this.apiToken &&
-          this.routingKey &&
-          this.severity
-        )
-          return false
+        if (this.isPagerDuty && this.routingKey && this.severity) return false
         if (!this.actionConfigArray.length) return true
         else return false
       } else {
@@ -159,10 +153,7 @@ export default {
     allowSave() {
       const type = this.actionType.type
       const allow = this.isPagerDuty
-        ? !!this.actionType &&
-          !!this.apiToken &&
-          !!this.routingKey &&
-          !!this.severity
+        ? !!this.actionType && !!this.routingKey && !!this.severity
         : this.isTwilio
         ? !!this.actionConfigArray &&
           !!this.authToken &&
@@ -286,12 +277,7 @@ export default {
         } else {
           if (this.actionType.type === 'EMAIL' && this.actionConfigArray.length)
             this.steps['openToConfig'].complete = true
-          else if (
-            this.isPagerDuty &&
-            this.apiToken &&
-            this.routingKey &&
-            this.severity
-          ) {
+          else if (this.isPagerDuty && this.routingKey && this.severity) {
             this.steps['openToConfig'].complete = true
           }
           this.switchStep('addName')
@@ -369,7 +355,6 @@ export default {
             case 'PAGERDUTY':
               {
                 this.actionConfig = {
-                  api_token_secret: this.apiToken,
                   routing_key: this.routingKey,
                   severity: this.severity
                 }
@@ -719,7 +704,7 @@ export default {
           integration.
         </span>
         <v-row class="mt-2">
-          <v-col cols="12" md="4">
+          <!-- <v-col cols="12" md="4">
             <v-select
               v-model="apiToken"
               :items="secretNames"
@@ -727,7 +712,7 @@ export default {
               label="PagerDuty API Token Secret"
               no-data-text="You will need to create a secret with your PagerDuty API Token"
             />
-          </v-col>
+          </v-col> -->
           <v-col cols="12" md="4">
             <v-select
               v-model="severity"
