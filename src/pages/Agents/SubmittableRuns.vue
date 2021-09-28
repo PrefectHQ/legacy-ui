@@ -176,8 +176,7 @@ export default {
     flowRuns: {
       query: require('@/graphql/Agent/FlowRuns.gql'),
       pollInterval: 1000,
-      loading: 'loadingKey',
-      fetchPolicy: 'no-cache',
+      loadingKey: 'loadingKey',
       update(data) {
         return data.flow_run
       }
@@ -195,7 +194,7 @@ export default {
         <v-col cols="8">
           <div>
             <div
-              v-if="loading || (tab === tabs.late && isClearingLateRuns)"
+              v-if="loading"
               style="
                 display: inline-block;
                 height: 20px;
@@ -255,13 +254,10 @@ export default {
             lateRuns && lateRuns.length ? 'late-card-content' : 'card-content'
           "
         >
-          <v-skeleton-loader v-if="loading" type="list-item-three-line">
-          </v-skeleton-loader>
+          <v-skeleton-loader v-if="loading" type="list-item-three-line" />
 
           <v-list-item
-            v-else-if="
-              !loading && submittableRuns && submittableRuns.length === 0
-            "
+            v-else-if="submittableRuns && submittableRuns.length === 0"
             dense
           >
             <v-list-item-avatar class="mr-0">
@@ -356,16 +352,9 @@ export default {
             lateRuns && lateRuns.length ? 'late-card-content' : 'card-content'
           "
         >
-          <v-skeleton-loader
-            v-if="loading || isClearingLateRuns"
-            type="list-item-three-line"
-          >
-          </v-skeleton-loader>
+          <v-skeleton-loader v-if="loading" type="list-item-three-line" />
 
-          <v-list-item
-            v-else-if="!loading && lateRuns && lateRuns.length === 0"
-            dense
-          >
+          <v-list-item v-else-if="lateRuns && lateRuns.length === 0" dense>
             <v-list-item-avatar class="mr-0">
               <v-icon class="green--text">check</v-icon>
             </v-list-item-avatar>
