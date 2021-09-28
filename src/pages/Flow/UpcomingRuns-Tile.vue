@@ -1,26 +1,21 @@
 <script>
-// import moment from 'moment-timezone'
 import { mapGetters } from 'vuex'
 import CardTitle from '@/components/Card-Title'
 import ClearLate from '@/components/SystemActions/ClearLate'
 import ConcurrencyInfo from '@/components/ConcurrencyInfo'
-import DurationSpan from '@/components/DurationSpan'
-import LabelWarning from '@/components/LabelWarning'
 import WorkQueue from '@/components/SystemActions/WorkQueue'
-
-import { runFlowNowMixin } from '@/mixins/runFlowNow'
-import { formatTime } from '@/mixins/formatTimeMixin'
+import UpcomingRunsTileUpcoming from './UpcomingRuns-Tile-Upcoming.vue'
+import UpcomingRunsTileLate from './UpcomingRuns-Tile-Late.vue'
 
 export default {
   components: {
     CardTitle,
     ClearLate,
     ConcurrencyInfo,
-    DurationSpan,
-    LabelWarning,
-    WorkQueue
+    WorkQueue,
+    UpcomingRunsTileUpcoming,
+    UpcomingRunsTileLate
   },
-  mixins: [runFlowNowMixin, formatTime],
   props: {
     aggregate: {
       type: Boolean,
@@ -41,88 +36,76 @@ export default {
     }
   },
   data() {
+    const tabs = {
+      upcoming: 'upcoming',
+      late: 'late'
+    }
+
     return {
       lateInterval: null,
       loadingKey: 0,
       overlay: null,
-      tab: 'upcoming'
+      tab: tabs.upcoming,
+      tabs
     }
   },
   computed: {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
-    lateRuns() {
-      if (!this.upcoming) return null
-      return this.upcoming.filter(run => {
-        return this.getTimeOverdue(run.scheduled_start_time) > 20000
-      })
-    },
     loading() {
       return this.loadingKey > 0
     },
     paused() {
       return this.tenant?.settings?.work_queue_paused
     },
+    lateRuns() {
+      if (!this.upcomingFowRunsData) return null
+
+      return this.upcomingFowRunsData.filter(run => this.runIsLate(run))
+    },
     upcomingRuns() {
-      if (!this.upcoming) return null
-      return this.upcoming.filter(run => {
-        return this.getTimeOverdue(run.scheduled_start_time) <= 20000
-      })
+      if (!this.upcomingFowRunsData) return null
+
+      return this.upcomingFowRunsData.filter(run => !this.runIsLate(run))
     },
     title() {
-      if (!this.upcoming) return
-      let title = ''
+      if (!this.upcomingFowRunsData) return null
 
-      if (this.tab == 'upcoming') {
-        title =
-          this.loading > 0
-            ? 'Upcoming runs'
-            : `${this.upcomingRuns?.length || 0} upcoming runs`
-      }
-
-      if (this.tab == 'late') {
-        title = this.loading
-          ? 'Late runs'
-          : `${this.lateRuns?.length +
-              (this.lateRuns?.length >= 1000 ? '+' : '') || 0} late runs`
-      }
-
-      return title
+      return this.tabProperties[this.tab].title
     },
     titleIcon() {
-      let icon = ''
-
-      if (this.tab == 'upcoming') {
-        icon = 'access_time'
-      }
-
-      if (this.tab == 'late') {
-        icon = 'timelapse'
-      }
-
-      return icon
+      return this.tabProperties[this.tab].icon
     },
     titleIconColor() {
-      return this.loading
-        ? 'grey'
-        : this.tab == 'upcoming'
-        ? 'primary'
-        : this.lateRuns?.length > 0
-        ? 'deepRed'
-        : 'Success'
+      if (this.loading) return 'grey'
+
+      return this.tabProperties[this.tab].icon_color
+    },
+    systemBarColor() {
+      if (this.loading || !this.upcomingFowRunsData) return 'secondaryGray'
+
+      return this.lateRuns?.length > 0 ? 'deepRed' : 'Success'
+    },
+    tabProperties() {
+      var upcomingCount = this.upcomingRuns?.length || 0
+      var lateCount = this.lateRuns?.length || 0
+
+      return {
+        [this.tabs.upcoming]: {
+          title: `${upcomingCount} upcoming runs`,
+          icon: 'access_time',
+          icon_color: 'primary'
+        },
+        [this.tabs.late]: {
+          title: `${lateCount > 999 ? '1,000+' : lateCount} late runs`,
+          icon: 'timelapse',
+          icon_color: lateCount > 0 ? 'deepRed' : 'Success'
+        }
+      }
     }
   },
   watch: {
-    upcoming(val) {
-      if (!val) return
-      if (this.lateRuns?.length > 0) {
-        this.tab = 'late'
-      }
-      if (this.lateRuns?.length <= 0) {
-        this.tab = 'upcoming'
-      }
-    },
     ['tenant.settings.work_queue_paused'](val) {
       if (!val) {
         setTimeout(() => {
@@ -132,9 +115,9 @@ export default {
     }
   },
   beforeDestroy() {
-    this.upcoming = []
+    this.upcomingFowRunsData = []
     clearInterval(this.lateInterval)
-    this.tab = 'upcoming'
+    this.tab = this.tabs.upcoming
   },
   mounted() {
     if (this.paused) {
@@ -144,10 +127,13 @@ export default {
     this.lateInterval = setInterval(() => {
       // This ensures that the lateRuns always recomputes
       // even if the upcoming runs don't return new data
-      this.upcoming = [...this.upcoming]
+      this.upcomingFowRunsData = [...this.upcomingFowRunsData]
     }, 10000)
   },
   methods: {
+    runIsLate(run) {
+      return this.getTimeOverdue(run.scheduled_start_time) > 20000
+    },
     getTimeOverdue(time) {
       return new Date() - new Date(time)
     },
@@ -158,12 +144,12 @@ export default {
       this.overlay = null
     },
     refetch() {
-      this.$apollo.queries.upcoming.refresh()
+      this.$apollo.queries.upcomingFowRunsData.refresh()
       this.overlay = null
     }
   },
   apollo: {
-    upcoming: {
+    upcomingFowRunsData: {
       query: require('@/graphql/Flow/upcoming-flow-runs.gql'),
       variables() {
         let variables = {}
@@ -191,37 +177,26 @@ export default {
     style="height: 100%;"
     tile
   >
-    <v-system-bar
-      :color="
-        loading || !upcoming
-          ? 'secondaryGray'
-          : lateRuns && lateRuns.length > 0
-          ? 'deepRed'
-          : 'Success'
-      "
-      :height="5"
-      absolute
-    >
-    </v-system-bar>
+    <v-system-bar :color="systemBarColor" :height="5" absolute />
 
     <CardTitle :title="title" :icon="titleIcon" :icon-color="titleIconColor">
       <v-row slot="title" no-gutters class="d-flex align-center">
         <v-col cols="8">
           <div>
             <div
-              v-if="loading || !upcoming"
+              v-if="loading"
               style="
                 display: inline-block;
                 height: 20px;
                 overflow: hidden;
                 width: 20px;"
             >
-              <v-skeleton-loader type="avatar" tile></v-skeleton-loader>
+              <v-skeleton-loader type="avatar" tile />
             </div>
             {{ title }}
           </div>
           <ConcurrencyInfo
-            v-if="isCloud && tab === 'late'"
+            v-if="isCloud && tab === tabs.late"
             class="text-caption position-absolute"
             style="bottom: 2px;"
           />
@@ -235,7 +210,7 @@ export default {
           tile
           icon
           class="button-transition w-100 d-flex justify-end"
-          :color="tab == 'upcoming' ? 'primary' : ''"
+          :color="tab == tabs.upcoming ? 'primary' : ''"
           :style="{
             'border-right': `3px solid ${
               tab == 'upcoming'
@@ -245,10 +220,10 @@ export default {
             'box-sizing': 'content-box',
             'min-width': '100px'
           }"
-          @click="tab = 'upcoming'"
+          @click="tab = tabs.upcoming"
         >
           {{
-            upcomingRuns && upcomingRuns.length > 0 && tab === 'late'
+            upcomingRuns && upcomingRuns.length > 0 && tab === tabs.late
               ? `(${upcomingRuns.length})`
               : ''
           }}
@@ -262,7 +237,7 @@ export default {
           tile
           icon
           class="button-transition w-100 d-flex justify-end"
-          :color="tab == 'late' ? 'primary' : ''"
+          :color="tab == tabs.late ? 'primary' : ''"
           :style="{
             'border-right': `3px solid ${
               tab == 'late'
@@ -274,13 +249,13 @@ export default {
             'box-sizing': 'content-box',
             'min-width': '100px'
           }"
-          @click="tab = 'late'"
+          @click="tab = tabs.late"
         >
           <v-icon v-if="lateRuns && lateRuns.length > 0" small color="deepRed">
             warning
           </v-icon>
           {{
-            lateRuns && lateRuns.length > 0 && tab === 'upcoming'
+            lateRuns && lateRuns.length > 0 && tab === tabs.upcoming
               ? `(${lateRuns.length})`
               : ''
           }}
@@ -291,7 +266,7 @@ export default {
     </CardTitle>
 
     <v-card-text v-show="overlay" class="pa-0">
-      <v-overlay v-show="overlay == 'late'" absolute z-index="1">
+      <v-overlay v-show="overlay == tabs.late" absolute z-index="1">
         <ClearLate :flow-runs="lateRuns" @finish="refetch" />
       </v-overlay>
       <v-overlay v-show="overlay == 'queue'" absolute z-index="1">
@@ -299,141 +274,17 @@ export default {
       </v-overlay>
     </v-card-text>
 
-    <v-card-text v-show="tab == 'upcoming'" class="pa-0 card-content">
-      <v-skeleton-loader
-        v-if="loading || !upcoming"
-        type="list-item-three-line"
-      >
-      </v-skeleton-loader>
+    <upcoming-runs-tile-upcoming
+      v-show="tab == tabs.upcoming"
+      :loading="loading"
+      :runs="upcomingRuns"
+    />
 
-      <v-list-item
-        v-else-if="!loading && upcomingRuns && upcomingRuns.length === 0"
-        dense
-      >
-        <v-list-item-avatar class="mr-0">
-          <v-icon class="green--text">check</v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content class="my-0 py-0">
-          <div
-            class="text-subtitle-1 font-weight-light"
-            style="line-height: 1.25rem;"
-          >
-            No upcoming runs.
-          </div>
-        </v-list-item-content>
-      </v-list-item>
-
-      <v-list v-else dense class="card-content">
-        <v-lazy
-          v-for="item in upcomingRuns"
-          :key="item.id"
-          :options="{
-            threshold: 0.75
-          }"
-          min-height="44"
-          transition="fade-transition"
-        >
-          <v-list-item dense :disabled="setToRun.includes(item.id)">
-            <v-list-item-content>
-              <v-list-item-subtitle class="text-body-1 font-weight-regular">
-                <router-link
-                  :to="{ name: 'flow-run', params: { id: item.id } }"
-                >
-                  {{ item.name }}
-                </router-link>
-              </v-list-item-subtitle>
-
-              <span class="text-caption mb-0 ml-n1 d-flex align-center">
-                <LabelWarning :flow="item.flow" :flow-run="item" />
-                <span class="ml-1">
-                  Scheduled for
-                  {{ formatDateTime(item.scheduled_start_time) }}
-                </span>
-              </span>
-            </v-list-item-content>
-
-            <v-list-item-action tile min-width="5" class="text-body-2">
-              <v-tooltip top>
-                <template #activator="{ on }">
-                  <v-btn
-                    text
-                    x-small
-                    aria-label="Run Now"
-                    :disabled="setToRun.includes(item.id)"
-                    color="primary"
-                    class="vertical-button"
-                    v-on="on"
-                    @click="runFlowNow(item.id, item.version, item.name)"
-                  >
-                    <v-icon small dense color="primary"> fa-rocket</v-icon>
-                  </v-btn>
-                </template>
-                <span> Run {{ item.name }} now </span>
-              </v-tooltip>
-            </v-list-item-action>
-          </v-list-item>
-        </v-lazy>
-      </v-list>
-    </v-card-text>
-
-    <v-card-text v-show="tab == 'late'" class="pa-0 card-content">
-      <v-skeleton-loader v-if="loading" type="list-item-three-line">
-      </v-skeleton-loader>
-
-      <v-list-item
-        v-else-if="!loading && lateRuns && lateRuns.length === 0"
-        dense
-      >
-        <v-list-item-avatar class="mr-0">
-          <v-icon class="green--text">check</v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content class="my-0 py-0">
-          <div
-            class="text-subtitle-1 font-weight-light"
-            style="line-height: 1.25rem;"
-          >
-            Everything is running on schedule!
-          </div>
-        </v-list-item-content>
-      </v-list-item>
-
-      <v-list v-else dense class="card-content">
-        <v-lazy
-          v-for="item in lateRuns"
-          :key="item.id"
-          :options="{
-            threshold: 0.75
-          }"
-          min-height="40px"
-          transition="fade"
-        >
-          <v-list-item dense two-line>
-            <v-list-item-content>
-              <v-list-item-subtitle class="text-body-1 font-weight-regular">
-                <router-link
-                  :to="{ name: 'flow-run', params: { id: item.id } }"
-                >
-                  {{ item.name }}
-                </router-link>
-              </v-list-item-subtitle>
-
-              <span class="text-caption mb-0 ml-n1 d-flex align-center">
-                <LabelWarning :flow-run="item" location="flowPage" />
-                <span class="ml-1">
-                  Scheduled for
-                  {{ formatDateTime(item.scheduled_start_time) }}
-                </span>
-              </span>
-
-              <v-list-item-subtitle class="text-caption">
-                <DurationSpan :start-time="item.scheduled_start_time" />
-                behind schedule
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-lazy>
-      </v-list>
-    </v-card-text>
+    <upcoming-runs-tile-late
+      v-show="tab == tabs.late"
+      :loading="loading"
+      :runs="lateRuns"
+    />
 
     <v-spacer />
 
@@ -447,23 +298,10 @@ export default {
         color="primary"
         text
         style="z-index: 2;"
-        @click="showOverlay('late')"
+        @click="showOverlay(tabs.late)"
       >
         Clear late
       </v-btn>
-
-      <!-- We don't need to show this option on the flow page -->
-      <!-- <v-btn
-        v-if="!overlay"
-        small
-        depressed
-        color="primary"
-        text
-        style="z-index: 2;"
-        @click="showOverlay('queue')"
-      >
-        Options
-      </v-btn> -->
 
       <v-btn
         v-if="overlay && !paused"
