@@ -42,7 +42,6 @@ export default {
     }
 
     return {
-      lateInterval: null,
       loadingKey: 0,
       overlay: null,
       pristine: true,
@@ -124,7 +123,6 @@ export default {
   },
   beforeDestroy() {
     this.upcomingFlowRunsData = []
-    clearInterval(this.lateInterval)
     this.tab = this.tabs.upcoming
   },
   mounted() {
