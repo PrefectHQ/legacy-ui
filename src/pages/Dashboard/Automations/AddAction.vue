@@ -702,7 +702,7 @@ export default {
               v-model="apiToken"
               :items="secretNames"
               outlined
-              label="PagerDuty API Token Secret"
+              label="PagerDuty API Token Secret (optional)"
               no-data-text="You will need to create a secret with your PagerDuty API Token"
             />
           </v-col>
