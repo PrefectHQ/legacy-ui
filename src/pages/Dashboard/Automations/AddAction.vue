@@ -355,6 +355,7 @@ export default {
             case 'PAGERDUTY':
               {
                 this.actionConfig = {
+                  api_token_secret: this.apiToken,
                   routing_key: this.routingKey,
                   severity: this.severity
                 }
@@ -704,7 +705,7 @@ export default {
           integration.
         </span>
         <v-row class="mt-2">
-          <!-- <v-col cols="12" md="4">
+          <v-col cols="12" md="4">
             <v-select
               v-model="apiToken"
               :items="secretNames"
@@ -712,7 +713,7 @@ export default {
               label="PagerDuty API Token Secret"
               no-data-text="You will need to create a secret with your PagerDuty API Token"
             />
-          </v-col> -->
+          </v-col>
           <v-col cols="12" md="4">
             <v-select
               v-model="severity"
