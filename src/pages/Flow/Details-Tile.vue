@@ -44,10 +44,22 @@ export default {
     }
 
     return {
-      tab: tabs.overview,
-      tabs,
       paramInfoOpen: false,
       copiedText: {},
+      tab: tabs.overview,
+      tabs,
+      //labels
+      newLabel: '',
+      labelMenuOpen: false,
+      labelEditOpen: false,
+      labelSearchInput: '',
+      removingLabel: null,
+      newLabels: null,
+      disableRemove: false,
+      disableAdd: false,
+      valid: false,
+      errorMessage: '',
+      duplicateLabel: '',
       typeFieldMap: {
         LocalRun: ['type', 'working_dir'],
         DockerRun: ['type', 'image'],
@@ -533,34 +545,43 @@ export default {
   background-color: var(--v-appBackground-base);
   transition: background-color 300ms;
 }
+
 .bg-white-transition {
   background-color: var(--v-appForeground-base);
   transition: background-color 300ms;
 }
+
 .card-content {
   max-height: 207px;
   overflow-y: auto;
 }
+
 .label-search {
   border-radius: 0 !important;
   font-size: 0.85rem !important;
+
   .v-icon {
     font-size: 20px !important;
   }
 }
+
 .max-h-300 {
   max-height: 300px;
 }
+
 .mb-2px {
   margin-bottom: 2px;
 }
+
 .pa-2px {
   padding: 2px;
 }
+
 .show-icon-hover-focus-only {
   .v-icon {
     visibility: hidden;
   }
+
   &:hover,
   &:focus {
     .v-icon {
@@ -568,6 +589,7 @@ export default {
     }
   }
 }
+
 .w-100 {
   width: 100% !important;
 }
