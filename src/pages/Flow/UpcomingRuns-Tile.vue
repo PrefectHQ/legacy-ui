@@ -3,19 +3,23 @@ import { mapGetters } from 'vuex'
 import CardTitle from '@/components/Card-Title'
 import ClearLate from '@/components/SystemActions/ClearLate'
 import ConcurrencyInfo from '@/components/ConcurrencyInfo'
+import DurationSpan from '@/components/DurationSpan'
+import LabelWarning from '@/components/LabelWarning'
 import WorkQueue from '@/components/SystemActions/WorkQueue'
-import UpcomingRunsTileUpcoming from './UpcomingRuns-Tile-Upcoming.vue'
-import UpcomingRunsTileLate from './UpcomingRuns-Tile-Late.vue'
+
+import { runFlowNowMixin } from '@/mixins/runFlowNow'
+import { formatTime } from '@/mixins/formatTimeMixin'
 
 export default {
   components: {
     CardTitle,
     ClearLate,
     ConcurrencyInfo,
-    WorkQueue,
-    UpcomingRunsTileUpcoming,
-    UpcomingRunsTileLate
+    DurationSpan,
+    LabelWarning,
+    WorkQueue
   },
+  mixins: [runFlowNowMixin, formatTime],
   props: {
     aggregate: {
       type: Boolean,
@@ -252,10 +256,131 @@ export default {
 
     <v-tabs-items v-model="tab" class="flex-grow-1">
       <v-tab-item :key="tabs.upcoming">
-        <upcoming-runs-tile-upcoming :loading="loading" :runs="upcomingRuns" />
+        <v-card-text class="pa-0 card-content">
+          <v-skeleton-loader v-if="loading" type="list-item-three-line" />
+
+          <v-list-item v-else-if="upcomingRuns.length === 0" dense>
+            <v-list-item-avatar class="mr-0">
+              <v-icon class="green--text">check</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content class="my-0 py-0">
+              <div
+                class="text-subtitle-1 font-weight-light"
+                style="line-height: 1.25rem;"
+              >
+                No upcoming runs.
+              </div>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list v-else dense class="card-content">
+            <v-lazy
+              v-for="run in upcomingRuns"
+              :key="run.id"
+              :options="{
+                threshold: 0.75
+              }"
+              min-height="44"
+              transition="fade-transition"
+            >
+              <v-list-item dense :disabled="setToRun.includes(run.id)">
+                <v-list-item-content>
+                  <v-list-item-subtitle class="text-body-1 font-weight-regular">
+                    <router-link
+                      :to="{ name: 'flow-run', params: { id: run.id } }"
+                    >
+                      {{ run.name }}
+                    </router-link>
+                  </v-list-item-subtitle>
+
+                  <span class="text-caption mb-0 ml-n1 d-flex align-center">
+                    <LabelWarning :flow="run.flow" :flow-run="run" />
+                    <span class="ml-1">
+                      Scheduled for
+                      {{ formatDateTime(run.scheduled_start_time) }}
+                    </span>
+                  </span>
+                </v-list-item-content>
+
+                <v-list-item-action tile min-width="5" class="text-body-2">
+                  <v-tooltip top>
+                    <template #activator="{ on }">
+                      <v-btn
+                        text
+                        x-small
+                        aria-label="Run Now"
+                        :disabled="setToRun.includes(run.id)"
+                        color="primary"
+                        class="vertical-button"
+                        v-on="on"
+                        @click="runFlowNow(run.id, run.version, run.name)"
+                      >
+                        <v-icon small dense color="primary">fa-rocket</v-icon>
+                      </v-btn>
+                    </template>
+                    <span> Run {{ run.name }} now </span>
+                  </v-tooltip>
+                </v-list-item-action>
+              </v-list-item>
+            </v-lazy>
+          </v-list>
+        </v-card-text>
       </v-tab-item>
       <v-tab-item :key="tabs.late">
-        <upcoming-runs-tile-late :loading="loading" :runs="lateRuns" />
+        <v-card-text class="pa-0 card-content">
+          <v-skeleton-loader v-if="loading" type="list-item-three-line" />
+
+          <v-list-item v-else-if="lateRuns.length === 0" dense>
+            <v-list-item-avatar class="mr-0">
+              <v-icon class="green--text">check</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content class="my-0 py-0">
+              <div
+                class="text-subtitle-1 font-weight-light"
+                style="line-height: 1.25rem;"
+              >
+                Everything is running on schedule!
+              </div>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list v-else dense class="card-content">
+            <v-lazy
+              v-for="run in lateRuns"
+              :key="run.id"
+              :options="{
+                threshold: 0.75
+              }"
+              min-height="40px"
+              transition="fade"
+            >
+              <v-list-item dense two-line>
+                <v-list-item-content>
+                  <v-list-item-subtitle class="text-body-1 font-weight-regular">
+                    <router-link
+                      :to="{ name: 'flow-run', params: { id: run.id } }"
+                    >
+                      {{ run.name }}
+                    </router-link>
+                  </v-list-item-subtitle>
+
+                  <span class="text-caption mb-0 ml-n1 d-flex align-center">
+                    <LabelWarning :flow-run="run" location="flowPage" />
+                    <span class="ml-1">
+                      Scheduled for
+                      {{ formatDateTime(run.scheduled_start_time) }}
+                    </span>
+                  </span>
+
+                  <v-list-item-subtitle class="text-caption">
+                    <DurationSpan :start-time="run.scheduled_start_time" />
+                    behind schedule
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-lazy>
+          </v-list>
+        </v-card-text>
       </v-tab-item>
     </v-tabs-items>
 
@@ -288,3 +413,16 @@ export default {
     </v-card-actions>
   </v-card>
 </template>
+
+<style lang="scss" scoped>
+a {
+  text-decoration: none !important;
+}
+
+.card-content {
+  height: 100%;
+  max-height: 179px;
+  overflow-y: auto;
+  position: relative;
+}
+</style>
