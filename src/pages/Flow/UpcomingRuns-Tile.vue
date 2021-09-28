@@ -61,17 +61,17 @@ export default {
       return this.tenant?.settings?.work_queue_paused
     },
     lateRuns() {
-      if (!this.upcomingFowRunsData) return null
+      if (!this.upcomingFlowRunsData) return null
 
-      return this.upcomingFowRunsData.filter(run => this.runIsLate(run))
+      return this.upcomingFlowRunsData.filter(run => this.runIsLate(run))
     },
     upcomingRuns() {
-      if (!this.upcomingFowRunsData) return null
+      if (!this.upcomingFlowRunsData) return null
 
-      return this.upcomingFowRunsData.filter(run => !this.runIsLate(run))
+      return this.upcomingFlowRunsData.filter(run => !this.runIsLate(run))
     },
     title() {
-      if (!this.upcomingFowRunsData) return null
+      if (!this.upcomingFlowRunsData) return null
 
       return this.tabProperties[this.tab].title
     },
@@ -84,7 +84,7 @@ export default {
       return this.tabProperties[this.tab].icon_color
     },
     systemBarColor() {
-      if (this.loading || !this.upcomingFowRunsData) return 'secondaryGray'
+      if (this.loading || !this.upcomingFlowRunsData) return 'secondaryGray'
 
       return this.lateRuns?.length > 0 ? 'deepRed' : 'Success'
     },
@@ -107,7 +107,7 @@ export default {
     }
   },
   watch: {
-    upcomingFowRunsData(val) {
+    upcomingFlowRunsData(val) {
       if (!val || !this.pristine) return
 
       if (this.tab == this.tabs.upcoming && this.lateRuns?.length > 0) {
@@ -123,7 +123,7 @@ export default {
     }
   },
   beforeDestroy() {
-    this.upcomingFowRunsData = []
+    this.upcomingFlowRunsData = []
     clearInterval(this.lateInterval)
     this.tab = this.tabs.upcoming
   },
@@ -131,12 +131,6 @@ export default {
     if (this.paused) {
       this.showOverlay('queue')
     }
-
-    this.lateInterval = setInterval(() => {
-      // This ensures that the lateRuns always recomputes
-      // even if the upcoming runs don't return new data
-      this.upcomingFowRunsData = [...this.upcomingFowRunsData]
-    }, 10000)
   },
   methods: {
     runIsLate(run) {
@@ -152,12 +146,12 @@ export default {
       this.overlay = null
     },
     refetch() {
-      this.$apollo.queries.upcomingFowRunsData.refresh()
+      this.$apollo.queries.upcomingFlowRunsData.refresh()
       this.overlay = null
     }
   },
   apollo: {
-    upcomingFowRunsData: {
+    upcomingFlowRunsData: {
       query: require('@/graphql/Flow/upcoming-flow-runs.gql'),
       variables() {
         let variables = {}
@@ -172,8 +166,12 @@ export default {
       },
       loadingKey: 'loadingKey',
       pollInterval: 10000,
-      fetchPolicy: 'no-cache',
-      update: data => data?.flow_run || []
+      update: data => {
+        return (data?.flow_run || []).map(run => ({
+          ...run,
+          cacheInvalidation: new Date().getTime()
+        }))
+      }
     }
   }
 }
