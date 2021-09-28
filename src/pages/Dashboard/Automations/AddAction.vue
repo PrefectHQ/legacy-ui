@@ -355,7 +355,7 @@ export default {
             case 'PAGERDUTY':
               {
                 this.actionConfig = {
-                  api_token_secret: this.apiToken,
+                  api_token_secret: this.apiToken || null,
                   routing_key: this.routingKey,
                   severity: this.severity
                 }
