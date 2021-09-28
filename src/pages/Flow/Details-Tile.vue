@@ -59,21 +59,7 @@ export default {
       disableAdd: false,
       valid: false,
       errorMessage: '',
-      duplicateLabel: '',
-      typeFieldMap: {
-        LocalRun: ['type', 'working_dir'],
-        DockerRun: ['type', 'image'],
-        KubernetesRun: [
-          'type',
-          'image',
-          'job_template_path',
-          'cpu_request',
-          'cpu_limit',
-          'memory_request',
-          'memory_limit'
-        ],
-        ECSRun: ['type', 'image', 'task_definition_path', 'cpu', 'memory']
-      }
+      duplicateLabel: ''
     }
   },
   computed: {
@@ -90,7 +76,22 @@ export default {
     runConfigDisplayFields() {
       if (!this.flow.run_config?.type) return []
 
-      return this.typeFieldMap[this.flow.run_config.type].filter(
+      const typeFieldMap = {
+        LocalRun: ['type', 'working_dir'],
+        DockerRun: ['type', 'image'],
+        KubernetesRun: [
+          'type',
+          'image',
+          'job_template_path',
+          'cpu_request',
+          'cpu_limit',
+          'memory_request',
+          'memory_limit'
+        ],
+        ECSRun: ['type', 'image', 'task_definition_path', 'cpu', 'memory']
+      }
+
+      return typeFieldMap[this.flow.run_config.type].filter(
         field => this.flow.run_config[field] != null
       )
     },
