@@ -25,9 +25,16 @@ export default {
     }
   },
   data() {
+    const tabs = {
+      submittable: 0,
+      late: 1
+    }
+
     return {
-      tab: 'submittable',
+      tab: tabs.submittable,
+      tabs,
       overlay: null,
+      pristine: true,
       loadingKey: 0
     }
   },
@@ -93,54 +100,45 @@ export default {
       )
     },
     title() {
-      let title = ''
-      if (this.tab == 'submittable') {
-        title =
-          this.loading > 0
-            ? 'Submittable runs'
-            : `${this.submittableRuns?.length || 0} submittable runs`
-      }
-
-      if (this.tab == 'late') {
-        title =
-          this.loading || this.isClearingLateRuns
-            ? 'Late runs'
-            : `${this.lateRuns?.length +
-                (this.lateRuns?.length >= 1000 ? '+' : '') || 0} late runs`
-      }
-
-      return title
+      return this.tabProperties[this.tab].title
     },
     titleIcon() {
-      let icon = ''
-
-      if (this.tab == 'submittable') {
-        icon = 'access_time'
-      }
-
-      if (this.tab == 'late') {
-        icon = 'timelapse'
-      }
-      return icon
+      return this.tabProperties[this.tab].icon
     },
     titleIconColor() {
-      return this.loading
-        ? 'grey'
-        : this.tab == 'submittable'
-        ? 'primary'
-        : this.lateRuns?.length > 0
-        ? 'deepRed'
-        : 'Success'
+      if (this.loading) return 'grey'
+
+      return this.tabProperties[this.tab].icon_color
+    },
+    systemBarColor() {
+      if (this.loading) return 'secondaryGray'
+
+      return this.lateRuns?.length > 0 ? 'deepRed' : 'Success'
+    },
+    tabProperties() {
+      var submittableCount = this.submittableRuns?.length || 0
+      var lateCount = this.lateRuns?.length || 0
+
+      return {
+        [this.tabs.submittable]: {
+          title: `${submittableCount} submittable runs`,
+          icon: 'access_time',
+          icon_color: 'primary'
+        },
+        [this.tabs.late]: {
+          title: `${lateCount > 999 ? '1,000+' : lateCount} late runs`,
+          icon: 'timelapse',
+          icon_color: lateCount > 0 ? 'deepRed' : 'Success'
+        }
+      }
     }
   },
   watch: {
     agent(val) {
-      if (!val) return
-      if (val.lateRuns?.length > 0) {
-        this.tab = 'late'
-      }
-      if (val.lateRuns?.length <= 0) {
-        this.tab = 'submittable'
+      if (!val || !this.pristine) return
+
+      if (this.tab == this.tabs.submittable && this.lateRuns?.length > 0) {
+        this.tab = this.tabs.late
       }
     },
     ['tenant.settings.work_queue_paused'](val) {
@@ -152,7 +150,7 @@ export default {
     }
   },
   mounted() {
-    if (this.agent?.lateRuns?.length) this.tab = 'late'
+    if (this.agent?.lateRuns?.length) this.tab = this.tabs.late
   },
   methods: {
     ...mapMutations('agent', ['setRefetch']),
@@ -190,25 +188,14 @@ export default {
 
 <template>
   <v-card class="py-2" tile height="380px">
-    <v-system-bar
-      :color="
-        loading
-          ? 'secondaryGray'
-          : lateRuns && lateRuns.length > 0
-          ? 'deepRed'
-          : 'Success'
-      "
-      :height="5"
-      absolute
-    >
-    </v-system-bar>
+    <v-system-bar :color="systemBarColor" :height="5" absolute> </v-system-bar>
 
     <CardTitle :title="title" :icon="titleIcon" :icon-color="titleIconColor">
       <v-row slot="title" no-gutters class="d-flex align-center">
         <v-col cols="8">
           <div>
             <div
-              v-if="loading || (tab === 'late' && isClearingLateRuns)"
+              v-if="loading || (tab === tabs.late && isClearingLateRuns)"
               style="
                 display: inline-block;
                 height: 20px;
@@ -221,68 +208,35 @@ export default {
           </div>
         </v-col>
       </v-row>
-
-      <div slot="action" class="d-flex align-end flex-column">
-        <v-btn
-          depressed
-          small
-          tile
-          icon
-          class="button-transition w-100 d-flex justify-end"
-          :color="tab == 'submittable' ? 'primary' : ''"
-          :style="{
-            'border-right': `3px solid ${
-              tab == 'submittable'
-                ? 'var(--v-primary-base)'
-                : 'var(--v-appForeground-base)'
-            }`,
-            'box-sizing': 'content-box',
-            'min-width': '100px'
-          }"
-          @click="tab = 'submittable'"
-        >
-          {{
-            submittableRuns && submittableRuns.length > 0 && tab === 'late'
-              ? `(${submittableRuns.length})`
-              : ''
-          }}
-          Submittable
-          <v-icon small>access_time</v-icon>
-        </v-btn>
-
-        <v-btn
-          depressed
-          small
-          tile
-          icon
-          class="button-transition w-100 d-flex justify-end"
-          :color="tab == 'late' ? 'primary' : ''"
-          :style="{
-            'border-right': `3px solid ${
-              tab == 'late'
-                ? lateRuns && lateRuns.length > 0
-                  ? 'var(--v-deepRed-base)'
-                  : 'var(--v-primary-base)'
-                : 'var(--v-appForeground-base)'
-            }`,
-            'box-sizing': 'content-box',
-            'min-width': '100px'
-          }"
-          @click="tab = 'late'"
-        >
-          <v-icon v-if="lateRuns && lateRuns.length > 0" small color="deepRed">
-            warning
-          </v-icon>
-          {{
-            lateRuns && lateRuns.length > 0 && tab === 'submittable'
-              ? `(${lateRuns.length})`
-              : ''
-          }}
-          Late
-          <v-icon small>timelapse</v-icon>
-        </v-btn>
-      </div>
     </CardTitle>
+
+    <v-tabs
+      v-model="tab"
+      tabs-border-bottom
+      :color="titleIconColor"
+      class="flex-grow-0"
+      @change="pristine = false"
+    >
+      <v-tab :key="tabs.submittable" data-cy="submittable-runs-submittable">
+        {{
+          submittableRuns && submittableRuns.length > 0 && tab === 'late'
+            ? `(${submittableRuns.length})`
+            : ''
+        }}
+        Submittable
+      </v-tab>
+      <v-tab :key="tabs.late" data-cy="submittable-runs-late">
+        <v-icon v-if="lateRuns && lateRuns.length > 0" small color="deepRed">
+          warning
+        </v-icon>
+        {{
+          lateRuns && lateRuns.length > 0 && tab === 'submittable'
+            ? `(${lateRuns.length})`
+            : ''
+        }}
+        Late
+      </v-tab>
+    </v-tabs>
 
     <v-card-text v-show="overlay" class="pa-0">
       <v-overlay v-show="overlay == 'late'" absolute z-index="1">
@@ -293,180 +247,187 @@ export default {
       </v-overlay>
     </v-card-text>
 
-    <v-card-text
-      v-if="tab == 'submittable'"
-      class="pa-0"
-      :class="
-        lateRuns && lateRuns.length ? 'late-card-content' : 'card-content'
-      "
-    >
-      <v-skeleton-loader v-if="loading" type="list-item-three-line">
-      </v-skeleton-loader>
-
-      <v-list-item
-        v-else-if="!loading && submittableRuns && submittableRuns.length === 0"
-        dense
-      >
-        <v-list-item-avatar class="mr-0">
-          <v-icon class="green--text">check</v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content class="my-0 py-0">
-          <div
-            class="text-subtitle-1 font-weight-light"
-            style="line-height: 1.25rem;"
-          >
-            No submittable runs.
-          </div>
-        </v-list-item-content>
-      </v-list-item>
-
-      <v-list v-else dense>
-        <v-lazy
-          v-for="item in submittableRuns"
-          :key="item.id"
-          :options="{
-            threshold: 0.75
-          }"
-          min-height="44"
-          transition="fade-transition"
+    <v-tabs-items v-model="tab" class="flex-grow-1">
+      <v-tab-item :key="tabs.submittable">
+        <v-card-text
+          class="pa-0"
+          :class="
+            lateRuns && lateRuns.length ? 'late-card-content' : 'card-content'
+          "
         >
-          <v-list-item dense :disabled="setToRun.includes(item.id)">
-            <v-list-item-content>
-              <v-list-item-subtitle class="text-body-1 font-weight-regular">
-                <router-link
-                  :to="{ name: 'flow', params: { id: item.flow_id } }"
-                >
-                  {{ flowName(item) }}
-                </router-link>
-                <span class="font-weight-bold">
-                  <v-icon style="font-size: 12px;">
-                    chevron_right
-                  </v-icon>
-                </span>
-                <router-link
-                  :to="{ name: 'flow-run', params: { id: item.id } }"
-                >
-                  {{ item.name }}
-                </router-link>
-              </v-list-item-subtitle>
+          <v-skeleton-loader v-if="loading" type="list-item-three-line">
+          </v-skeleton-loader>
 
-              <span class="text-caption mb-0 ml-n1 d-flex align-center">
-                <span class="ml-1">
-                  Scheduled for
-                  {{ formatDateTime(item.scheduled_start_time) }}
-                </span>
-              </span>
-            </v-list-item-content>
-
-            <v-list-item-action tile min-width="5" class="text-body-2">
-              <v-tooltip top>
-                <template #activator="{ on }">
-                  <v-btn
-                    text
-                    x-small
-                    aria-label="Run Now"
-                    :disabled="setToRun.includes(item.id)"
-                    color="primary"
-                    class="vertical-button"
-                    v-on="on"
-                    @click="runFlowNow(item.id, item.version, item.name)"
-                  >
-                    <v-icon small dense color="primary"> fa-rocket</v-icon>
-                  </v-btn>
-                </template>
-                <span> Run {{ item.name }} now </span>
-              </v-tooltip>
-            </v-list-item-action>
-          </v-list-item>
-        </v-lazy>
-      </v-list>
-
-      <Alert
-        v-model="showAlert"
-        :type="alertType"
-        :message="alertMessage"
-        :alert-link="alertLink"
-        :timeout="12000"
-      >
-      </Alert>
-    </v-card-text>
-
-    <v-card-text
-      v-if="tab == 'late'"
-      class="pa-0"
-      :class="
-        lateRuns && lateRuns.length ? 'late-card-content' : 'card-content'
-      "
-    >
-      <v-skeleton-loader
-        v-if="loading || isClearingLateRuns"
-        type="list-item-three-line"
-      >
-      </v-skeleton-loader>
-
-      <v-list-item
-        v-else-if="!loading && lateRuns && lateRuns.length === 0"
-        dense
-      >
-        <v-list-item-avatar class="mr-0">
-          <v-icon class="green--text">check</v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content class="my-0 py-0">
-          <div
-            class="text-subtitle-1 font-weight-light"
-            style="line-height: 1.25rem;"
+          <v-list-item
+            v-else-if="
+              !loading && submittableRuns && submittableRuns.length === 0
+            "
+            dense
           >
-            Everything is running on schedule!
-          </div>
-        </v-list-item-content>
-      </v-list-item>
-
-      <v-list v-else dense>
-        <v-lazy
-          v-for="item in lateRuns"
-          :key="item.id"
-          :options="{
-            threshold: 0.75
-          }"
-          min-height="40px"
-          transition="fade"
-        >
-          <v-list-item dense three-line>
-            <v-list-item-content>
-              <v-list-item-subtitle class="text-body-1 font-weight-regular">
-                <router-link
-                  :to="{ name: 'flow', params: { id: item.flow_id } }"
-                >
-                  {{ flowName(item) }}
-                </router-link>
-                <span class="font-weight-bold">
-                  <v-icon style="font-size: 12px;">
-                    chevron_right
-                  </v-icon>
-                </span>
-                <router-link
-                  :to="{ name: 'flow-run', params: { id: item.id } }"
-                >
-                  {{ item.name }}
-                </router-link>
-              </v-list-item-subtitle>
-
-              <span class="text-caption mb-0 ml-n1 d-flex align-center">
-                <span class="ml-1">
-                  Scheduled for
-                  {{ formatDateTime(item.scheduled_start_time) }}
-                </span>
-              </span>
-
-              <v-list-item-subtitle class="text-caption">
-                <DurationSpan :start-time="item.scheduled_start_time" />
-                behind schedule
-              </v-list-item-subtitle>
+            <v-list-item-avatar class="mr-0">
+              <v-icon class="green--text">check</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content class="my-0 py-0">
+              <div
+                class="text-subtitle-1 font-weight-light"
+                style="line-height: 1.25rem;"
+              >
+                No submittable runs.
+              </div>
             </v-list-item-content>
           </v-list-item>
-        </v-lazy>
-      </v-list>
-    </v-card-text>
+
+          <v-list v-else dense>
+            <v-lazy
+              v-for="item in submittableRuns"
+              :key="item.id"
+              :options="{
+                threshold: 0.75
+              }"
+              min-height="44"
+              transition="fade-transition"
+            >
+              <v-list-item dense :disabled="setToRun.includes(item.id)">
+                <v-list-item-content>
+                  <v-list-item-subtitle class="text-body-1 font-weight-regular">
+                    <router-link
+                      :to="{ name: 'flow', params: { id: item.flow_id } }"
+                    >
+                      {{ flowName(item) }}
+                    </router-link>
+                    <span class="font-weight-bold">
+                      <v-icon style="font-size: 12px;">
+                        chevron_right
+                      </v-icon>
+                    </span>
+                    <router-link
+                      :to="{ name: 'flow-run', params: { id: item.id } }"
+                    >
+                      {{ item.name }}
+                    </router-link>
+                  </v-list-item-subtitle>
+
+                  <span class="text-caption mb-0 ml-n1 d-flex align-center">
+                    <span class="ml-1">
+                      Scheduled for
+                      {{ formatDateTime(item.scheduled_start_time) }}
+                    </span>
+                  </span>
+                </v-list-item-content>
+
+                <v-list-item-action tile min-width="5" class="text-body-2">
+                  <v-tooltip top>
+                    <template #activator="{ on }">
+                      <v-btn
+                        text
+                        x-small
+                        aria-label="Run Now"
+                        :disabled="setToRun.includes(item.id)"
+                        color="primary"
+                        class="vertical-button"
+                        v-on="on"
+                        @click="runFlowNow(item.id, item.version, item.name)"
+                      >
+                        <v-icon small dense color="primary"> fa-rocket</v-icon>
+                      </v-btn>
+                    </template>
+                    <span> Run {{ item.name }} now </span>
+                  </v-tooltip>
+                </v-list-item-action>
+              </v-list-item>
+            </v-lazy>
+          </v-list>
+
+          <Alert
+            v-model="showAlert"
+            :type="alertType"
+            :message="alertMessage"
+            :alert-link="alertLink"
+            :timeout="12000"
+          >
+          </Alert>
+        </v-card-text>
+      </v-tab-item>
+
+      <v-tab-item :key="tabs.late">
+        <v-card-text
+          class="pa-0"
+          :class="
+            lateRuns && lateRuns.length ? 'late-card-content' : 'card-content'
+          "
+        >
+          <v-skeleton-loader
+            v-if="loading || isClearingLateRuns"
+            type="list-item-three-line"
+          >
+          </v-skeleton-loader>
+
+          <v-list-item
+            v-else-if="!loading && lateRuns && lateRuns.length === 0"
+            dense
+          >
+            <v-list-item-avatar class="mr-0">
+              <v-icon class="green--text">check</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content class="my-0 py-0">
+              <div
+                class="text-subtitle-1 font-weight-light"
+                style="line-height: 1.25rem;"
+              >
+                Everything is running on schedule!
+              </div>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list v-else dense>
+            <v-lazy
+              v-for="item in lateRuns"
+              :key="item.id"
+              :options="{
+                threshold: 0.75
+              }"
+              min-height="40px"
+              transition="fade"
+            >
+              <v-list-item dense three-line>
+                <v-list-item-content>
+                  <v-list-item-subtitle class="text-body-1 font-weight-regular">
+                    <router-link
+                      :to="{ name: 'flow', params: { id: item.flow_id } }"
+                    >
+                      {{ flowName(item) }}
+                    </router-link>
+                    <span class="font-weight-bold">
+                      <v-icon style="font-size: 12px;">
+                        chevron_right
+                      </v-icon>
+                    </span>
+                    <router-link
+                      :to="{ name: 'flow-run', params: { id: item.id } }"
+                    >
+                      {{ item.name }}
+                    </router-link>
+                  </v-list-item-subtitle>
+
+                  <span class="text-caption mb-0 ml-n1 d-flex align-center">
+                    <span class="ml-1">
+                      Scheduled for
+                      {{ formatDateTime(item.scheduled_start_time) }}
+                    </span>
+                  </span>
+
+                  <v-list-item-subtitle class="text-caption">
+                    <DurationSpan :start-time="item.scheduled_start_time" />
+                    behind schedule
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-lazy>
+          </v-list>
+        </v-card-text>
+      </v-tab-item>
+    </v-tabs-items>
+
     <v-card-actions class="pb-0">
       <v-spacer />
       <v-btn
@@ -512,14 +473,14 @@ a {
 }
 
 .late-card-content {
-  min-height: 280px;
-  max-height: 280px;
+  min-height: 233px;
+  max-height: 233px;
   overflow-y: auto;
 }
 
 .card-content {
-  min-height: 300px;
-  max-height: 300px;
+  min-height: 253px;
+  max-height: 253px;
   overflow-y: auto;
 }
 </style>
