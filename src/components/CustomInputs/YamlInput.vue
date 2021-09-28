@@ -44,11 +44,6 @@ export default {
       default: () => '',
       required: false
     },
-    newParameterInput: {
-      type: String,
-      default: '',
-      required: false
-    },
     placeholderText: {
       type: String,
       default: '',

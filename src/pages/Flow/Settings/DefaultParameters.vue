@@ -10,6 +10,7 @@ export default {
   mixins: [parametersMixin],
   data() {
     return {
+      loading: false,
       expandedPanelKeys: [],
       selectedParameter: null,
       editAll: false,
@@ -35,7 +36,7 @@ export default {
           flowVal: flowValue
         })
       }
-      this.diffBetweenFlowGroupAndFlow.forEach(flowOnlyKey => {
+      this.newParamsNotInFlowGroup.forEach(flowOnlyKey => {
         let flowValue = selectedFlowObj ? selectedFlowObj[flowOnlyKey] : null
         perFlowObjectArray.push({
           name: flowOnlyKey,
@@ -102,12 +103,15 @@ export default {
         return
       }
     },
-    switchVal(param) {
+    async switchVal(param) {
+      this.loading = true
+
       try {
         const parameterInputObj = JSON.parse(this.parameterInput)
         delete parameterInputObj[param.name]
         this.parameterInput = JSON.stringify(parameterInputObj)
-        this.setDefaultParams(true)
+
+        await this.setDefaultParams(true)
       } catch (error) {
         const errString = toString(error)
         this.setAlert({
@@ -115,6 +119,8 @@ export default {
           alertMessage: errString,
           alertType: 'error'
         })
+      } finally {
+        this.loading = false
       }
     },
     async clearFlowGroupParameters() {
@@ -205,7 +211,6 @@ export default {
                       ref="parameterRef"
                       v-model="parameterInput"
                       selected-type="json"
-                      :new-parameter-input="newParameterInput"
                       :disabled="selectedFlow.archived"
                       data-cy="flow-group-parameter-input"
                     ></JsonInput>

@@ -17,11 +17,6 @@ export const parametersMixin = {
   },
   data() {
     return {
-      loading: false,
-      flowParameters: [],
-      newParameterInput: null,
-      alertMessage: '',
-      alertType: '',
       updatedParameters: null
     }
   },
@@ -37,7 +32,7 @@ export const parametersMixin = {
         return jsBeautify(paramString, jsonFormatOptions)
       },
       set(val) {
-        this.newParameterInput = val
+        console.log('setting newParameterInput', val)
       }
     },
     optionalParameters() {
@@ -56,22 +51,24 @@ export const parametersMixin = {
     selectedFlow() {
       return this.flowGroup.flows.find(flow => !flow.archived)
     },
+    selectedFlowId() {
+      return this.selectedFlow.id
+    },
     flowGroupParameters() {
-      const fgParamObjArray = []
-      for (const [key, value] of Object.entries(
-        this.flowGroup?.default_parameters
-      )) {
-        fgParamObjArray.push({ name: key, default: value })
-      }
-      return fgParamObjArray
+      return Object.entries(this.flowGroup?.default_parameters).map(
+        ([key, value]) => ({
+          name: key,
+          default: value
+        })
+      )
     },
     selectedFlowParameters() {
       return this.selectedFlow.parameters.reduce((accum, currentParam) => {
-        accum[currentParam.name] = currentParam.default
-        return accum
+        return { ...accum, [currentParam.name]: currentParam.default }
       }, {})
     },
-    diffBetweenFlowGroupAndFlow() {
+    //todo: evaluate the need for this
+    newParamsNotInFlowGroup() {
       const fgParams =
         JSON.parse(this.updatedParameters) || this.flowGroup?.default_parameters
       const selectedFlowParams = this.selectedFlowParameters
@@ -79,16 +76,18 @@ export const parametersMixin = {
         Object.keys(selectedFlowParams),
         Object.keys(fgParams)
       )
+
       return diff
     },
     defaultParameters() {
-      const fgParams = this.flowGroup?.default_parameters
+      const fgParams = { ...this.flowGroup?.default_parameters }
       const selectedFlowParams = this.selectedFlowParameters
-      this.diffBetweenFlowGroupAndFlow.forEach(
+      this.newParamsNotInFlowGroup.forEach(
         differentKey =>
           (fgParams[differentKey] = selectedFlowParams[differentKey])
       )
       const paramifiedArray = []
+
       for (const [key, value] of Object.entries(fgParams)) {
         const required =
           this.selectedFlow?.parameters.filter(
@@ -100,6 +99,7 @@ export const parametersMixin = {
           required: required
         })
       }
+
       const sorted = paramifiedArray.sort((a, b) => {
         return a.name > b.name ? 1 : -1
       })
@@ -107,8 +107,13 @@ export const parametersMixin = {
     }
   },
   watch: {
-    flowGroup() {
+    selectedFlowId() {
+      console.log('selectedFlowId changed..')
       this.updatedParameters = null
+    },
+    flowGroup(newValue, oldValue) {
+      console.log('something happened', newValue, oldValue)
+      //this.updatedParameters = null
     }
   },
   methods: {
@@ -122,9 +127,7 @@ export const parametersMixin = {
         return false
       }
 
-      const parameters = JSON.parse(
-        this.newParameterInput || this.parameterInput
-      )
+      const parameters = JSON.parse(this.parameterInput)
 
       if (!this.validateAllRequiredParametersExist(parameters)) {
         return false
@@ -134,7 +137,7 @@ export const parametersMixin = {
         return false
       }
 
-      return false
+      return true
     },
     validateJsonInput() {
       const jsonValidationResult = Array.isArray(this.$refs.parameterRef)
@@ -198,14 +201,12 @@ export const parametersMixin = {
       this.parameterInput = jsBeautify(this.parameterInput, jsonFormatOptions)
     },
     async setDefaultParams(noValidateNeeded) {
-      this.loading = true
       try {
         const valid = noValidateNeeded || this.validParameters()
         if (!valid) {
-          this.loading = false
           return
         }
-        const parametersToSet = this.newParameterInput || this.parameterInput
+        const parametersToSet = this.parameterInput
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/set-default-params.gql'),
           variables: {
@@ -240,7 +241,6 @@ export const parametersMixin = {
             alertMessage: this.alertMessage,
             alertType: this.alertType
           })
-          this.loading = false
         }
       }
     }

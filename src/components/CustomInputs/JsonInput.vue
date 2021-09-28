@@ -49,11 +49,6 @@ export default {
       default: () => '',
       required: false
     },
-    newParameterInput: {
-      type: String,
-      default: '',
-      required: false
-    },
     placeholderText: {
       type: String,
       default: '',
@@ -152,7 +147,6 @@ export default {
     // JSON validation is only used within this component for secrets.
     // Parent components are responsible for imperatively validating JSON using a ref to this component.
     validateJson: debounce(function(event) {
-      if (this.newParameterInput) this.internalValue = this.newParameterInput
       const input = event || this.internalValue
       try {
         // Treat empty or null inputs as valid

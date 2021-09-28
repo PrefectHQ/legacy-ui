@@ -1,14 +1,14 @@
 <script>
 import CloudHooks from '@/pages/Flow/Settings/CloudHooks'
 import GeneralSettings from '@/pages/Flow/Settings/General'
-import Parameters from '@/pages/Flow/Settings/DefaultParameters'
+import DefaultParameters from '@/pages/Flow/Settings/DefaultParameters'
 import Schedules from '@/pages/Flow/Settings/Schedules'
 
 export default {
   components: {
     CloudHooks,
     GeneralSettings,
-    Parameters,
+    DefaultParameters,
     Schedules
   },
   props: {
@@ -77,7 +77,7 @@ export default {
         <Schedules v-if="tab == 2" :flow="flow" :flow-group="flowGroup" />
       </v-tab-item>
       <v-tab-item key="parameters">
-        <Parameters :flow-group="flowGroup" />
+        <default-parameters :flow-group="flowGroup" />
       </v-tab-item>
     </v-tabs-items>
 
