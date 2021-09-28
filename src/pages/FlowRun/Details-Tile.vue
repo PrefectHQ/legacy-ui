@@ -99,6 +99,7 @@ export default {
     <CardTitle :title="flowRun.name" icon="pi-flow-run" />
 
     <v-tabs
+      v-if="hasParameters || hasContext || hasRunConfig"
       v-model="tab"
       tabs-border-bottom
       center-active
