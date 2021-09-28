@@ -687,22 +687,14 @@ export default {
       <div v-else-if="isPagerDuty">
         <span>
           Prefect Cloud will send a PagerDuty notification. Create your
-          <a
-            href="https://support.pagerduty.com/docs/generating-api-keys"
-            target="_blank"
-            >Pager Duty API token</a
-          >
-          in the Pager Duty app by visiting Configuration > API Access. To
-          securely store your API Token, you'll need to create a
-          <router-link :to="{ name: 'secrets' }">secret</router-link>. You'll
-          also need an Integration Key, which can be created by visiting the
-          Integrations tab of the Service Details page and setting up an
+          Integration Key by visiting the Integrations tab of the Service
+          Details page and setting up an
           <a
             href="https://support.pagerduty.com/docs/services-and-integrations"
             target="_blank"
             >Events API v2</a
           >
-          integration.
+          integration. Providing a Pager Duty API token is optional.
         </span>
         <v-row class="mt-2">
           <v-col cols="12" md="4">
