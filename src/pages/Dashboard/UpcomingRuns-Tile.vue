@@ -286,7 +286,7 @@ export default {
       </v-overlay>
     </v-card-text>
 
-    <v-card-text v-show="tab == tabs.upcoming" class="pa-0 card-content">
+    <v-card-text v-show="tab == 'upcoming'" class="pa-0 card-content">
       <v-skeleton-loader
         v-if="loading || !upcoming"
         type="list-item-three-line"
