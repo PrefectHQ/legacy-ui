@@ -221,6 +221,9 @@ export default {
       color="primary"
       class="flex-grow-0"
     >
+      <v-tab :key="tabs.all" data-cy="in-progress-tile-all">
+        All
+      </v-tab>
       <v-tab :key="tabs.running" data-cy="in-progress-tile-running">
         Running
       </v-tab>
