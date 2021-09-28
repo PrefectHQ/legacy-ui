@@ -45,6 +45,7 @@ export default {
       lateInterval: null,
       loadingKey: 0,
       overlay: null,
+      pristine: true,
       tab: tabs.upcoming,
       tabs
     }
@@ -106,6 +107,13 @@ export default {
     }
   },
   watch: {
+    upcomingFowRunsData(val) {
+      if (!val || !this.pristine) return
+
+      if (this.tab == this.tabs.upcoming && this.lateRuns?.length > 0) {
+        this.tab = this.tabs.late
+      }
+    },
     ['tenant.settings.work_queue_paused'](val) {
       if (!val) {
         setTimeout(() => {
@@ -131,6 +139,10 @@ export default {
     }, 10000)
   },
   methods: {
+    changeTab(tab) {
+      this.tab = tab
+      this.pristine = false
+    },
     runIsLate(run) {
       return this.getTimeOverdue(run.scheduled_start_time) > 20000
     },
@@ -213,14 +225,14 @@ export default {
           :color="tab == tabs.upcoming ? 'primary' : ''"
           :style="{
             'border-right': `3px solid ${
-              tab == 'upcoming'
+              tab == tabs.upcoming
                 ? 'var(--v-primary-base)'
                 : 'var(--v-appForeground-base)'
             }`,
             'box-sizing': 'content-box',
             'min-width': '100px'
           }"
-          @click="tab = tabs.upcoming"
+          @click="changeTab(tabs.upcoming)"
         >
           {{
             upcomingRuns && upcomingRuns.length > 0 && tab === tabs.late
@@ -240,7 +252,7 @@ export default {
           :color="tab == tabs.late ? 'primary' : ''"
           :style="{
             'border-right': `3px solid ${
-              tab == 'late'
+              tab == tabs.late
                 ? lateRuns && lateRuns.length > 0
                   ? 'var(--v-deepRed-base)'
                   : 'var(--v-primary-base)'
@@ -249,7 +261,7 @@ export default {
             'box-sizing': 'content-box',
             'min-width': '100px'
           }"
-          @click="tab = tabs.late"
+          @click="changeTab(tabs.late)"
         >
           <v-icon v-if="lateRuns && lateRuns.length > 0" small color="deepRed">
             warning
