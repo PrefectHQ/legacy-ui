@@ -191,7 +191,7 @@ export default {
 
     <CardTitle :title="title" :icon="titleIcon" :icon-color="titleIconColor">
       <v-row slot="title" no-gutters class="d-flex align-center">
-        <v-col cols="8">
+        <v-col cols="10">
           <div>
             <div
               v-if="loading"
