@@ -5,10 +5,15 @@
 ### Features and Improvements
 
 - Remove requirement to add an API Secret for Pager Duty - [#1065](https://github.com/PrefectHQ/ui/pull/1065)
+- Updated experience of "tabs" on all tiles from buttons next to the title to standard v-tabs
 
 ### Bugfixes
 
 - Fix member invitation bug - [#1062](https://github.com/PrefectHQ/ui/pull/1062)
+- Fixed [#1056](https://github.com/PrefectHQ/ui/issues/1056) with improvements above
+- Submittable/Upcoming Runs Tiles would automatically switch tabs when user explicitly set the tab they want to view
+- Loading indicator was not showing up for Submittable Runs Tile
+- Loading indicator was showing whenever there was no upcoming runs for Upcoming Runs Tile
 
 ## 2021-09-20
 
