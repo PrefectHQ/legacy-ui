@@ -142,7 +142,7 @@ export default {
     </v-system-bar>
     <CardTitle :icon="flow.archived ? 'archive' : 'pi-flow'">
       <v-row slot="title" no-gutters class="d-flex align-center">
-        <v-col cols="8">
+        <v-col cols="10">
           <div class="text-truncate pb-1">
             {{ flow.name }}
           </div>
