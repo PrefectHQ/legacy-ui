@@ -71,16 +71,18 @@ export default {
 
       return Object.keys(this.flow.storage)
         .filter(key => !filtered.includes(key))
-        .reduce((obj, key) => ({ ...obj, [key]: this.flow.storage[key] }), {})
+        .reduce((obj, key) => {
+          obj[key] = this.flow.storage[key]
+          return obj
+        }, {})
     },
     runConfigDisplayFields() {
       if (!this.flow.run_config?.type) return []
 
       const typeFieldMap = {
-        LocalRun: ['type', 'working_dir'],
-        DockerRun: ['type', 'image'],
+        LocalRun: ['working_dir'],
+        DockerRun: ['image'],
         KubernetesRun: [
-          'type',
           'image',
           'job_template_path',
           'cpu_request',
@@ -88,12 +90,14 @@ export default {
           'memory_request',
           'memory_limit'
         ],
-        ECSRun: ['type', 'image', 'task_definition_path', 'cpu', 'memory']
+        ECSRun: ['image', 'task_definition_path', 'cpu', 'memory']
       }
+      const typeFields = typeFieldMap[this.flow.run_config.type]
 
-      return typeFieldMap[this.flow.run_config.type].filter(
-        field => this.flow.run_config[field] != null
-      )
+      return [
+        'type',
+        ...typeFields.filter(field => this.flow.run_config[field] != null)
+      ]
     },
     flows() {
       if (!this.flow.storage?.flows) return null
@@ -541,7 +545,7 @@ export default {
 }
 
 .card-content {
-  max-height: 207px;
+  max-height: calc(254px - var(--v-tabs-height));
   overflow-y: auto;
 }
 

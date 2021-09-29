@@ -48,7 +48,7 @@ export default {
     return {
       loadingKey: 0,
       overlay: null,
-      pristine: true,
+      userSetTab: false,
       tab: tabs.upcoming,
       tabs
     }
@@ -97,7 +97,9 @@ export default {
 
       return {
         [this.tabs.upcoming]: {
-          title: `${upcomingCount} upcoming runs`,
+          title: `${
+            upcomingCount > 999 ? '1,000+' : upcomingCount
+          } upcoming runs`,
           icon: 'access_time',
           icon_color: 'primary'
         },
@@ -107,14 +109,34 @@ export default {
           icon_color: lateCount > 0 ? 'deepRed' : 'Success'
         }
       }
+    },
+    upcomingTabTitle() {
+      var upcomingCount = this.upcomingRuns?.length || 0
+
+      if (this.tab == this.tabs.upcoming || upcomingCount == 0) {
+        return 'Upcoming'
+      }
+
+      return `(${upcomingCount > 999 ? '1,000+' : upcomingCount}) Upcoming`
+    },
+    lateTabTitle() {
+      var lateCount = this.lateRuns?.length || 0
+
+      if (this.tab == this.tabs.late || lateCount == 0) {
+        return 'Late'
+      }
+
+      return `(${lateCount > 999 ? '1,000+' : lateCount}) Late`
     }
   },
   watch: {
     upcomingFlowRunsData(val) {
-      if (!val || !this.pristine) return
+      if (!val || this.userSetTab) return
 
       if (this.tab == this.tabs.upcoming && this.lateRuns?.length > 0) {
         this.tab = this.tabs.late
+      } else if (this.tab == this.tabs.late && this.lateRuns?.length == 0) {
+        this.tab = this.tabs.upcoming
       }
     },
     ['tenant.settings.work_queue_paused'](val) {
@@ -169,10 +191,11 @@ export default {
       loadingKey: 'loadingKey',
       pollInterval: 10000,
       update: data => {
-        return (data?.flow_run || []).map(run => ({
-          ...run,
-          cacheInvalidation: new Date().getTime()
-        }))
+        return (data?.flow_run || []).map(run => {
+          run.cacheInvalidation = new Date().getTime()
+
+          return run
+        })
       }
     }
   }
@@ -213,7 +236,7 @@ export default {
     </CardTitle>
 
     <v-card-text v-show="overlay" class="pa-0">
-      <v-overlay v-show="overlay == tabs.late" absolute z-index="1">
+      <v-overlay v-show="overlay == 'late'" absolute z-index="1">
         <ClearLate :flow-runs="lateRuns" @finish="refetch" />
       </v-overlay>
       <v-overlay v-show="overlay == 'queue'" absolute z-index="1">
@@ -226,15 +249,10 @@ export default {
       tabs-border-bottom
       :color="titleIconColor"
       class="flex-grow-0"
-      @change="pristine = false"
+      @change="userSetTab = true"
     >
       <v-tab :key="tabs.upcoming" data-cy="upcoming-runs-tile-upcoming">
-        {{
-          upcomingRuns && upcomingRuns.length > 0 && tab === tabs.late
-            ? `(${upcomingRuns.length})`
-            : ''
-        }}
-        Upcoming
+        {{ upcomingTabTitle }}
       </v-tab>
       <v-tab :key="tabs.late" data-cy="upcoming-runs-tile-late">
         <v-icon
@@ -245,12 +263,7 @@ export default {
         >
           warning
         </v-icon>
-        {{
-          lateRuns && lateRuns.length > 0 && tab === tabs.upcoming
-            ? `(${lateRuns.length})`
-            : ''
-        }}
-        Late
+        {{ lateTabTitle }}
       </v-tab>
     </v-tabs>
 
@@ -259,7 +272,10 @@ export default {
         <v-card-text class="pa-0 card-content">
           <v-skeleton-loader v-if="loading" type="list-item-three-line" />
 
-          <v-list-item v-else-if="upcomingRuns.length === 0" dense>
+          <v-list-item
+            v-else-if="upcomingRuns && upcomingRuns.length === 0"
+            dense
+          >
             <v-list-item-avatar class="mr-0">
               <v-icon class="green--text">check</v-icon>
             </v-list-item-avatar>
@@ -330,7 +346,7 @@ export default {
         <v-card-text class="pa-0 card-content">
           <v-skeleton-loader v-if="loading" type="list-item-three-line" />
 
-          <v-list-item v-else-if="lateRuns.length === 0" dense>
+          <v-list-item v-else-if="lateRuns && lateRuns.length === 0" dense>
             <v-list-item-avatar class="mr-0">
               <v-icon class="green--text">check</v-icon>
             </v-list-item-avatar>
@@ -429,7 +445,7 @@ a {
 
 .card-content {
   height: 100%;
-  max-height: 179px;
+  max-height: calc(226px - var(--v-tabs-height));
   overflow-y: auto;
   position: relative;
 }

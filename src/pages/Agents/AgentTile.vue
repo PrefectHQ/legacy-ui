@@ -328,8 +328,8 @@ export default {
       <v-tab :key="tabs.overview" data-cy="details-tile-overview">
         Overview
       </v-tab>
-      <v-tab :key="tabs.details" data-cy="details-tile-detail">
-        Details
+      <v-tab v-if="isCloud" :key="tabs.config" data-cy="details-tile-config">
+        Config
       </v-tab>
     </v-tabs>
 

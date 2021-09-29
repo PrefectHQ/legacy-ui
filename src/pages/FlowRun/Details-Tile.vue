@@ -60,10 +60,10 @@ export default {
     },
     flowRunParams() {
       const flowParams = this.flowRun?.flow?.parameters.reduce(
-        (accum, currentParam) => ({
-          ...accum,
-          [currentParam.name]: currentParam.default
-        }),
+        (accum, currentParam) => {
+          accum[currentParam.name] = currentParam.default
+          return accum
+        },
         {}
       )
       return { ...flowParams, ...this.flowRun?.parameters }
@@ -127,7 +127,7 @@ export default {
     </v-tabs>
 
     <v-tabs-items v-model="tab" class="flex-grow-1">
-      <v-tab-item :key="tabs.upcoming">
+      <v-tab-item :key="tabs.overview">
         <v-list>
           <v-list-item v-if="isCloudOrAutoScheduled">
             <v-list-item-content>
@@ -285,20 +285,20 @@ export default {
       <v-tab-item :key="tabs.context">
         <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
           {{ formatJson(flowRun.context) }}
-        </div></v-tab-item
-      >
+        </div>
+      </v-tab-item>
       <v-tab-item :key="tabs.run_config">
         <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
           {{ formatJson(flowRun.run_config) }}
-        </div></v-tab-item
-      >
+        </div>
+      </v-tab-item>
     </v-tabs-items>
   </v-card>
 </template>
 
 <style lang="scss">
 .card-content {
-  max-height: 207px;
+  max-height: calc(254px - var(--v-tabs-height));
   overflow-y: auto;
 }
 
