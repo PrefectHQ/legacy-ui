@@ -34,7 +34,7 @@ export default {
       tab: tabs.submittable,
       tabs,
       overlay: null,
-      pristine: true,
+      userSetTab: false,
       loadingKey: 0
     }
   },
@@ -121,7 +121,9 @@ export default {
 
       return {
         [this.tabs.submittable]: {
-          title: `${submittableCount} submittable runs`,
+          title: `${
+            submittableCount > 999 ? '1,000+' : submittableCount
+          } submittable runs`,
           icon: 'access_time',
           icon_color: 'primary'
         },
@@ -131,14 +133,36 @@ export default {
           icon_color: lateCount > 0 ? 'deepRed' : 'Success'
         }
       }
+    },
+    submittableTabTitle() {
+      var submittableCount = this.submittableRuns?.length || 0
+
+      if (this.tab == this.tabs.submittable || submittableCount == 0) {
+        return 'Submittable'
+      }
+
+      return `(${
+        submittableCount > 999 ? '1,000+' : submittableCount
+      }) Submittable`
+    },
+    lateTabTitle() {
+      var lateCount = this.lateRuns?.length || 0
+
+      if (this.tab == this.tabs.late || lateCount == 0) {
+        return 'Late'
+      }
+
+      return `(${lateCount > 999 ? '1,000+' : lateCount}) Late`
     }
   },
   watch: {
     agent(val) {
-      if (!val || !this.pristine) return
+      if (!val || this.userSetTab) return
 
       if (this.tab == this.tabs.submittable && this.lateRuns?.length > 0) {
         this.tab = this.tabs.late
+      } else if (this.tab == this.tabs.late && this.lateRuns?.length == 0) {
+        this.tab = this.tabs.submittable
       }
     },
     ['tenant.settings.work_queue_paused'](val) {
@@ -194,14 +218,14 @@ export default {
         <v-col cols="10">
           <div>
             <div
-              v-if="loading"
+              v-if="loading || (tab === tabs.late && isClearingLateRuns)"
               style="
                 display: inline-block;
                 height: 20px;
                 overflow: hidden;
                 width: 20px;"
             >
-              <v-skeleton-loader type="avatar" tile></v-skeleton-loader>
+              <v-skeleton-loader type="avatar" tile />
             </div>
             {{ title }}
           </div>
@@ -214,26 +238,16 @@ export default {
       tabs-border-bottom
       :color="titleIconColor"
       class="flex-grow-0"
-      @change="pristine = false"
+      @change="userSetTab = true"
     >
       <v-tab :key="tabs.submittable" data-cy="submittable-runs-submittable">
-        {{
-          submittableRuns && submittableRuns.length > 0 && tab === 'late'
-            ? `(${submittableRuns.length})`
-            : ''
-        }}
-        Submittable
+        {{ submittableTabTitle }}
       </v-tab>
       <v-tab :key="tabs.late" data-cy="submittable-runs-late">
         <v-icon v-if="lateRuns && lateRuns.length > 0" small color="deepRed">
           warning
         </v-icon>
-        {{
-          lateRuns && lateRuns.length > 0 && tab === 'submittable'
-            ? `(${lateRuns.length})`
-            : ''
-        }}
-        Late
+        {{ lateTabTitle }}
       </v-tab>
     </v-tabs>
 
@@ -352,7 +366,10 @@ export default {
             lateRuns && lateRuns.length ? 'late-card-content' : 'card-content'
           "
         >
-          <v-skeleton-loader v-if="loading" type="list-item-three-line" />
+          <v-skeleton-loader
+            v-if="loading || isClearingLateRuns"
+            type="list-item-three-line"
+          />
 
           <v-list-item v-else-if="lateRuns && lateRuns.length === 0" dense>
             <v-list-item-avatar class="mr-0">
@@ -462,14 +479,14 @@ a {
 }
 
 .late-card-content {
-  min-height: 233px;
-  max-height: 233px;
+  min-height: calc(280px - var(--v-tabs-height));
+  max-height: calc(280px - var(--v-tabs-height));
   overflow-y: auto;
 }
 
 .card-content {
-  min-height: 253px;
-  max-height: 253px;
+  min-height: calc(300px - var(--v-tabs-height));
+  max-height: calc(300px - var(--v-tabs-height));
   overflow-y: auto;
 }
 </style>

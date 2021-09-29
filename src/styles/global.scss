@@ -11,6 +11,10 @@ a "regional" stylesheet, and import it only on the pages needed. This will keep 
 concise and snappy, and the files easier to read!
 */
 
+:root {
+  --v-tabs-height: 47px;
+}
+
 html,
 body {
   overflow: overlay;

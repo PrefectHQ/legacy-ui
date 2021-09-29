@@ -379,7 +379,7 @@ a {
 
 .card-content {
   height: 100%;
-  max-height: 163px;
+  max-height: calc(210px - var(--v-tabs-height));
   overflow-y: auto;
 }
 
