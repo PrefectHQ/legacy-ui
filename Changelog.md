@@ -4,11 +4,14 @@
 
 ### Features and Improvements
 
-- None
+- Updated experience of "tabs" on all tiles from buttons next to the title to standard v-tabs
 
 ### Bugfixes
 
-- None
+- Fixed [#1056](https://github.com/PrefectHQ/ui/issues/1056) with improvements above
+- Submittable/Upcoming Runs Tiles would automatically switch tabs when user explicitly set the tab they want to view
+- Loading indicator was not showing up for Submittable Runs Tile
+- Loading indicator was showing whenever there was no upcoming runs for Upcoming Runs Tile
 
 ## 2021-09-20
 
