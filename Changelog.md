@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Remove requirement to add an API Secret for Pager Duty - [#1065](https://github.com/PrefectHQ/ui/pull/1065)
 
 ### Bugfixes
 

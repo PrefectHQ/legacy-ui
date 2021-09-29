@@ -137,13 +137,7 @@ export default {
     },
     disableNext() {
       if (this.step.name === 'openToConfig') {
-        if (
-          this.isPagerDuty &&
-          this.apiToken &&
-          this.routingKey &&
-          this.severity
-        )
-          return false
+        if (this.isPagerDuty && this.routingKey && this.severity) return false
         if (!this.actionConfigArray.length) return true
         else return false
       } else {
@@ -159,10 +153,7 @@ export default {
     allowSave() {
       const type = this.actionType.type
       const allow = this.isPagerDuty
-        ? !!this.actionType &&
-          !!this.apiToken &&
-          !!this.routingKey &&
-          !!this.severity
+        ? !!this.actionType && !!this.routingKey && !!this.severity
         : this.isTwilio
         ? !!this.actionConfigArray &&
           !!this.authToken &&
@@ -184,7 +175,7 @@ export default {
       get() {
         const whoTo = this.actionConfigArray.length
           ? this.actionConfigArray
-          : this.secretName || this.webhookURLString
+          : this.secretName || this.webhookURLString || this.apiToken
         return `${this.actionType.verb} ${whoTo}`
       },
       set(x) {
@@ -286,12 +277,7 @@ export default {
         } else {
           if (this.actionType.type === 'EMAIL' && this.actionConfigArray.length)
             this.steps['openToConfig'].complete = true
-          else if (
-            this.isPagerDuty &&
-            this.apiToken &&
-            this.routingKey &&
-            this.severity
-          ) {
+          else if (this.isPagerDuty && this.routingKey && this.severity) {
             this.steps['openToConfig'].complete = true
           }
           this.switchStep('addName')
@@ -369,7 +355,7 @@ export default {
             case 'PAGERDUTY':
               {
                 this.actionConfig = {
-                  api_token_secret: this.apiToken,
+                  api_token_secret: this.apiToken || null,
                   routing_key: this.routingKey,
                   severity: this.severity
                 }
@@ -701,22 +687,14 @@ export default {
       <div v-else-if="isPagerDuty">
         <span>
           Prefect Cloud will send a PagerDuty notification. Create your
-          <a
-            href="https://support.pagerduty.com/docs/generating-api-keys"
-            target="_blank"
-            >Pager Duty API token</a
-          >
-          in the Pager Duty app by visiting Configuration > API Access. To
-          securely store your API Token, you'll need to create a
-          <router-link :to="{ name: 'secrets' }">secret</router-link>. You'll
-          also need an Integration Key, which can be created by visiting the
-          Integrations tab of the Service Details page and setting up an
+          Integration Key by visiting the Integrations tab of the Service
+          Details page and setting up an
           <a
             href="https://support.pagerduty.com/docs/services-and-integrations"
             target="_blank"
             >Events API v2</a
           >
-          integration.
+          integration. Providing a Pager Duty API token is optional.
         </span>
         <v-row class="mt-2">
           <v-col cols="12" md="4">
@@ -724,7 +702,7 @@ export default {
               v-model="apiToken"
               :items="secretNames"
               outlined
-              label="PagerDuty API Token Secret"
+              label="PagerDuty API Token Secret (optional)"
               no-data-text="You will need to create a secret with your PagerDuty API Token"
             />
           </v-col>
