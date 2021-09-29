@@ -126,179 +126,173 @@ export default {
       </template>
     </v-tabs>
 
-    <v-card-text class="pa-0">
-      <v-fade-transition hide-on-leave>
-        <v-tabs-items v-model="tab" class="flex-grow-1">
-          <v-tab-item :key="tabs.upcoming">
-            <v-list>
-              <v-list-item v-if="isCloudOrAutoScheduled">
-                <v-list-item-content>
-                  <v-list-item-subtitle class="text-caption">
-                    Created by
-                  </v-list-item-subtitle>
-                  <div class="text-subtitle-2">
-                    {{
-                      flowRun.auto_scheduled
-                        ? 'The Prefect Scheduler'
-                        : flowRun.created_by
-                        ? flowRun.created_by.username
-                        : 'A nonexistant user'
-                    }}
-                  </div>
-                </v-list-item-content>
-              </v-list-item>
+    <v-tabs-items v-model="tab" class="flex-grow-1">
+      <v-tab-item :key="tabs.upcoming">
+        <v-list>
+          <v-list-item v-if="isCloudOrAutoScheduled">
+            <v-list-item-content>
+              <v-list-item-subtitle class="text-caption">
+                Created by
+              </v-list-item-subtitle>
+              <div class="text-subtitle-2">
+                {{
+                  flowRun.auto_scheduled
+                    ? 'The Prefect Scheduler'
+                    : flowRun.created_by
+                    ? flowRun.created_by.username
+                    : 'A nonexistant user'
+                }}
+              </div>
+            </v-list-item-content>
+          </v-list-item>
 
-              <v-list-item v-if="flowRun.state_message" dense>
-                <v-list-item-content>
-                  <v-list-item-subtitle class="text-caption">
-                    Last State Message
-                  </v-list-item-subtitle>
+          <v-list-item v-if="flowRun.state_message" dense>
+            <v-list-item-content>
+              <v-list-item-subtitle class="text-caption">
+                Last State Message
+              </v-list-item-subtitle>
 
-                  <truncate :content="flowRun.state_message">
-                    [{{ formatTime(flowRun.state_timestamp) }}]:
-                    {{ flowRun.state_message }}
-                  </truncate>
-                </v-list-item-content>
-              </v-list-item>
+              <truncate :content="flowRun.state_message">
+                [{{ formatTime(flowRun.state_timestamp) }}]:
+                {{ flowRun.state_message }}
+              </truncate>
+            </v-list-item-content>
+          </v-list-item>
 
-              <v-list-item v-if="flowRun.agent_id" dense>
-                <v-list-item-content>
-                  <v-list-item-subtitle class="text-caption">
-                    Agent ID
-                  </v-list-item-subtitle>
-                  <router-link
-                    class="link"
-                    :to="{
-                      name: 'agent',
-                      params: { tenant: tenant.slug, id: flowRun.agent_id }
-                    }"
+          <v-list-item v-if="flowRun.agent_id" dense>
+            <v-list-item-content>
+              <v-list-item-subtitle class="text-caption">
+                Agent ID
+              </v-list-item-subtitle>
+              <router-link
+                class="link"
+                :to="{
+                  name: 'agent',
+                  params: { tenant: tenant.slug, id: flowRun.agent_id }
+                }"
+              >
+                {{ flowRun.agent_id }}
+              </router-link>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item dense>
+            <v-list-item-content>
+              <v-list-item-subtitle class="text-caption">
+                <v-row no-gutters>
+                  <v-col cols="6"> {{ flowRun.flow.name }} version </v-col>
+                  <v-col cols="6" class="text-right font-weight-bold">
+                    <router-link
+                      class="link"
+                      :to="{
+                        name: 'flow',
+                        params: { id: flowRun.flow.id }
+                      }"
+                    >
+                      {{ flowRun.flow.version }}
+                    </router-link>
+                  </v-col>
+                </v-row>
+
+                <v-row no-gutters>
+                  <v-col v-if="flowRun.start_time" cols="6">
+                    Scheduled Start Time
+                  </v-col>
+                  <v-col
+                    v-if="flowRun.start_time"
+                    cols="6"
+                    class="text-right font-weight-bold"
                   >
-                    {{ flowRun.agent_id }}
-                  </router-link>
-                </v-list-item-content>
-              </v-list-item>
-
-              <v-list-item dense>
-                <v-list-item-content>
-                  <v-list-item-subtitle class="text-caption">
-                    <v-row no-gutters>
-                      <v-col cols="6"> {{ flowRun.flow.name }} version </v-col>
-                      <v-col cols="6" class="text-right font-weight-bold">
-                        <router-link
-                          class="link"
-                          :to="{
-                            name: 'flow',
-                            params: { id: flowRun.flow.id }
-                          }"
-                        >
-                          {{ flowRun.flow.version }}
-                        </router-link>
-                      </v-col>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col v-if="flowRun.start_time" cols="6">
-                        Scheduled Start Time
-                      </v-col>
-                      <v-col
-                        v-if="flowRun.start_time"
-                        cols="6"
-                        class="text-right font-weight-bold"
-                      >
-                        <v-tooltip top>
-                          <template #activator="{ on }">
-                            <span v-on="on">
-                              {{ formatTime(flowRun.scheduled_start_time) }}
-                            </span>
-                          </template>
-                          <div>
-                            {{ formatDateTime(flowRun.scheduled_start_time) }}
-                          </div>
-                        </v-tooltip>
-                      </v-col>
-                      <v-col cols="6">
-                        {{
-                          flowRun.start_time ? 'Started' : 'Scheduled to start'
-                        }}
-                      </v-col>
-                      <v-col cols="6" class="text-right font-weight-bold">
-                        <v-tooltip top>
-                          <template #activator="{ on }">
-                            <span v-on="on">
-                              {{
-                                flowRun.start_time
-                                  ? formatTime(flowRun.start_time)
-                                  : formatTime(flowRun.scheduled_start_time)
-                              }}
-                            </span>
-                          </template>
-                          <div>
-                            {{
-                              flowRun.start_time
-                                ? formatDateTime(flowRun.start_time)
-                                : formatDateTime(flowRun.scheduled_start_time)
-                            }}
-                          </div>
-                        </v-tooltip>
-                      </v-col>
-                    </v-row>
-                    <v-row v-if="flowRun.end_time" no-gutters>
-                      <v-col cols="6"> Ended </v-col>
-                      <v-col cols="6" class="text-right font-weight-bold">
-                        <v-tooltip top>
-                          <template #activator="{ on }">
-                            <span v-on="on">
-                              {{ formatTime(flowRun.end_time) }}
-                            </span>
-                          </template>
-                          <div>
-                            {{ formatDateTime(flowRun.end_time) }}
-                          </div>
-                        </v-tooltip>
-                      </v-col>
-                    </v-row>
-                    <v-row v-if="flowRun.start_time" no-gutters>
-                      <v-col cols="6"> Duration </v-col>
-                      <v-col cols="6" class="text-right font-weight-bold">
-                        <!-- Check for isFinished improves duration handling for restarted flows  -->
-                        <DurationSpan
-                          v-if="flowRun.start_time"
-                          :start-time="flowRun.start_time"
-                          :end-time="
-                            isFinished && flowRun.start_time
-                              ? flowRun.end_time
-                              : null
-                          "
-                        />
-                        <span v-else>
-                          <v-skeleton-loader type="text"></v-skeleton-loader>
+                    <v-tooltip top>
+                      <template #activator="{ on }">
+                        <span v-on="on">
+                          {{ formatTime(flowRun.scheduled_start_time) }}
                         </span>
-                      </v-col>
-                    </v-row>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-              <LabelEdit type="flowRun" :flow-run="flowRun" />
-            </v-list>
-          </v-tab-item>
-          <v-tab-item :key="tabs.parameters">
-            <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
-              {{ formatJson(flowRunParams) }}
-            </div>
-          </v-tab-item>
-          <v-tab-item :key="tabs.context">
-            <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
-              {{ formatJson(flowRun.context) }}
-            </div></v-tab-item
-          >
-          <v-tab-item :key="tabs.run_config">
-            <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
-              {{ formatJson(flowRun.run_config) }}
-            </div></v-tab-item
-          >
-        </v-tabs-items>
-      </v-fade-transition>
-    </v-card-text>
+                      </template>
+                      <div>
+                        {{ formatDateTime(flowRun.scheduled_start_time) }}
+                      </div>
+                    </v-tooltip>
+                  </v-col>
+                  <v-col cols="6">
+                    {{ flowRun.start_time ? 'Started' : 'Scheduled to start' }}
+                  </v-col>
+                  <v-col cols="6" class="text-right font-weight-bold">
+                    <v-tooltip top>
+                      <template #activator="{ on }">
+                        <span v-on="on">
+                          {{
+                            flowRun.start_time
+                              ? formatTime(flowRun.start_time)
+                              : formatTime(flowRun.scheduled_start_time)
+                          }}
+                        </span>
+                      </template>
+                      <div>
+                        {{
+                          flowRun.start_time
+                            ? formatDateTime(flowRun.start_time)
+                            : formatDateTime(flowRun.scheduled_start_time)
+                        }}
+                      </div>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
+                <v-row v-if="flowRun.end_time" no-gutters>
+                  <v-col cols="6"> Ended </v-col>
+                  <v-col cols="6" class="text-right font-weight-bold">
+                    <v-tooltip top>
+                      <template #activator="{ on }">
+                        <span v-on="on">
+                          {{ formatTime(flowRun.end_time) }}
+                        </span>
+                      </template>
+                      <div>
+                        {{ formatDateTime(flowRun.end_time) }}
+                      </div>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
+                <v-row v-if="flowRun.start_time" no-gutters>
+                  <v-col cols="6"> Duration </v-col>
+                  <v-col cols="6" class="text-right font-weight-bold">
+                    <!-- Check for isFinished improves duration handling for restarted flows  -->
+                    <DurationSpan
+                      v-if="flowRun.start_time"
+                      :start-time="flowRun.start_time"
+                      :end-time="
+                        isFinished && flowRun.start_time
+                          ? flowRun.end_time
+                          : null
+                      "
+                    />
+                    <span v-else>
+                      <v-skeleton-loader type="text"></v-skeleton-loader>
+                    </span>
+                  </v-col>
+                </v-row>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <LabelEdit type="flowRun" :flow-run="flowRun" />
+        </v-list>
+      </v-tab-item>
+      <v-tab-item :key="tabs.parameters">
+        <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
+          {{ formatJson(flowRunParams) }}
+        </div>
+      </v-tab-item>
+      <v-tab-item :key="tabs.context">
+        <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
+          {{ formatJson(flowRun.context) }}
+        </div></v-tab-item
+      >
+      <v-tab-item :key="tabs.run_config">
+        <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
+          {{ formatJson(flowRun.run_config) }}
+        </div></v-tab-item
+      >
+    </v-tabs-items>
   </v-card>
 </template>
 
