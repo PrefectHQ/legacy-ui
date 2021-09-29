@@ -319,7 +319,7 @@ export default {
     </v-dialog>
 
     <v-tabs
-      v-if="showAll"
+      v-if="showAll && isCloud"
       v-model="tab"
       tabs-border-bottom
       color="primary"
@@ -328,7 +328,7 @@ export default {
       <v-tab :key="tabs.overview" data-cy="details-tile-overview">
         Overview
       </v-tab>
-      <v-tab v-if="isCloud" :key="tabs.config" data-cy="details-tile-config">
+      <v-tab :key="tabs.config" data-cy="details-tile-config">
         Config
       </v-tab>
     </v-tabs>
