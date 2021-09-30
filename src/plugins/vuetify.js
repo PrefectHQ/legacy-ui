@@ -44,7 +44,8 @@ export const THEME_COLORS = {
   navIcons: '#999',
   utilGrayLight: '#ddd',
   utilGrayMid: '#767676',
-  utilGrayDark: '#333'
+  utilGrayDark: '#333',
+  pagerDuty: '#06ac38'
 }
 
 export const THEME_COLORS_ALT = {
@@ -54,7 +55,8 @@ export const THEME_COLORS_ALT = {
   primary: '#1aa3ff',
   utilGrayLight: '#585f74',
   utilGrayMid: '#9ea4b6',
-  utilGrayDark: '#ecedf0'
+  utilGrayDark: '#ecedf0',
+  pagerDuty: '#FFFFFF'
 }
 
 Vue.use(Vuetify)

@@ -343,10 +343,12 @@ export default {
   </v-card>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .pdcard {
   overflow: auto;
 }
-</style>
 
-<style lang="scss" scoped></style>
+.pdicon {
+  color: var(--v-pagerDuty-base);
+}
+</style>
