@@ -297,11 +297,6 @@ export default {
 </template>
 
 <style lang="scss">
-.card-content {
-  max-height: calc(254px - var(--v-tabs-height));
-  overflow-y: auto;
-}
-
 .code-block {
   border: 1px solid var(--v-utilGrayLight-base) !important;
   font-family: 'Source Code Pro', monospace !important;

@@ -286,8 +286,8 @@ export default {
     <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
     <CardTitle :title="name">
       <div slot="icon" :class="iconClass" class="ml-2" icon>
-        <i class="fa-2x pi-2x nav-bar-duotone-icon" :class="agentIcon"
-      /></div>
+        <i class="fa-2x pi-2x nav-bar-duotone-icon" :class="agentIcon" />
+      </div>
     </CardTitle>
 
     <v-dialog v-model="showConfirmDialog" max-width="480">

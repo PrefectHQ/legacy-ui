@@ -92,41 +92,39 @@ export default {
       return this.lateRuns?.length > 0 ? 'deepRed' : 'Success'
     },
     tabProperties() {
-      var upcomingCount = this.upcomingRuns?.length || 0
-      var lateCount = this.lateRuns?.length || 0
+      const upcomingCount = this.upcomingRuns?.length || 0
+      const lateCount = this.lateRuns?.length || 0
 
       return {
         [this.tabs.upcoming]: {
-          title: `${
-            upcomingCount > 999 ? '1,000+' : upcomingCount
-          } upcoming runs`,
+          title: `${this.getFriendlyCount(upcomingCount)} upcoming runs`,
           icon: 'access_time',
           icon_color: 'primary'
         },
         [this.tabs.late]: {
-          title: `${lateCount > 999 ? '1,000+' : lateCount} late runs`,
+          title: `${this.getFriendlyCount(lateCount)} late runs`,
           icon: 'timelapse',
           icon_color: lateCount > 0 ? 'deepRed' : 'Success'
         }
       }
     },
     upcomingTabTitle() {
-      var upcomingCount = this.upcomingRuns?.length || 0
+      const upcomingCount = this.upcomingRuns?.length || 0
 
       if (this.tab == this.tabs.upcoming || upcomingCount == 0) {
         return 'Upcoming'
       }
 
-      return `(${upcomingCount > 999 ? '1,000+' : upcomingCount}) Upcoming`
+      return `(${this.getFriendlyCount(upcomingCount)}) Upcoming`
     },
     lateTabTitle() {
-      var lateCount = this.lateRuns?.length || 0
+      const lateCount = this.lateRuns?.length || 0
 
       if (this.tab == this.tabs.late || lateCount == 0) {
         return 'Late'
       }
 
-      return `(${lateCount > 999 ? '1,000+' : lateCount}) Late`
+      return `(${this.getFriendlyCount(lateCount)}) Late`
     }
   },
   watch: {
@@ -172,6 +170,9 @@ export default {
     refetch() {
       this.$apollo.queries.upcomingFlowRunsData.refresh()
       this.overlay = null
+    },
+    getFriendlyCount(count) {
+      return count > 999 ? '1,000+' : count
     }
   },
   apollo: {
@@ -191,8 +192,10 @@ export default {
       loadingKey: 'loadingKey',
       pollInterval: 10000,
       update: data => {
+        const timestamp = new Date().getTime()
+
         return (data?.flow_run || []).map(run => {
-          run.cacheInvalidation = new Date().getTime()
+          run.cacheInvalidation = timestamp
 
           return run
         })

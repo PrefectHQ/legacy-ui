@@ -116,43 +116,39 @@ export default {
       return this.lateRuns?.length > 0 ? 'deepRed' : 'Success'
     },
     tabProperties() {
-      var submittableCount = this.submittableRuns?.length || 0
-      var lateCount = this.lateRuns?.length || 0
+      const submittableCount = this.submittableRuns?.length || 0
+      const lateCount = this.lateRuns?.length || 0
 
       return {
         [this.tabs.submittable]: {
-          title: `${
-            submittableCount > 999 ? '1,000+' : submittableCount
-          } submittable runs`,
+          title: `${this.getFriendlyCount(submittableCount)} submittable runs`,
           icon: 'access_time',
           icon_color: 'primary'
         },
         [this.tabs.late]: {
-          title: `${lateCount > 999 ? '1,000+' : lateCount} late runs`,
+          title: `${this.getFriendlyCount(lateCount)} late runs`,
           icon: 'timelapse',
           icon_color: lateCount > 0 ? 'deepRed' : 'Success'
         }
       }
     },
     submittableTabTitle() {
-      var submittableCount = this.submittableRuns?.length || 0
+      const submittableCount = this.submittableRuns?.length || 0
 
       if (this.tab == this.tabs.submittable || submittableCount == 0) {
         return 'Submittable'
       }
 
-      return `(${
-        submittableCount > 999 ? '1,000+' : submittableCount
-      }) Submittable`
+      return `(${this.getFriendlyCount(submittableCount)}) Submittable`
     },
     lateTabTitle() {
-      var lateCount = this.lateRuns?.length || 0
+      const lateCount = this.lateRuns?.length || 0
 
       if (this.tab == this.tabs.late || lateCount == 0) {
         return 'Late'
       }
 
-      return `(${lateCount > 999 ? '1,000+' : lateCount}) Late`
+      return `(${this.getFriendlyCount(lateCount)}) Late`
     }
   },
   watch: {
@@ -194,6 +190,9 @@ export default {
     refetch() {
       this.setRefetch(true)
       this.overlay = null
+    },
+    getFriendlyCount(count) {
+      return count > 999 ? '1,000+' : count
     }
   },
   apollo: {
@@ -211,7 +210,7 @@ export default {
 
 <template>
   <v-card class="py-2" tile height="380px">
-    <v-system-bar :color="systemBarColor" :height="5" absolute> </v-system-bar>
+    <v-system-bar :color="systemBarColor" :height="5" absolute />
 
     <CardTitle :title="title" :icon="titleIcon" :icon-color="titleIconColor">
       <v-row slot="title" no-gutters class="d-flex align-center">
