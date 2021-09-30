@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Update PagerDuty logo color in dark mode - [#1070](https://github.com/PrefectHQ/ui/pull/1070)
 - Remove requirement to add an API Secret for Pager Duty - [#1065](https://github.com/PrefectHQ/ui/pull/1065)
 
 ### Bugfixes
