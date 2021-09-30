@@ -411,7 +411,7 @@ export default {
         color="primary"
         text
         style="z-index: 2;"
-        @click="showOverlay(tabs.late)"
+        @click="showOverlay('late')"
       >
         Clear late
       </v-btn>
