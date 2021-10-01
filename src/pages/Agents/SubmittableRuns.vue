@@ -259,14 +259,14 @@ export default {
       </v-overlay>
     </v-card-text>
 
-    <v-tabs-items v-model="tab" class="flex-grow-1">
-      <v-tab-item :key="tabs.submittable">
-        <v-card-text
-          class="pa-0"
-          :class="
-            lateRuns && lateRuns.length ? 'late-card-content' : 'card-content'
-          "
-        >
+    <v-card-text
+      class="pa-0"
+      :class="
+        lateRuns && lateRuns.length ? 'late-card-content' : 'card-content'
+      "
+    >
+      <v-tabs-items v-model="tab" class="flex-grow-1">
+        <v-tab-item :key="tabs.submittable">
           <v-skeleton-loader v-if="loading" type="list-item-three-line" />
 
           <v-list-item
@@ -355,16 +355,9 @@ export default {
             :timeout="12000"
           >
           </Alert>
-        </v-card-text>
-      </v-tab-item>
+        </v-tab-item>
 
-      <v-tab-item :key="tabs.late">
-        <v-card-text
-          class="pa-0"
-          :class="
-            lateRuns && lateRuns.length ? 'late-card-content' : 'card-content'
-          "
-        >
+        <v-tab-item :key="tabs.late">
           <v-skeleton-loader
             v-if="loading || isClearingLateRuns"
             type="list-item-three-line"
@@ -429,11 +422,11 @@ export default {
               </v-list-item>
             </v-lazy>
           </v-list>
-        </v-card-text>
-      </v-tab-item>
-    </v-tabs-items>
+        </v-tab-item>
+      </v-tabs-items>
+    </v-card-text>
 
-    <v-card-actions class="pb-0">
+    <v-card-actions class="py-0">
       <v-spacer />
       <v-btn
         v-if="!overlay && lateRuns && lateRuns.length > 0"

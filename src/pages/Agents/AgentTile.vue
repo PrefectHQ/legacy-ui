@@ -335,7 +335,7 @@ export default {
 
     <v-card-text
       v-if="tab == tabs.overview || !showAll"
-      class="py-2"
+      class="py-2 card-content"
       :style="showAll ? '' : { height: '250px' }"
     >
       <div v-if="!showAll" class="my-2 text-subtitle-1 font-weight-light ">
@@ -570,6 +570,11 @@ export default {
 .unhealthy {
   color: var(--v-utilGrayLight-base);
   --fa-primary-color: var(--v-utilGrayLight-base);
+}
+
+.card-content {
+  max-height: calc(310px - var(--v-tabs-height));
+  overflow-y: auto;
 }
 
 .timeline-no-runs {
