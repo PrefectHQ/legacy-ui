@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Internal: update CircleCI config slack orb (add `@` to mentions) - [#1053](https://github.com/PrefectHQ/ui/pull/1053)
 
 ## 2021-09-20
 
