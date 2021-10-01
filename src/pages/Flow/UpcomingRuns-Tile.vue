@@ -270,9 +270,9 @@ export default {
       </v-tab>
     </v-tabs>
 
-    <v-tabs-items v-model="tab" class="flex-grow-1">
-      <v-tab-item :key="tabs.upcoming">
-        <v-card-text class="pa-0 card-content">
+    <v-card-text class="pa-0 card-content">
+      <v-tabs-items v-model="tab" class="flex-grow-1">
+        <v-tab-item :key="tabs.upcoming">
           <v-skeleton-loader v-if="loading" type="list-item-three-line" />
 
           <v-list-item
@@ -343,10 +343,8 @@ export default {
               </v-list-item>
             </v-lazy>
           </v-list>
-        </v-card-text>
-      </v-tab-item>
-      <v-tab-item :key="tabs.late">
-        <v-card-text class="pa-0 card-content">
+        </v-tab-item>
+        <v-tab-item :key="tabs.late">
           <v-skeleton-loader v-if="loading" type="list-item-three-line" />
 
           <v-list-item v-else-if="lateRuns && lateRuns.length === 0" dense>
@@ -399,9 +397,9 @@ export default {
               </v-list-item>
             </v-lazy>
           </v-list>
-        </v-card-text>
-      </v-tab-item>
-    </v-tabs-items>
+        </v-tab-item>
+      </v-tabs-items>
+    </v-card-text>
 
     <v-card-actions class="py-0 justify-end">
       <v-btn
