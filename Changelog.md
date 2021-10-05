@@ -4,6 +4,16 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-10-05
+
+### Features and Improvements
+
 - Remove requirement to add an API Secret for Pager Duty - [#1065](https://github.com/PrefectHQ/ui/pull/1065)
 - Updated experience of "tabs" on all tiles from buttons next to the title to standard v-tabs - [#1064](https://github.com/PrefectHQ/ui/pull/1064)
 
