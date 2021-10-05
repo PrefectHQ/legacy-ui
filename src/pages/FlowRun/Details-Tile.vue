@@ -21,8 +21,16 @@ export default {
     }
   },
   data() {
+    const tabs = {
+      overview: 0,
+      parameters: 1,
+      context: 2,
+      run_config: 3
+    }
+
     return {
-      tab: 'overview'
+      tab: tabs.overview,
+      tabs
     }
   },
   computed: {
@@ -88,117 +96,39 @@ export default {
       <!-- <v-icon>{{ flowRun.state }}</v-icon> -->
     </v-system-bar>
 
-    <CardTitle
+    <CardTitle :title="flowRun.name" icon="pi-flow-run" />
+
+    <v-tabs
       v-if="hasParameters || hasContext || hasRunConfig"
-      icon="pi-flow-run"
+      v-model="tab"
+      tabs-border-bottom
+      center-active
+      color="primary"
+      class="flex-grow-0"
     >
-      <v-row slot="title" no-gutters class="d-flex align-center">
-        <v-col cols="8">
-          <div class="text-truncate pb-1">
-            {{ flowRun.name }}
-          </div>
-        </v-col>
-      </v-row>
-
-      <div slot="action" class="d-flex flex-column align-end">
-        <v-btn
-          depressed
-          small
-          tile
-          icon
-          class="button-transition w-100 d-flex justify-end"
-          :color="tab == 'overview' ? 'primary' : ''"
-          :style="{
-            'border-right': `3px solid ${
-              tab == 'overview'
-                ? 'var(--v-primary-base)'
-                : 'var(--v-appForeground-base)'
-            }`,
-            'box-sizing': 'content-box',
-            'min-width': '100px'
-          }"
-          @click="tab = 'overview'"
-        >
-          Overview
-          <v-icon small>calendar_view_day</v-icon>
-        </v-btn>
-
-        <v-btn
-          v-if="hasParameters"
-          depressed
-          small
-          tile
-          icon
-          class="button-transition w-100 d-flex justify-end"
-          :color="tab == 'parameters' ? 'primary' : ''"
-          :style="{
-            'border-right': `3px solid ${
-              tab == 'parameters'
-                ? 'var(--v-primary-base)'
-                : 'var(--v-appForeground-base)'
-            }`,
-            'box-sizing': 'content-box',
-            'min-width': '100px'
-          }"
-          @click="tab = 'parameters'"
-        >
+      <v-tab :key="tabs.overview" data-cy="details-tile-overview">
+        Overview
+      </v-tab>
+      <template v-if="hasParameters">
+        <v-tab :key="tabs.parameters" data-cy="details-tile-parameters">
           Parameters
-          <v-icon small>notes</v-icon>
-        </v-btn>
-
-        <v-btn
-          v-if="hasContext"
-          depressed
-          small
-          tile
-          icon
-          class="button-transition w-100 d-flex justify-end"
-          :color="tab == 'context' ? 'primary' : ''"
-          :style="{
-            'border-right': `3px solid ${
-              tab == 'context'
-                ? 'var(--v-primary-base)'
-                : 'var(--v-appForeground-base)'
-            }`,
-            'box-sizing': 'content-box',
-            'min-width': '100px'
-          }"
-          @click="tab = 'context'"
-        >
+        </v-tab>
+      </template>
+      <template v-if="hasContext">
+        <v-tab :key="tabs.context" data-cy="details-tile-parameters">
           Context
-          <v-icon small>list</v-icon>
-        </v-btn>
-
-        <v-btn
-          v-if="hasRunConfig"
-          depressed
-          small
-          tile
-          icon
-          class="button-transition w-100 d-flex justify-end"
-          :color="tab == 'run_config' ? 'primary' : ''"
-          :style="{
-            'border-right': `3px solid ${
-              tab == 'run_config'
-                ? 'var(--v-primary-base)'
-                : 'var(--v-appForeground-base)'
-            }`,
-            'box-sizing': 'content-box',
-            'min-width': '100px'
-          }"
-          @click="tab = 'run_config'"
-        >
+        </v-tab>
+      </template>
+      <template v-if="hasRunConfig">
+        <v-tab :key="tabs.run_config" data-cy="details-tile-parameters">
           Run Config
-          <v-icon small>notes</v-icon>
-        </v-btn>
-      </div>
-    </CardTitle>
+        </v-tab>
+      </template>
+    </v-tabs>
 
-    <CardTitle v-else :title="flowRun.name" icon="pi-flow-run" />
-
-    <v-card-text class="pa-0">
-      <v-fade-transition hide-on-leave>
-        <v-list v-if="tab === 'overview'">
+    <v-tabs-items v-model="tab" class="flex-grow-1">
+      <v-tab-item :key="tabs.overview">
+        <v-list>
           <v-list-item v-if="isCloudOrAutoScheduled">
             <v-list-item-content>
               <v-list-item-subtitle class="text-caption">
@@ -254,7 +184,10 @@ export default {
                   <v-col cols="6" class="text-right font-weight-bold">
                     <router-link
                       class="link"
-                      :to="{ name: 'flow', params: { id: flowRun.flow.id } }"
+                      :to="{
+                        name: 'flow',
+                        params: { id: flowRun.flow.id }
+                      }"
                     >
                       {{ flowRun.flow.version }}
                     </router-link>
@@ -343,44 +276,27 @@ export default {
           </v-list-item>
           <LabelEdit type="flowRun" :flow-run="flowRun" />
         </v-list>
-      </v-fade-transition>
-
-      <v-fade-transition hide-on-leave>
-        <div
-          v-if="tab === 'parameters'"
-          class="text-body-2 appForeground rounded-sm pa-5 code-block"
-        >
+      </v-tab-item>
+      <v-tab-item :key="tabs.parameters">
+        <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
           {{ formatJson(flowRunParams) }}
         </div>
-      </v-fade-transition>
-
-      <v-fade-transition hide-on-leave>
-        <div
-          v-if="tab === 'context'"
-          class="text-body-2 appForeground rounded-sm pa-5 code-block"
-        >
+      </v-tab-item>
+      <v-tab-item :key="tabs.context">
+        <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
           {{ formatJson(flowRun.context) }}
         </div>
-      </v-fade-transition>
-
-      <v-fade-transition hide-on-leave>
-        <div
-          v-if="tab === 'run_config'"
-          class="text-body-2 appForeground rounded-sm pa-5 code-block"
-        >
+      </v-tab-item>
+      <v-tab-item :key="tabs.run_config">
+        <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
           {{ formatJson(flowRun.run_config) }}
         </div>
-      </v-fade-transition>
-    </v-card-text>
+      </v-tab-item>
+    </v-tabs-items>
   </v-card>
 </template>
 
-<style lang="scss" scoped>
-.card-content {
-  max-height: 254px;
-  overflow-y: auto;
-}
-
+<style lang="scss">
 .code-block {
   border: 1px solid var(--v-utilGrayLight-base) !important;
   font-family: 'Source Code Pro', monospace !important;
@@ -389,5 +305,10 @@ export default {
 
 .w-100 {
   width: 100% !important;
+}
+
+.v-slide-group__prev,
+.v-slide-group__next {
+  display: none !important;
 }
 </style>
