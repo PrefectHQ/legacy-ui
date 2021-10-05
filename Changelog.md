@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Update the Pager Duty logo to match new branding - [#1073](https://github.com/PrefectHQ/ui/pull/1073)
 - Remove requirement to add an API Secret for Pager Duty - [#1065](https://github.com/PrefectHQ/ui/pull/1065)
 
 ### Bugfixes
