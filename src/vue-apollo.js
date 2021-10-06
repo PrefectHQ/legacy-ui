@@ -56,7 +56,10 @@ const backendMiddleware = new ApolloLink((operation, forward) => {
 })
 
 // Used to identify the request in the server
-const headerMiddleware = setContext((_, { headers }) => {
+const headerMiddleware = setContext((operation, { headers }) => {
+  // should be 'query' for queries and 'mutation' for mutations
+  headers['X-Prefect-Graphql-Operation'] =
+    operation.query.definitions[0].operation
   headers['X-Prefect-UI'] = true
   headers['X-Backend'] = store.getters['api/backend']
   headers['X-Prefect-Tenant-ID'] = store.getters['tenant/tenant'].id
