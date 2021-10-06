@@ -47,6 +47,11 @@ export default {
     }
   },
   data() {
+    const tabs = {
+      overview: 0,
+      config: 1
+    }
+
     return {
       copiedText: {},
       labelMenuOpen: false,
@@ -54,7 +59,8 @@ export default {
       showConfirmDialog: false,
       loading: 0,
       showIcon: true,
-      tab: 'overview'
+      tab: tabs.overview,
+      tabs
     }
   },
   computed: {
@@ -280,54 +286,10 @@ export default {
     <v-system-bar :color="statusColor" :height="5" absolute> </v-system-bar>
     <CardTitle :title="name">
       <div slot="icon" :class="iconClass" class="ml-2" icon>
-        <i class="fa-2x pi-2x nav-bar-duotone-icon" :class="agentIcon"
-      /></div>
-      <div v-if="showAll" slot="action" class="d-flex align-end flex-column">
-        <v-btn
-          depressed
-          small
-          tile
-          icon
-          class="button-transition w-100 d-flex justify-end"
-          :color="tab == 'overview' ? 'primary' : ''"
-          :style="{
-            'border-right': `3px solid ${
-              tab == 'overview'
-                ? 'var(--v-primary-base)'
-                : 'var(--v-appForeground-base)'
-            }`,
-            'box-sizing': 'content-box',
-            'min-width': '100px'
-          }"
-          @click="tab = 'overview'"
-        >
-          Overview
-          <v-icon small>calendar_view_day</v-icon>
-        </v-btn>
-        <v-btn
-          v-if="isCloud"
-          depressed
-          small
-          tile
-          icon
-          class="button-transition w-100 d-flex justify-end"
-          :color="tab == 'config' ? 'primary' : ''"
-          :style="{
-            'border-right': `3px solid ${
-              tab == 'config'
-                ? 'var(--v-primary-base)'
-                : 'var(--v-appForeground-base)'
-            }`,
-            'box-sizing': 'content-box',
-            'min-width': '100px'
-          }"
-          @click="tab = 'config'"
-        >
-          Config
-          <v-icon x-small>inventory_2</v-icon>
-        </v-btn>
+        <i class="fa-2x pi-2x nav-bar-duotone-icon" :class="agentIcon" />
       </div>
     </CardTitle>
+
     <v-dialog v-model="showConfirmDialog" max-width="480">
       <v-card>
         <v-card-title class="word-break-normal">
@@ -356,9 +318,24 @@ export default {
       </v-card>
     </v-dialog>
 
+    <v-tabs
+      v-if="showAll && isCloud"
+      v-model="tab"
+      tabs-border-bottom
+      color="primary"
+      class="flex-grow-0"
+    >
+      <v-tab :key="tabs.overview" data-cy="details-tile-overview">
+        Overview
+      </v-tab>
+      <v-tab :key="tabs.config" data-cy="details-tile-config">
+        Config
+      </v-tab>
+    </v-tabs>
+
     <v-card-text
-      v-if="tab == 'overview' || !showAll"
-      class="py-2"
+      v-if="tab == tabs.overview || !showAll"
+      class="py-2 card-content"
       :style="showAll ? '' : { height: '250px' }"
     >
       <div v-if="!showAll" class="my-2 text-subtitle-1 font-weight-light ">
@@ -593,6 +570,11 @@ export default {
 .unhealthy {
   color: var(--v-utilGrayLight-base);
   --fa-primary-color: var(--v-utilGrayLight-base);
+}
+
+.card-content {
+  max-height: calc(310px - var(--v-tabs-height));
+  overflow-y: auto;
 }
 
 .timeline-no-runs {

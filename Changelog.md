@@ -5,11 +5,31 @@
 ### Features and Improvements
 
 - Update PagerDuty logo color in dark mode - [#1070](https://github.com/PrefectHQ/ui/pull/1070)
+
+### Bugfixes
+
+- Update command on getting start agent section - [#1076](https://github.com/PrefectHQ/ui/pull/1076)
+
+## 2021-10-06
+
+### Bugfixes
+
+- Fix bug where overview tile would not show on the Flow detail page - [#1074](https://github.com/PrefectHQ/ui/pull/1074)
+
+## 2021-10-05
+
+### Features and Improvements
+
 - Remove requirement to add an API Secret for Pager Duty - [#1065](https://github.com/PrefectHQ/ui/pull/1065)
+- Updated experience of "tabs" on all tiles from buttons next to the title to standard v-tabs - [#1064](https://github.com/PrefectHQ/ui/pull/1064)
 
 ### Bugfixes
 
 - Fix member invitation bug - [#1062](https://github.com/PrefectHQ/ui/pull/1062)
+- Fixed [#1056](https://github.com/PrefectHQ/ui/issues/1056) with improvements above - [#1064](https://github.com/PrefectHQ/ui/pull/1064)
+- Submittable/Upcoming Runs Tiles would automatically switch tabs when user explicitly set the tab they want to view - [#1064](https://github.com/PrefectHQ/ui/pull/1064)
+- Loading indicator was not showing up for Submittable Runs Tile - [#1064](https://github.com/PrefectHQ/ui/pull/1064)
+- Loading indicator was showing whenever there was no upcoming runs for Upcoming Runs Tile - [#1064](https://github.com/PrefectHQ/ui/pull/1064)
 
 ## 2021-09-20
 
