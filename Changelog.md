@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix bug where overview tile would not show on the Flow detail page - [#1074](https://github.com/PrefectHQ/ui/pull/1074)
 
 ## 2021-10-05
 
