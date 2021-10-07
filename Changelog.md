@@ -8,7 +8,7 @@
 
 ### Bugfixes
 
-- None
+- Fix inability to reset run_config values to "unset" state - [#1075](https://github.com/PrefectHQ/ui/pull/1075)
 
 ## 2021-10-06
 
