@@ -4,8 +4,23 @@
 
 ### Features and Improvements
 
-- Update the Pager Duty logo to match new branding - [#1073](https://github.com/PrefectHQ/ui/pull/1073)
-- Remove requirement to add an API Secret for Pager Duty - [#1065](https://github.com/PrefectHQ/ui/pull/1065)
+- Update the PagerDuty logo to match new branding - [#1073](https://github.com/PrefectHQ/ui/pull/1073)
+
+### Bugfixes
+
+- Update command on getting start agent section - [#1076](https://github.com/PrefectHQ/ui/pull/1076)
+
+## 2021-10-06
+
+### Bugfixes
+
+- Fix bug where overview tile would not show on the Flow detail page - [#1074](https://github.com/PrefectHQ/ui/pull/1074)
+
+## 2021-10-05
+
+### Features and Improvements
+
+- Remove requirement to add an API Secret for PagerDuty - [#1065](https://github.com/PrefectHQ/ui/pull/1065)
 - Updated experience of "tabs" on all tiles from buttons next to the title to standard v-tabs - [#1064](https://github.com/PrefectHQ/ui/pull/1064)
 
 ### Bugfixes

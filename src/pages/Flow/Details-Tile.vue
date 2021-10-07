@@ -90,10 +90,10 @@ export default {
           'memory_request',
           'memory_limit'
         ],
-        ECSRun: ['image', 'task_definition_path', 'cpu', 'memory']
+        ECSRun: ['image', 'task_definition_path', 'cpu', 'memory'],
+        UniversalRun: []
       }
-      const typeFields = typeFieldMap[this.flow.run_config.type]
-
+      const typeFields = typeFieldMap[this.flow.run_config.type] || []
       return [
         'type',
         ...typeFields.filter(field => this.flow.run_config[field] != null)
