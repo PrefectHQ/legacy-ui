@@ -63,7 +63,7 @@ export default {
         const dict = { type: val.type }
         // Filter values that don't exist as template args
         Object.keys(val).map(key => {
-          if (this.templateArgs.includes(key)) {
+          if (this.templateArgs.includes(key) && !this.valueIsEmpty(val[key])) {
             dict[key] = val[key]
           }
         })
@@ -134,6 +134,21 @@ export default {
     },
     handleInput(arg, val) {
       this.$set(this.internalValue, arg, val)
+    },
+    valueIsEmpty(value) {
+      if (Array.isArray(value)) {
+        return value.length == 0
+      }
+
+      if (typeof value == 'string') {
+        return value.length == 0
+      }
+
+      if (typeof value == 'object') {
+        return Object.keys(value).length == 0
+      }
+
+      return false
     }
   }
 }
