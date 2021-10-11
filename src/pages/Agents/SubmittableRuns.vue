@@ -266,7 +266,7 @@ export default {
       "
     >
       <v-tabs-items v-model="tab" class="flex-grow-1">
-        <v-tab-item :key="tabs.submittable">
+        <v-tab-item>
           <v-skeleton-loader v-if="loading" type="list-item-three-line" />
 
           <v-list-item
@@ -357,7 +357,7 @@ export default {
           </Alert>
         </v-tab-item>
 
-        <v-tab-item :key="tabs.late">
+        <v-tab-item>
           <v-skeleton-loader
             v-if="loading || isClearingLateRuns"
             type="list-item-three-line"
