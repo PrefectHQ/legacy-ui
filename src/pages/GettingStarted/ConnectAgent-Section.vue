@@ -151,7 +151,7 @@ export default {
             >$
           </span>
           <span class="primary--text font-weight-medium">prefect</span>
-          agent
+          agent local
           <span class="deepRed--text font-weight-medium">start</span>
           --name
           <span class="yellow--text text--darken-3 font-weight-medium"
