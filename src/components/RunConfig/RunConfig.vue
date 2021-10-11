@@ -1,10 +1,12 @@
 <script>
 /* eslint-disable vue/no-v-html */
 import { runConfigs } from '@/utils/runConfigs'
-import DictInput from '@/components/CustomInputs/DictInput'
-import ListInput from '@/components/CustomInputs/ListInput'
 import MenuTooltip from '@/components/MenuTooltip'
-import MultiLineInput from '@/components/CustomInputs/MultiLineInput'
+import UniversalRunForm from '@/components/RunConfig/UniversalRunForm'
+import LocalRunForm from '@/components/RunConfig/LocalRunForm'
+import DockerRunForm from '@/components/RunConfig/DockerRunForm'
+import KubernetesRunForm from '@/components/RunConfig/KubernetesRunForm'
+import EcsRunForm from '@/components/RunConfig/EcsRunForm'
 
 const nullValues = {
   list: [],
@@ -15,10 +17,7 @@ const nullValues = {
 
 export default {
   components: {
-    DictInput,
-    ListInput,
-    MenuTooltip,
-    MultiLineInput
+    MenuTooltip
   },
   props: {
     value: {
@@ -40,6 +39,20 @@ export default {
     }
   },
   computed: {
+    formComponent() {
+      switch (this.value.type) {
+        case 'LocalRun':
+          return LocalRunForm
+        case 'DockerRun':
+          return DockerRunForm
+        case 'KubernetesRun':
+          return KubernetesRunForm
+        case 'ECSRun':
+          return EcsRunForm
+        default:
+          return UniversalRunForm
+      }
+    },
     fields() {
       return Object.keys(this.template.args)
     },
@@ -170,159 +183,14 @@ export default {
       </div>
     </div>
 
-    <transition-group name="fade" mode="out-in">
-      <v-row
-        v-for="(arg, i) in template.args"
-        :key="arg.arg || i"
-        class="my-2 py-8 row-divider"
-        no-gutters
-      >
-        <v-col cols="12" md="6">
-          <div
-            class="pl-md-8 mb-6 mb-md-0 pl-sm-0 py-0"
-            :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }"
-          >
-            <div class="text-h6">
-              {{ arg.label }}
-              <span
-                v-if="arg.arg"
-                class="text-caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
-                style="border: 1px solid utilGrayLight !important;"
-              >
-                {{ arg.arg }}
-              </span>
-            </div>
-
-            <div class="mt-2 text-body-2" v-html="arg.description" />
-          </div>
-        </v-col>
-
-        <v-col cols="12" md="6">
-          <v-text-field
-            v-if="arg.input_type == 'string'"
-            v-model="internalValue[arg.arg]"
-            placeholder="Default"
-            :label="arg.label"
-            hide-details
-            outlined
-            dense
-          />
-          <MultiLineInput
-            v-else-if="arg.input_type == 'multiline'"
-            v-model="internalValue[arg.arg]"
-          />
-          <DictInput
-            v-else-if="arg.input_type == 'object'"
-            v-model="internalValue[arg.arg]"
-            :dict="internalValue[arg.arg]"
-          />
-          <ListInput
-            v-else-if="arg.input_type == 'list'"
-            v-model="internalValue[arg.arg]"
-            :label="arg.label"
-          />
-
-          <div v-else-if="arg.input_type == 'arg_override'">
-            <v-radio-group
-              v-model="shownArgs[arg.ref]"
-              mandatory
-              row
-              @change="handleArgOptionClick(arg)"
-            >
-              <v-radio
-                v-for="(option, j) in arg.options"
-                :key="j"
-                :label="option.label"
-                :value="j"
-              ></v-radio>
-            </v-radio-group>
-          </div>
-        </v-col>
-
-        <v-col v-for="(option, j) in arg.options" :key="option.label" cols="12">
-          <v-row
-            v-if="option.arg && shownArgs[arg.ref] == j"
-            no-gutters
-            class="my-4"
-          >
-            <v-col cols="12" md="6">
-              <div
-                class="pl-md-8 mb-6 mb-md-0 pl-sm-0 py-0"
-                :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }"
-              >
-                <div class="text-h6">
-                  {{ option.label }}
-                  <span
-                    v-if="option.arg"
-                    class="text-caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
-                    style="border: 1px solid utilGrayLight !important;"
-                  >
-                    {{ option.arg }}
-                  </span>
-                </div>
-
-                <div class="mt-2 text-body-2" v-html="option.description" />
-              </div>
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-if="option.input_type == 'string'"
-                placeholder="Default"
-                class="white"
-                :label="option.label"
-                hide-details
-                outlined
-                dense
-                @input="handleInput(option.arg, $event)"
-              />
-              <MultiLineInput
-                v-else-if="option.input_type == 'multiline'"
-                v-model="internalValue[option.arg]"
-                @input="handleInput(option.arg, $event)"
-              />
-              <DictInput
-                v-else-if="option.input_type == 'object'"
-                :dict="internalValue[arg.arg]"
-                @input="handleInput(option.arg, $event)"
-              />
-              <ListInput
-                v-else-if="option.input_type == 'list'"
-                :label="option.label"
-                @input="handleInput(option.arg, $event)"
-              />
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-    </transition-group>
+    <component :is="formComponent" v-model="internalValue" />
   </div>
 </template>
 
-<style lang="scss" scoped>
-.pr-24 {
-  padding-right: 124px;
-}
-
-.row-divider:not(:last-child) {
-  position: relative;
-
-  &::after {
-    background-color: var(--v-utilGrayLight-base);
-    bottom: 0;
-    content: '';
-    height: 1px;
-    margin: auto;
-    position: absolute;
-    width: 100%;
-  }
-}
-
-.w-50 {
-  width: 50%;
-}
-
-.w-100 {
-  width: 100%;
+<style lang="scss">
+.run-config-form__row {
+  align-items: center;
+  margin: 0;
 }
 
 .config-selection-container {
@@ -340,6 +208,14 @@ export default {
 
   &.active {
     border-color: var(--v-primary-base) !important;
+
+    .svg-inline--fa path {
+      fill: var(--v-primary-base) !important;
+    }
+
+    .pi-kubernetes::before {
+      color: var(--v-primary-base) !important;
+    }
   }
 
   &:hover,
@@ -353,16 +229,6 @@ export default {
     &:hover,
     &:focus {
       background-color: rgba(255, 255, 255, 0.12);
-    }
-  }
-}
-</style>
-
-<style lang="scss">
-.config-type {
-  &.active {
-    .svg-inline--fa path {
-      fill: var(--v-primary-base) !important;
     }
   }
 }
