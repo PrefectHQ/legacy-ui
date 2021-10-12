@@ -189,8 +189,29 @@ export default {
 
 <style lang="scss">
 .run-config-form__row {
-  align-items: center;
+  max-width: var(--v-lg);
   margin: 0;
+}
+
+.run-config-form__input {
+  margin-top: 26px;
+}
+
+.run-config-form__input .v-input-radio-group {
+  margin-top: -26px;
+  justify-content: center;
+}
+
+.run-config-form__input .list-input {
+  margin-top: -26px;
+}
+
+.run-config-form__input .multiline-input {
+  margin-top: -26px;
+}
+
+.run-config-form__input .dict-input {
+  margin-top: -36px;
 }
 
 .config-selection-container {

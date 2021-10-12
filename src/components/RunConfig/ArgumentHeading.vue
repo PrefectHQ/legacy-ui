@@ -1,20 +1,13 @@
 <template>
-  <div
-    class="pl-md-8 mb-6 mb-md-0 pl-sm-0 py-0"
-    :class="{ 'pr-24': $vuetify.breakpoint.mdAndUp }"
-  >
-    <div class="text-h6">
+  <div class="argument-heading">
+    <div class="argument-heading__title">
       {{ title }}
-      <span
-        v-if="argument.length"
-        class="text-caption grey lighten-5 blue-grey--text text--darken-2 rounded-sm ml-1 px-1"
-        style="border: 1px solid utilGrayLight !important;"
-      >
+      <span v-if="argument.length" class="argument-heading__tag">
         {{ argument }}
       </span>
     </div>
 
-    <div class="mt-2 text-body-2">
+    <div class="argument-heading__description">
       <slot>
         {{ description }}
       </slot>
@@ -41,3 +34,32 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.argument-heading__tag {
+  background-color: #fafafa !important;
+  border: 1px solid var(--v-utilGrayLight-base);
+  border-radius: 2px;
+  color: #455a64 !important;
+  caret-color: #455a64 !important;
+  padding: 0 4px;
+  font-size: 0.75rem !important;
+  font-weight: 400;
+  line-height: 1.25rem;
+  letter-spacing: 0.0333333333em !important;
+}
+
+.argument-heading__title {
+  font-size: 1.25rem !important;
+  font-weight: 500;
+  line-height: 2rem;
+  letter-spacing: 0.0125em !important;
+}
+
+.argument-heading__description {
+  font-size: 0.875rem !important;
+  font-weight: 400;
+  line-height: 1.25rem;
+  letter-spacing: 0.0178571429em !important;
+}
+</style>

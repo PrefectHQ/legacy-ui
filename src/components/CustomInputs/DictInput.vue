@@ -236,7 +236,7 @@ export default {
 </script>
 
 <template>
-  <div class="position-relative">
+  <div class="dict-input position-relative">
     <div class="d-flex justify-end align-end mb-1" style="width: 100%;">
       <v-btn
         v-if="allowReset"
@@ -295,6 +295,7 @@ export default {
               class="text-body-1"
               hide-details
               outlined
+              label="Key"
               :disabled="disabled"
               dense
               :placeholder="keyLabel"
@@ -309,6 +310,7 @@ export default {
               hide-details
               :disabled="disabled"
               outlined
+              label="Value"
               dense
               :placeholder="
                 inputIsArray && dict[i] && dict[i].value

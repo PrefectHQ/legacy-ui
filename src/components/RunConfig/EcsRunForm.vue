@@ -7,7 +7,7 @@
           description="The source of the task definition to use. If default is selected, the task will use the definition specified by your agent."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-radio-group v-model="selectedTaskDefinition" mandatory row>
           <v-radio label="Default" :value="taskDefinitions.default" />
           <v-radio label="Template path" :value="taskDefinitions.path" />
@@ -27,7 +27,7 @@
           description="Specify a path to a task definition to use. If this is a local path, the definition will be loaded on initialization and stored on the ECSRun object as the task_definition field. Otherwise the definition will be loaded at runtime by the agent; supported runtime file schemes include s3, gcs, and agent."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.task_definition_path"
           placeholder="Default"
@@ -52,7 +52,7 @@
           for more information on task definitions.
         </argument-heading>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <multi-line-input v-model="internalValue.task_definition" />
       </v-col>
     </v-row>
@@ -67,7 +67,7 @@
           definition ARN).
         </argument-heading>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.task_definition_arn"
           placeholder="Default"
@@ -86,7 +86,7 @@
           description="The image to use; if not provided, the image will be inferred from either the flow's storage or the default image configured on the agent."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.image"
           placeholder="Default"
@@ -105,7 +105,7 @@
           description="Additional environment variables to set on the task."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <dict-input :dict="internalValue.env" />
       </v-col>
     </v-row>
@@ -120,7 +120,7 @@
           for available values.
         </argument-heading>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.cpu"
           placeholder="Default"
@@ -142,7 +142,7 @@
           for available values.
         </argument-heading>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.memory"
           placeholder="Default"
@@ -161,7 +161,7 @@
           description="The name or full ARN for the IAM role to use for this task. If not provided, the default on the agent will be used (if configured)."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.task_role_arn"
           placeholder="Default"
@@ -180,7 +180,7 @@
           description="The execution role ARN to use when registering a task definition for this task. If not provided, the default on the agent will be used (if configured)."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.execution_role_arn"
           placeholder="Default"
@@ -203,7 +203,7 @@
           for more information.
         </argument-heading>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <dict-input :dict="internalValue.run_task_kwargs" />
       </v-col>
     </v-row>

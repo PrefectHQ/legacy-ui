@@ -88,7 +88,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="list-input">
     <div
       v-if="showClear || showReset || showClose"
       class="d-flex align-center justify-end mb-2"

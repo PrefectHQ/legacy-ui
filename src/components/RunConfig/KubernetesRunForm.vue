@@ -7,7 +7,7 @@
           description="The source of the job template to use. If default is selected, the job will use the template specified by your agent."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-radio-group v-model="selectedJobTemplate" mandatory row>
           <v-radio label="Default" :value="jobTemplates.default" />
           <v-radio label="Template path" :value="jobTemplates.path" />
@@ -26,7 +26,7 @@
           description="Specify a path to a job template to use. If this is a local path, the job template will be loaded on initialization and stored on the KubernetesRun object as the job template field. Otherwise the job template will be loaded at runtime by the agent; supported runtime file schemes include s3, gcs, and agent."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.job_template_path"
           placeholder="Default"
@@ -48,7 +48,7 @@
           description="Specify an in-memory job template to use."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <multi-line-input v-model="internalValue.job_template" />
       </v-col>
     </v-row>
@@ -60,7 +60,7 @@
           description="The image to use."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.image"
           placeholder="Default"
@@ -79,7 +79,7 @@
           description="Additional environment variables to set on the job."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <dict-input :dict="internalValue.env" />
       </v-col>
     </v-row>
@@ -95,7 +95,7 @@
           for more information.
         </argument-heading>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.cpu_limit"
           placeholder="Default"
@@ -118,7 +118,7 @@
           for more information.
         </argument-heading>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.cpu_request"
           placeholder="Default"
@@ -142,7 +142,7 @@
           for more information.
         </argument-heading>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.memory_limit"
           placeholder="Default"
@@ -166,7 +166,7 @@
           for more information.
         </argument-heading>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.memory_request"
           placeholder="Default"
@@ -187,7 +187,7 @@
           the job template."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.service_account_name"
           placeholder="Default"
@@ -208,7 +208,7 @@
           agent or in the job template."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <list-input
           v-model="internalValue.image_pull_secrets"
           label="Image pull secrets"

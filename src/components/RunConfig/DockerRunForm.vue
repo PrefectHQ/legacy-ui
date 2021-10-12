@@ -8,7 +8,7 @@
           description="The image to use."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.image"
           placeholder="Default"
@@ -27,7 +27,7 @@
           description="Additional environment variables to set in the container."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <dict-input :dict="internalValue.env" />
       </v-col>
     </v-row>
@@ -39,7 +39,7 @@
           description="Runtime arguments to pass to the Docker Agent."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <dict-input :dict="internalValue.host_config" />
       </v-col>
     </v-row>

@@ -8,7 +8,7 @@
           description="Additional environment variables to set for the process."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <dict-input :dict="internalValue.env" />
       </v-col>
     </v-row>
@@ -20,7 +20,7 @@
           description="The working directory in which to start the process; the directory must already exist. If not provided, will be run in the same directory as the agent was started."
         />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="6" class="run-config-form__input">
         <v-text-field
           v-model="internalValue.working_dir"
           placeholder="Default"
