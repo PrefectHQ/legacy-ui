@@ -1,7 +1,6 @@
 <script>
 /* eslint-disable vue/no-v-html */
-import { runConfigs } from '@/utils/runConfigs'
-import MenuTooltip from '@/components/MenuTooltip'
+import RunConfigTypeSelect from '@/components/RunConfig/RunConfigTypeSelect'
 import UniversalRunForm from '@/components/RunConfig/UniversalRunForm'
 import LocalRunForm from '@/components/RunConfig/LocalRunForm'
 import DockerRunForm from '@/components/RunConfig/DockerRunForm'
@@ -17,7 +16,7 @@ const nullValues = {
 
 export default {
   components: {
-    MenuTooltip
+    RunConfigTypeSelect
   },
   props: {
     value: {
@@ -55,20 +54,17 @@ export default {
     },
     fields() {
       return Object.keys(this.template.args)
-    },
-    template() {
-      return runConfigs[this.internalValue.type]
-    },
-    templateArgs() {
-      return runConfigs[this.internalValue.type].args
-        .map(a =>
-          a.options ? a.options.filter(a_ => !!a_.arg).map(a_ => a_.arg) : a.arg
-        )
-        .flat()
-    },
-    runConfigs() {
-      return runConfigs
     }
+    // template() {
+    //   return runConfigs[this.internalValue.type]
+    // },
+    // templateArgs() {
+    //   return runConfigs[this.internalValue.type].args
+    //     .map(a =>
+    //       a.options ? a.options.filter(a_ => !!a_.arg).map(a_ => a_.arg) : a.arg
+    //     )
+    //     .flat()
+    // }
   },
   watch: {
     internalValue: {
@@ -104,35 +100,35 @@ export default {
   methods: {
     createArgs() {
       const dict = {}
-      Object.keys(runConfigs).forEach(config => {
-        if (!runConfigs[config]) return
-        runConfigs[config].args.forEach(arg => {
-          if (arg.arg) {
-            try {
-              dict[arg.arg] =
-                JSON.parse(this.value?.[arg.arg]) || nullValues[arg.type]
-            } catch {
-              dict[arg.arg] = this.value?.[arg.arg] || nullValues[arg.type]
-            }
-          }
+      // Object.keys(runConfigs).forEach(config => {
+      //   if (!runConfigs[config]) return
+      //   runConfigs[config].args.forEach(arg => {
+      //     if (arg.arg) {
+      //       try {
+      //         dict[arg.arg] =
+      //           JSON.parse(this.value?.[arg.arg]) || nullValues[arg.type]
+      //       } catch {
+      //         dict[arg.arg] = this.value?.[arg.arg] || nullValues[arg.type]
+      //       }
+      //     }
 
-          arg.options?.forEach((option, i) => {
-            if (option.arg) {
-              try {
-                dict[option.arg] =
-                  JSON.parse(this.value?.[option.arg]) || nullValues[arg.type]
-              } catch (e) {
-                dict[option.arg] =
-                  this.value?.[option.arg] || nullValues[arg.type]
-              }
+      //     arg.options?.forEach((option, i) => {
+      //       if (option.arg) {
+      //         try {
+      //           dict[option.arg] =
+      //             JSON.parse(this.value?.[option.arg]) || nullValues[arg.type]
+      //         } catch (e) {
+      //           dict[option.arg] =
+      //             this.value?.[option.arg] || nullValues[arg.type]
+      //         }
 
-              if (this.value?.[option.arg]) {
-                this.shownArgs[arg.ref] = i
-              }
-            }
-          })
-        })
-      })
+      //         if (this.value?.[option.arg]) {
+      //           this.shownArgs[arg.ref] = i
+      //         }
+      //       }
+      //     })
+      //   })
+      // })
       this.internalValue = { type: this.templateType, ...dict }
     },
     handleArgOptionClick(arg) {
@@ -154,35 +150,7 @@ export default {
 
 <template>
   <div style="min-width: 100%;">
-    <div class="pb-8">
-      <div class="config-selection-container">
-        <div
-          v-for="runConfig in runConfigs"
-          :key="runConfig.type"
-          v-ripple
-          class="config-type py-2 d-flex align-center justify-start px-4 my-2 cursor-pointer user-select-none"
-          :class="{ active: internalValue.type == runConfig.type }"
-          role="button"
-          tabindex="0"
-          @click="internalValue.type = runConfig.type"
-        >
-          <div class="text-center" style="width: 50px;">
-            <i :class="runConfig.icon" class="fa-2x pi-2x"> </i>
-          </div>
-
-          <div class="w-100 ml-2">
-            <span class="text-h6 mr-2"> {{ runConfig.label }}</span>
-
-            <MenuTooltip v-if="$vuetify.breakpoint.mdAndUp">
-              <div class="text-body-1 grey--text text--darken-1">
-                {{ runConfig.description }}
-              </div>
-            </MenuTooltip>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    <run-config-type-select v-model="internalValue.type" class="pb-8" />
     <component :is="formComponent" v-model="internalValue" />
   </div>
 </template>
@@ -212,45 +180,5 @@ export default {
 
 .run-config-form__input .dict-input {
   margin-top: -36px;
-}
-
-.config-selection-container {
-  display: grid;
-  grid-column-gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 195px));
-}
-
-.config-type {
-  border: 2px solid;
-  border-color: var(--v-utilGrayLight-base) !important;
-  height: 80px;
-  transition: all 50ms;
-  width: 100%;
-
-  &.active {
-    border-color: var(--v-primary-base) !important;
-
-    .svg-inline--fa path {
-      fill: var(--v-primary-base) !important;
-    }
-
-    .pi-kubernetes::before {
-      color: var(--v-primary-base) !important;
-    }
-  }
-
-  &:hover,
-  &:focus {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-}
-
-.theme--dark {
-  .config-type {
-    &:hover,
-    &:focus {
-      background-color: rgba(255, 255, 255, 0.12);
-    }
-  }
 }
 </style>

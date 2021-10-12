@@ -13,7 +13,6 @@ import { parametersMixin } from '@/mixins/parametersMixin.js'
 import throttle from 'lodash.throttle'
 import { adjectives } from '@/components/RunConfig/adjectives'
 import { animals } from '@/components/RunConfig/animals'
-import { runConfigs } from '@/utils/runConfigs'
 
 const adjectivesLength = adjectives.length
 const animalsLength = animals.length
@@ -80,7 +79,29 @@ export default {
       parameterDefaults: this.flow.parameters,
       parameterJsonMode: false,
 
-      when: 'now'
+      when: 'now',
+      runConfigs: {
+        LocalRun: {
+          label: 'Local',
+          icon: 'fad fa-laptop-house'
+        },
+        UniversalRun: {
+          label: 'Universal',
+          icon: 'fad fa-globe'
+        },
+        DockerRun: {
+          label: 'Docker',
+          icon: 'fab fa-docker'
+        },
+        KubernetesRun: {
+          label: 'Kubernetes',
+          icon: 'pi-kubernetes'
+        },
+        ECSRun: {
+          label: 'ECS',
+          icon: 'fab fa-aws'
+        }
+      }
     }
   },
   computed: {
@@ -115,8 +136,7 @@ export default {
       return keysModified || valuesModified
     },
     runConfigTemplate() {
-      if (!this.runConfig) return
-      return runConfigs[this.runConfig.type]
+      return this.runConfig && this.runConfigs[this.runConfig.type]
     }
   },
   destroyed() {
