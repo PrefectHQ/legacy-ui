@@ -142,7 +142,7 @@ export default {
   destroyed() {
     window.removeEventListener('scroll', this.handleScroll)
   },
-  mounted() {
+  created() {
     this.parameters = this.defaultParameters.reduce((acc, param) => {
       acc[param.name] = param.default
       return acc
@@ -218,9 +218,6 @@ export default {
     },
     handleToggleJsonEditor(val) {
       this.parameterJsonMode = val
-    },
-    handleLabelInput(val) {
-      this.labels = val
     },
     generateRandomName() {
       const adjective = adjectives[Math.floor(Math.random() * adjectivesLength)]
@@ -489,11 +486,7 @@ export default {
           </v-col>
 
           <v-col cols="12" md="9" class="mt-n4 mt-md-0 text-body-1">
-            <ListInput
-              label="Labels"
-              :value="labels"
-              @input="handleLabelInput"
-            />
+            <ListInput v-model="labels" label="Labels" />
           </v-col>
         </v-row>
 
