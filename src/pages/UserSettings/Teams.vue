@@ -291,9 +291,12 @@ export default {
             >Are you sure you want to remove yourself from
             {{ removeTenant.name }}? You'll no longer be able to access your run
             data associated with {{ removeTenant.name }}.
-            <div class="mt-2" v-show="removeTenant.name == tenant.name">
-              In addition, this is the last team you are part of. Once removed,
-              you won't be able to log back in to Cloud.
+            <div
+              class="mt-2 deepRed--text text-subtitle-1 font-weight-medium"
+              v-show="removeTenant.name == tenant.name"
+            >
+              This is the last team you are part of. If you remove it you will
+              not be able to log back in to Prefect Cloud.
             </div>
           </div>
         </ConfirmDialog>

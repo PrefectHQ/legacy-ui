@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Add warning that users will be locked out if not part of a team - [#1078](https://github.com/PrefectHQ/ui/pull/1078)
 
 ### Bugfixes
 
