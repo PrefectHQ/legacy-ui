@@ -52,6 +52,15 @@ export default {
         }, 3000)
       }, 100) // Should match log-copy transition duration
     },
+    hasRunLink(message) {
+      if(message.includes('Flow Run: https://')) {
+      return true
+      } 
+      return false
+    },
+    getUrl(link) {
+      return link.split(': ')[1]
+    },
     // Let parent know if the rendered log's ID is equal to the log ID query param
     emitRender() {
       if (this.isQueriedLog()) {
@@ -126,7 +135,8 @@ export default {
     </div>
 
     <div class="ml-10 py-1">
-      <span class="log-message">{{ log.message }}</span>
+      <span v-if="hasRunLink(log.message)"><a target="_blank" :href="getUrl(log.message)">{{ log.message }}</a></span>
+      <span class="log-message" v-else>{{ log.message }}</span>
     </div>
 
     <div v-if="log.task_run_id" class="justify-self-end log-router-link">
