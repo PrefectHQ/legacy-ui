@@ -147,7 +147,7 @@ export default {
       acc[param.name] = param.default
       return acc
     }, {})
-    this.runConfig = { ...this.flow.run_config }
+    this.resetRunConfigValues()
 
     // run config > flow group > flow group run config > flow run config > flow > flow environment ?
     if (this.flowGroup.labels?.length > 0) {
@@ -270,9 +270,9 @@ export default {
       if (jsonValidationResult === 'SyntaxError') {
         this.errorInContextInput = true
         this.showErrorAlert(`
-          There is a syntax error in your flow context JSON.
-          Please correct the error and try again.
-        `)
+        There is a syntax error in your flow context JSON.
+        Please correct the error and try again.
+      `)
         return false
       }
 
@@ -283,6 +283,9 @@ export default {
       }
 
       return true
+    },
+    resetRunConfigValues() {
+      this.runConfig = { ...this.flow.run_config }
     },
     handleScroll: throttle(
       function() {
@@ -602,6 +605,16 @@ export default {
                 for more details on run configs, including setting them at
                 registration time.
               </p>
+              <template slot="actions">
+                <v-btn
+                  class="text-none"
+                  color="primary"
+                  small
+                  text
+                  @click="resetRunConfigValues"
+                  >Reset to default values</v-btn
+                >
+              </template>
             </MenuTooltip>
             <span class="text-body-2 text--disabled ml-2">(Optional)</span>
           </div>
