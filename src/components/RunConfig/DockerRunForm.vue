@@ -1,58 +1,35 @@
 <template>
   <div class="run-config-form">
-    <v-row class="run-config-form__row">
-      <v-col cols="12" md="6">
-        <argument-heading
-          argument="image"
-          title="Image"
-          description="The image to use."
-        />
-      </v-col>
-      <v-col cols="12" md="6" class="run-config-form__input">
-        <v-text-field
-          v-model="internalValue.image"
-          placeholder="Default"
-          label="Image"
-          hide-details
-          outlined
-          dense
-        />
-      </v-col>
-    </v-row>
-    <v-row class="run-config-form__row">
-      <v-col cols="12" md="6">
-        <argument-heading
-          argument="env"
-          title="Environment Variables"
-          description="Additional environment variables to set in the container."
-        />
-      </v-col>
-      <v-col cols="12" md="6" class="run-config-form__input">
-        <dict-input :dict="internalValue.env" />
-      </v-col>
-    </v-row>
-    <v-row class="run-config-form__row">
-      <v-col cols="12" md="6">
-        <argument-heading
-          argument="host_config"
-          title="Host Config"
-          description="Runtime arguments to pass to the Docker Agent."
-        />
-      </v-col>
-      <v-col cols="12" md="6" class="run-config-form__input">
-        <dict-input :dict="internalValue.host_config" />
-      </v-col>
-    </v-row>
+    <argument-input
+      v-model="internalValue.image"
+      argument="image"
+      title="Image"
+      description="The image to use."
+    />
+    <argument-input
+      argument="env"
+      title="Environment Variables"
+      description="Additional environment variables to set in the container."
+    >
+      <dict-input v-model="internalValue.env" />
+    </argument-input>
+    <argument-input
+      argument="host_config"
+      title="Host Config"
+      description="Runtime arguments to pass to the Docker Agent."
+    >
+      <dict-input v-model="internalValue.host_config" />
+    </argument-input>
   </div>
 </template>
 
 <script>
-import ArgumentHeading from '@/components/RunConfig/ArgumentHeading'
+import ArgumentInput from '@/components/RunConfig/ArgumentInput'
 import DictInput from '@/components/CustomInputs/DictInput'
 
 export default {
   components: {
-    ArgumentHeading,
+    ArgumentInput,
     DictInput
   },
   props: {

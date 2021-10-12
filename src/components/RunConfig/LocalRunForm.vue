@@ -1,46 +1,28 @@
 <template>
   <div class="run-config-form">
-    <v-row class="run-config-form__row">
-      <v-col cols="12" md="6">
-        <argument-heading
-          argument="env"
-          title="Environment Variables"
-          description="Additional environment variables to set for the process."
-        />
-      </v-col>
-      <v-col cols="12" md="6" class="run-config-form__input">
-        <dict-input :dict="internalValue.env" />
-      </v-col>
-    </v-row>
-    <v-row class="run-config-form__row">
-      <v-col cols="12" md="6">
-        <argument-heading
-          argument="working_dir"
-          title="Working directory"
-          description="The working directory in which to start the process; the directory must already exist. If not provided, will be run in the same directory as the agent was started."
-        />
-      </v-col>
-      <v-col cols="12" md="6" class="run-config-form__input">
-        <v-text-field
-          v-model="internalValue.working_dir"
-          placeholder="Default"
-          label="Working directory"
-          hide-details
-          outlined
-          dense
-        />
-      </v-col>
-    </v-row>
+    <argument-input
+      argument="env"
+      title="Environment Variables"
+      description="Additional environment variables to set for the process."
+    >
+      <dict-input v-model="internalValue.env" />
+    </argument-input>
+    <argument-input
+      v-model="internalValue.working_dir"
+      argument="working_dir"
+      title="Working directory"
+      description="The working directory in which to start the process; the directory must already exist. If not provided, will be run in the same directory as the agent was started."
+    />
   </div>
 </template>
 
 <script>
-import ArgumentHeading from '@/components/RunConfig/ArgumentHeading'
+import ArgumentInput from '@/components/RunConfig/ArgumentInput'
 import DictInput from '@/components/CustomInputs/DictInput'
 
 export default {
   components: {
-    ArgumentHeading,
+    ArgumentInput,
     DictInput
   },
   props: {

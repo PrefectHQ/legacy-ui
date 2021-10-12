@@ -8,9 +8,7 @@
     </div>
 
     <div class="argument-heading__description">
-      <slot>
-        {{ description }}
-      </slot>
+      <slot />
     </div>
   </div>
 </template>
@@ -24,10 +22,6 @@ export default {
       default: ''
     },
     title: {
-      type: String,
-      required: true
-    },
-    description: {
       type: String,
       required: true
     }
