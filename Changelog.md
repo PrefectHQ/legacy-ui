@@ -8,6 +8,7 @@
 
 ### Bugfixes
 
+- When editing a schedule, update the action button to "Save" - [#1083](https://github.com/PrefectHQ/ui/pull/1083)
 - Update command on getting start agent section - [#1076](https://github.com/PrefectHQ/ui/pull/1076)
 
 ## 2021-10-06
