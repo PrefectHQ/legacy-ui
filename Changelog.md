@@ -5,6 +5,7 @@
 ### Features and Improvements
 
 - Add warning that users will be locked out if not part of a team - [#1078](https://github.com/PrefectHQ/ui/pull/1078)
+- Update the PagerDuty logo to match new branding - [#1073](https://github.com/PrefectHQ/ui/pull/1073)
 
 ### Bugfixes
 
@@ -20,7 +21,7 @@
 
 ### Features and Improvements
 
-- Remove requirement to add an API Secret for Pager Duty - [#1065](https://github.com/PrefectHQ/ui/pull/1065)
+- Remove requirement to add an API Secret for PagerDuty - [#1065](https://github.com/PrefectHQ/ui/pull/1065)
 - Updated experience of "tabs" on all tiles from buttons next to the title to standard v-tabs - [#1064](https://github.com/PrefectHQ/ui/pull/1064)
 
 ### Bugfixes
