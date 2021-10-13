@@ -237,7 +237,7 @@ export default {
         :disabled="!valid"
         @click.stop="confirm"
       >
-        Create
+        {{ Object.keys(clock).length === 0 ? 'Create' : 'Save' }}
       </v-btn>
     </div>
   </v-container>
