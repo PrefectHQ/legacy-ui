@@ -26,7 +26,7 @@ export const openCloudHookTypes = [
     requiresCloud: false
   },
   {
-    title: 'Pager Duty',
+    title: 'PagerDuty',
     type: 'PAGERDUTY',
     icon: '$pagerDuty',
     config: { routing_key: null, api_token: null, severity: [] },
