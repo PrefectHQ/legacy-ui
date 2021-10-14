@@ -49,6 +49,7 @@ export default {
         General
         <v-icon>settings</v-icon>
       </v-tab>
+
       <v-tab key="cloud-hooks" data-cy="flow-settings-cloud-hooks-tab">
         Cloud Hooks
         <v-icon>cloud</v-icon>
@@ -66,17 +67,17 @@ export default {
     </v-tabs>
 
     <v-tabs-items v-model="tab">
-      <v-tab-item key="general">
+      <v-tab-item>
         <GeneralSettings :flow="flow" :flow-group="flowGroup" />
       </v-tab-item>
 
-      <v-tab-item key="cloud-hooks">
+      <v-tab-item>
         <CloudHooks :flow="flow" :flow-group="flowGroup" />
       </v-tab-item>
-      <v-tab-item key="schedules">
+      <v-tab-item>
         <Schedules v-if="tab == 2" :flow="flow" :flow-group="flowGroup" />
       </v-tab-item>
-      <v-tab-item key="parameters">
+      <v-tab-item>
         <Parameters :flow-group="flowGroup" />
       </v-tab-item>
     </v-tabs-items>
