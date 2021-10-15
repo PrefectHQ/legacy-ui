@@ -32,19 +32,18 @@ export default {
   computed: {
     internalValue: {
       get() {
-        if (typeof this.value === 'object') {
+        if (this.valueIsObject) {
           return formatYaml(this.value)
         }
 
         return this.value
       },
       set(value) {
-        if (typeof this.value === 'object') {
-          this.$emit('input', parseYaml(value))
-        }
-
-        this.$emit('input', value)
+        this.$emit('input', this.valueIsObject ? parseYaml(value) : value)
       }
+    },
+    valueIsObject() {
+      return this.value != null && typeof this.value === 'object'
     },
     inputErrors() {
       if (!this.isValid) {

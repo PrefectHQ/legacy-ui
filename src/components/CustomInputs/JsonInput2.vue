@@ -27,19 +27,18 @@ export default {
   computed: {
     internalValue: {
       get() {
-        if (typeof this.value === 'object') {
+        if (this.valueIsObject) {
           return formatJson(this.value)
         }
 
         return this.value
       },
       set(value) {
-        if (typeof this.value === 'object') {
-          this.$emit('input', parseJson(value))
-        }
-
-        this.$emit('input', value)
+        this.$emit('input', this.valueIsObject ? parseJson(value) : value)
       }
+    },
+    valueIsObject() {
+      return this.value != null && typeof this.value === 'object'
     },
     inputErrors() {
       if (this.internalValue && !isValidJson(this.internalValue)) {
