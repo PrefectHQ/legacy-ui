@@ -8,7 +8,7 @@ query TableFlowRunsCount(
     where: {
       flow: { flow_group_id: { _eq: $flow_group_id }, id: { _eq: $flow_id } }
       name: { _ilike: $name }
-      state: { _in: $state, _neq: "Scheduled" }
+      state: { _in: $state }
     }
   ) {
     aggregate {
