@@ -37,6 +37,12 @@ import TransitionHeight from '@/components/Functional/Transition-Height'
 import TruncatedSpan from '@/components/Functional/TruncatedSpan'
 import GetCloud from '@/components/GetCloud'
 
+// Code syntax highlighting
+import VueHighlightJS from 'vue-highlight.js'
+import json from 'highlight.js/lib/languages/json'
+import yaml from 'highlight.js/lib/languages/yaml'
+import '@/styles/atelier-sulphurpool-light.scss'
+
 // Prefect icon font
 import '@/assets/fonts/prefect-icons/style.scss'
 
@@ -68,18 +74,25 @@ Vue.use(VueMeta, {
   debounceWait: 500
 })
 
+Vue.use(VueHighlightJS, {
+  languages: {
+    json,
+    yaml
+  }
+})
+
 Vue.prototype.$globalApolloQueries = {}
 
 // Vue Global Error Handler
-Vue.config.errorHandler = function(error, vm, trace) {
-  if (error?.message?.includes("Cannot read property '_observe' of null"))
-    return
-  if (process.env.NODE_ENV === 'development')
-    // eslint-disable-next-line no-console
-    console.log('Vue Global Error Handler', { error, vm, trace })
-  LogRocket.captureException(error)
-  LogRocket.log('Related to error', vm, error)
-}
+// Vue.config.errorHandler = function(error, vm, trace) {
+//   if (error?.message?.includes("Cannot read property '_observe' of null"))
+//     return
+//   if (process.env.NODE_ENV === 'development')
+//     // eslint-disable-next-line no-console
+//     console.log('Vue Global Error Handler', { error, vm, trace })
+//   LogRocket.captureException(error)
+//   LogRocket.log('Related to error', vm, error)
+// }
 
 Vue.config.warnHandler = function(error, vm, trace) {
   if (error?.message?.includes("Cannot read property '_observe' of null"))
