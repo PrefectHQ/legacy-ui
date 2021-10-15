@@ -167,7 +167,7 @@ export default {
         This flow run has been scheduled to start as soon as possible.
       </span>
       <span v-else-if="isLateRun">
-        You cannot start late runs
+        Flow run already scheduled to start.
       </span>
       <span v-else>
         Start this flow run immediately
