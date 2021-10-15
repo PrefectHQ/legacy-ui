@@ -4,7 +4,7 @@
       v-model="internalValue"
       :error-messages="inputErrors"
       outlined
-      @blur="format"
+      @blur="handleBlur"
     >
       <template #message="{message}">
         <p style="white-space: pre-line">
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import YAML from 'yaml'
+import { formatYaml, getYamlErrors } from '@/utils/yamlUtility'
 
 export default {
   props: {
@@ -49,29 +49,15 @@ export default {
       return this.yamlErrors.length == 0
     },
     yamlErrors() {
-      if (!this.internalValue) {
-        return []
-      }
-
-      try {
-        YAML.parse(this.internalValue)
-        return []
-      } catch (e) {
-        return [e.toString().trim()]
-      }
+      return getYamlErrors(this.internalValue)
     }
   },
   methods: {
-    format() {
-      if (!this.internalValue) {
-        return null
-      }
+    handleBlur() {
+      const formatted = formatYaml(this.internalValue)
 
-      try {
-        const yaml = YAML.parse(this.internalValue)
-        this.internalValue = YAML.stringify(yaml)
-      } catch {
-        return
+      if (formatted != null) {
+        this.internalValue = formatted
       }
     }
   }

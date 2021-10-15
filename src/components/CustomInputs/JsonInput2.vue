@@ -14,17 +14,14 @@
 </template>
 
 <script>
+import { formatJson, isValidJson } from '@/utils/jsonUtility'
+
 export default {
   props: {
     value: {
       type: String,
       required: false,
       default: null
-    }
-  },
-  data() {
-    return {
-      tabSpaces: 4
     }
   },
   computed: {
@@ -37,28 +34,19 @@ export default {
       }
     },
     inputErrors() {
-      if (!this.isValid) {
+      if (this.internalValue && !isValidJson(this.internalValue)) {
         return ['There is a syntax error in your JSON.']
       }
 
       return []
-    },
-    isValid() {
-      try {
-        JSON.parse(this.internalValue)
-        return true
-      } catch (e) {
-        return false
-      }
     }
   },
   methods: {
     handleBlur() {
-      try {
-        const json = JSON.parse(this.internalValue)
-        this.internalValue = JSON.stringify(json, null, this.tabSpaces)
-      } catch {
-        return
+      const formatted = formatJson(this.internalValue)
+
+      if (formatted != null) {
+        this.internalValue = formatted
       }
     }
   }
