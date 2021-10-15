@@ -1,9 +1,8 @@
 <template>
   <div>
     <v-textarea
-      ref="vTextArea"
       v-model="internalValue"
-      :error-messages="inputErrors"
+      :error-messages="errors"
       outlined
       @blur="handleBlur"
     />
@@ -14,12 +13,12 @@
 </template>
 
 <script>
-import { parseJson, formatJson, isValidJson } from '@/utils/json'
+import { formatJson, getJsonErrors } from '@/utils/json'
 
 export default {
   props: {
     value: {
-      type: [String, Object, Array],
+      type: String,
       required: false,
       default: null
     }
@@ -27,25 +26,14 @@ export default {
   computed: {
     internalValue: {
       get() {
-        if (this.valueIsObject) {
-          return formatJson(this.value)
-        }
-
         return this.value
       },
       set(value) {
-        this.$emit('input', this.valueIsObject ? parseJson(value) : value)
+        this.$emit('input', value)
       }
     },
-    valueIsObject() {
-      return this.value != null && typeof this.value === 'object'
-    },
-    inputErrors() {
-      if (this.internalValue && !isValidJson(this.internalValue)) {
-        return ['There is a syntax error in your JSON.']
-      }
-
-      return []
+    errors() {
+      return getJsonErrors(this.internalValue)
     }
   },
   methods: {

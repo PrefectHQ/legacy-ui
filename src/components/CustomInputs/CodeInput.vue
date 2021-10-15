@@ -1,6 +1,11 @@
 <template>
   <div>
-    <v-btn-toggle v-if="languages.length > 1" :value="mode" @change="setMode">
+    <v-btn-toggle
+      v-if="languages.length > 1"
+      :value="mode"
+      mandatory
+      @change="setMode"
+    >
       <v-btn
         v-for="language in languages"
         :key="language"
@@ -25,7 +30,7 @@ import { parseYaml, formatYaml } from '@/utils/yaml'
 export default {
   props: {
     value: {
-      type: [String, Object, Array],
+      type: String,
       required: false,
       default: null
     },
@@ -57,9 +62,6 @@ export default {
         this.$emit('input', value)
       }
     },
-    shouldFormatValueToString() {
-      return typeof this.value === 'string'
-    },
     editorComponent() {
       return this.editors[this.mode]
     }
@@ -69,14 +71,10 @@ export default {
   },
   methods: {
     setMode(mode) {
-      const value = this.tryGetValueObject()
+      const value = this.tryGetValueObject(this.internalValue)
+      console.log(value, this.formatValueToString(value))
 
-      if (value != null) {
-        this.internalValue = this.shouldFormatValueToString
-          ? this.formatValueToString(mode, value)
-          : value
-      }
-
+      this.internalValue = this.formatValueToString(mode, value)
       this.mode = mode
     },
     formatValueToString(mode, value) {
@@ -85,23 +83,12 @@ export default {
           return formatYaml(value)
         case 'json':
           return formatJson(value)
-        default:
+        case 'dict':
           return formatJson(value)
       }
     },
-    tryGetValueObject() {
-      try {
-        switch (this.mode) {
-          case 'yaml':
-            return parseYaml(this.internalValue)
-          case 'json':
-            return parseJson(this.internalValue)
-          default:
-            return parseJson(this.internalValue)
-        }
-      } catch {
-        return null
-      }
+    tryGetValueObject(value) {
+      return parseYaml(value) ?? parseJson(value)
     }
   }
 }

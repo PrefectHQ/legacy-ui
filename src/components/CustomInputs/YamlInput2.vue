@@ -2,7 +2,7 @@
   <div>
     <v-textarea
       v-model="internalValue"
-      :error-messages="inputErrors"
+      :error-messages="errors"
       outlined
       @blur="handleBlur"
     >
@@ -19,12 +19,12 @@
 </template>
 
 <script>
-import { parseYaml, formatYaml, getYamlErrors } from '@/utils/yaml'
+import { formatYaml, getYamlErrors } from '@/utils/yaml'
 
 export default {
   props: {
     value: {
-      type: [String, Object, Array],
+      type: String,
       required: false,
       default: null
     }
@@ -32,30 +32,13 @@ export default {
   computed: {
     internalValue: {
       get() {
-        if (this.valueIsObject) {
-          return formatYaml(this.value)
-        }
-
         return this.value
       },
       set(value) {
-        this.$emit('input', this.valueIsObject ? parseYaml(value) : value)
+        this.$emit('input', value)
       }
     },
-    valueIsObject() {
-      return this.value != null && typeof this.value === 'object'
-    },
-    inputErrors() {
-      if (!this.isValid) {
-        return this.yamlErrors
-      }
-
-      return []
-    },
-    isValid() {
-      return this.yamlErrors.length == 0
-    },
-    yamlErrors() {
+    errors() {
       return getYamlErrors(this.internalValue)
     }
   },

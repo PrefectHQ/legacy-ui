@@ -21,15 +21,19 @@ export function parseJson(value) {
   }
 }
 
-export function isValidJson(value) {
+export function getJsonErrors(value) {
   if (!value) {
-    return null
+    return []
   }
 
   try {
     JSON.parse(value)
-    return true
+    return []
   } catch (e) {
-    return false
+    return [e.toString()]
   }
+}
+
+export function isValidJson(value) {
+  return getJsonErrors(value).length === 0
 }

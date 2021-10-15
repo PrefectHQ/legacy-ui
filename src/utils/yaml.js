@@ -32,7 +32,7 @@ export function getYamlErrors(value) {
     YAML.parse(value)
     return []
   } catch (e) {
-    return [e.toString().trim()]
+    return [e.toString()]
   }
 }
 
