@@ -79,6 +79,11 @@ export default {
   computed: {
     clockToAdd() {
       return this.advanced ? `${this.advancedType}Model` : 'simpleModel'
+    },
+    createOrSave() {
+      return Object.keys(this.clock ? this.clock : {})?.length === 0
+        ? 'Create'
+        : 'Save'
     }
   },
   methods: {
@@ -237,7 +242,7 @@ export default {
         :disabled="!valid"
         @click.stop="confirm"
       >
-        Create
+        {{ createOrSave }}
       </v-btn>
     </div>
   </v-container>
