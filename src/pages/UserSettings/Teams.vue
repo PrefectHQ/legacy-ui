@@ -47,8 +47,8 @@ export default {
         ...this.pendingInvitations
       ]
     },
-    isCurrentTenant() {
-      return this.removeTenant.name == this.tenant.name
+    isLastTenant() {
+      return this.tenants.length === 1
     }
   },
   methods: {
@@ -296,7 +296,7 @@ export default {
           "
           :dialog-props="{ 'max-width': '600' }"
           :disabled="
-            (isCurrentTenant && confirmInput !== tenant.slug) || isRemovingUser
+            (isLastTenant && confirmInput !== tenant.slug) || isRemovingUser
           "
           :loading="isRemovingUser"
           @confirm="removeUser(removeTenant)"
@@ -307,7 +307,7 @@ export default {
               >You'll no longer be able to access your run data associated with
               {{ removeTenant.name }}.</div
             >
-            <div class="mt-2" v-show="isCurrentTenant">
+            <div class="mt-2" v-show="isLastTenant">
               <div class="deepRed--text text-subtitle-1 font-weight-medium">
                 This is the last team you are part of. If you remove it you will
                 not be able to log back in to Prefect Cloud.
