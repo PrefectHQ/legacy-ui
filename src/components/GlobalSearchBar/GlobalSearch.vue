@@ -45,6 +45,7 @@ export default {
       return `%${this.input.trim()}%`
     },
     entries() {
+      console.log('this.results', this.results, this.results.length)
       return this.results
     }
   },
@@ -102,6 +103,7 @@ export default {
       }
     },
     handleSearch(input) {
+      console.log('input', input)
       // We set the input prop to null if the input
       // string is empty, to bring back up the searchbox hint
       this.input = input == '' ? null : input
@@ -126,6 +128,7 @@ export default {
       // If that's the case, we start an id query and
       // pause the name query.
       if (this.isSearchForID) {
+        console.log('is id')
         this.startQuery('id')
         this.$apollo.queries.nameQuery.skip = true
       }
@@ -189,6 +192,7 @@ export default {
       this.$apollo.queries[`${ref}Query`].refetch()
     },
     processResult(data, loading) {
+      console.log('process', data)
       this.isLoading = loading
       // Returning if GraphQL is loading the query still
       // leads to a better UX since the search results
@@ -203,14 +207,17 @@ export default {
             .map(e => e[1].map(e1 => (e1 ? { ...e1 } : [])))
             .flat()
         : []
+      console.log('res', this.results)
     },
     searchFilter(item, queryText) {
+      console.log('in fliter', item, queryText)
       // This is the filter we use to determine what the VAutocomplete
       // method is showing. We transform all queries to lowercase
       // for comparison for a better UX
       return (
         item['id'].toLowerCase().includes(queryText.toLowerCase()) ||
-        item['name'].toLowerCase().includes(queryText.toLowerCase())
+        item['name'].toLowerCase().includes(queryText.toLowerCase()) ||
+        item['flow_id'].toLowerCase().includes(queryText.toLowerCase())
       )
     }
   },
@@ -224,6 +231,7 @@ export default {
         return { id: this.id }
       },
       result({ data, loading }) {
+        console.log('data in apollo', data)
         this.processResult(data, loading)
       },
       skip: true
@@ -285,7 +293,7 @@ export default {
           closeOnContentClick: false,
           closeOnClick: false
         }"
-        :items="entries"
+        :items="results"
         :loading="isLoading ? 'green accent-3' : false"
         :search-input.sync="search"
         :filter="searchFilter"
