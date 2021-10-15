@@ -8,6 +8,8 @@
 
 ### Bugfixes
 
+- Filter by scheduled runs in the Flow runs table - [#1079](https://github.com/PrefectHQ/ui/pull/1079)
+
 - When editing a schedule, update the action button to "Save" - [#1083](https://github.com/PrefectHQ/ui/pull/1083)
 - Fixed issue discovered on 1066 where missing tabs caused wrong tab content to display - [#1081](https://github.com/PrefectHQ/ui/pull/1081)
 - Update command on getting start agent section - [#1076](https://github.com/PrefectHQ/ui/pull/1076)
