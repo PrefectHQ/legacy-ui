@@ -19,12 +19,12 @@
 </template>
 
 <script>
-import { formatYaml, getYamlErrors } from '@/utils/yamlUtility'
+import { parseYaml, formatYaml, getYamlErrors } from '@/utils/yaml'
 
 export default {
   props: {
     value: {
-      type: String,
+      type: [String, Object, Array],
       required: false,
       default: null
     }
@@ -32,9 +32,17 @@ export default {
   computed: {
     internalValue: {
       get() {
+        if (typeof this.value === 'object') {
+          return formatYaml(this.value)
+        }
+
         return this.value
       },
       set(value) {
+        if (typeof this.value === 'object') {
+          this.$emit('input', parseYaml(value))
+        }
+
         this.$emit('input', value)
       }
     },

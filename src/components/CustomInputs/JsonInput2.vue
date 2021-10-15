@@ -14,12 +14,12 @@
 </template>
 
 <script>
-import { formatJson, isValidJson } from '@/utils/jsonUtility'
+import { parseJson, formatJson, isValidJson } from '@/utils/json'
 
 export default {
   props: {
     value: {
-      type: String,
+      type: [String, Object, Array],
       required: false,
       default: null
     }
@@ -27,9 +27,17 @@ export default {
   computed: {
     internalValue: {
       get() {
+        if (typeof this.value === 'object') {
+          return formatJson(this.value)
+        }
+
         return this.value
       },
       set(value) {
+        if (typeof this.value === 'object') {
+          this.$emit('input', parseJson(value))
+        }
+
         this.$emit('input', value)
       }
     },
