@@ -23,8 +23,8 @@
 import JsonInput2 from '@/components/CustomInputs/JsonInput2'
 import YamlInput2 from '@/components/CustomInputs/YamlInput2'
 import DictInput2 from '@/components/CustomInputs/DictInput2'
-import { parseJson, formatJson } from '@/utils/jsonUtility'
-import { parseYaml, formatYaml } from '@/utils/yamlUtility'
+import { parseJson, formatJson } from '@/utils/json'
+import { parseYaml, formatYaml } from '@/utils/yaml'
 
 export default {
   props: {
