@@ -22,10 +22,10 @@ export default {
   },
   data() {
     const tabs = {
-      overview: 0,
-      parameters: 1,
-      context: 2,
-      run_config: 3
+      overview: 'overview',
+      parameters: 'parameters',
+      context: 'context',
+      run_config: 'run_config'
     }
 
     return {
@@ -106,28 +106,28 @@ export default {
       color="primary"
       class="flex-grow-0"
     >
-      <v-tab :key="tabs.overview" data-cy="details-tile-overview">
+      <v-tab :href="`#${tabs.overview}`" data-cy="details-tile-overview">
         Overview
       </v-tab>
       <template v-if="hasParameters">
-        <v-tab :key="tabs.parameters" data-cy="details-tile-parameters">
+        <v-tab :href="`#${tabs.parameters}`" data-cy="details-tile-parameters">
           Parameters
         </v-tab>
       </template>
       <template v-if="hasContext">
-        <v-tab :key="tabs.context" data-cy="details-tile-parameters">
+        <v-tab :href="`#${tabs.context}`" data-cy="details-tile-parameters">
           Context
         </v-tab>
       </template>
       <template v-if="hasRunConfig">
-        <v-tab :key="tabs.run_config" data-cy="details-tile-parameters">
+        <v-tab :href="`#${tabs.run_config}`" data-cy="details-tile-parameters">
           Run Config
         </v-tab>
       </template>
     </v-tabs>
 
     <v-tabs-items v-model="tab" class="flex-grow-1">
-      <v-tab-item :key="tabs.overview">
+      <v-tab-item :value="tabs.overview">
         <v-list>
           <v-list-item v-if="isCloudOrAutoScheduled">
             <v-list-item-content>
@@ -277,17 +277,17 @@ export default {
           <LabelEdit type="flowRun" :flow-run="flowRun" />
         </v-list>
       </v-tab-item>
-      <v-tab-item :key="tabs.parameters">
+      <v-tab-item :value="tabs.parameters">
         <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
           {{ formatJson(flowRunParams) }}
         </div>
       </v-tab-item>
-      <v-tab-item :key="tabs.context">
+      <v-tab-item :value="tabs.context">
         <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
           {{ formatJson(flowRun.context) }}
         </div>
       </v-tab-item>
-      <v-tab-item :key="tabs.run_config">
+      <v-tab-item :value="tabs.run_config">
         <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
           {{ formatJson(flowRun.run_config) }}
         </div>

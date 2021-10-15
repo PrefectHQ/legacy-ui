@@ -694,7 +694,7 @@ export default {
             target="_blank"
             >Events API v2</a
           >
-          integration. Providing a Pager Duty API token is optional.
+          integration. Providing a PagerDuty API token is optional.
         </span>
         <v-row class="mt-2">
           <v-col cols="12" md="4">
