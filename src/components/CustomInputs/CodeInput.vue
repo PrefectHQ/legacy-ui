@@ -22,6 +22,7 @@
 <script>
 import JsonInput2 from '@/components/CustomInputs/JsonInput2'
 import YamlInput2 from '@/components/CustomInputs/YamlInput2'
+import DictInput2 from '@/components/CustomInputs/DictInput2'
 import { parseJson, formatJson } from '@/utils/jsonUtility'
 import { parseYaml, formatYaml } from '@/utils/yamlUtility'
 
@@ -46,7 +47,8 @@ export default {
       mode: null,
       editors: {
         json: JsonInput2,
-        yaml: YamlInput2
+        yaml: YamlInput2,
+        dict: DictInput2
       }
     }
   },
@@ -81,6 +83,8 @@ export default {
           return formatYaml(value)
         case 'json':
           return formatJson(value)
+        default:
+          return value.toString()
       }
     },
     tryGetValueObject() {
@@ -90,6 +94,8 @@ export default {
             return parseJson(this.internalValue)
           case 'yaml':
             return parseYaml(this.internalValue)
+          default:
+            return this.internalValue
         }
       } catch {
         return null
