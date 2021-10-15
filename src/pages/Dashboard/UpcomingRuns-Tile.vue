@@ -259,7 +259,7 @@ export default {
 
     <v-card-text class="pa-0 card-content">
       <v-tabs-items v-model="tab" class="flex-grow-1">
-        <v-tab-item :key="tabs.upcoming">
+        <v-tab-item>
           <v-skeleton-loader v-if="loading" type="list-item-three-line" />
 
           <v-list-item
@@ -341,7 +341,7 @@ export default {
             </v-lazy>
           </v-list>
         </v-tab-item>
-        <v-tab-item :key="tabs.late">
+        <v-tab-item>
           <v-skeleton-loader v-if="loading" type="list-item-three-line" />
 
           <v-list-item v-else-if="lateRuns && lateRuns.length === 0" dense>
