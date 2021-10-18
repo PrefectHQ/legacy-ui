@@ -117,6 +117,7 @@ export default {
       font-family: monospace, monospace;
       font-size: 13px;
       line-height: 13px !important;
+      min-height: 56px;
     }
   }
 

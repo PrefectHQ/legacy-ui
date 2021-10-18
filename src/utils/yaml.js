@@ -6,9 +6,6 @@ export function formatYaml(value) {
   }
 
   try {
-    if (typeof value == 'string') {
-      value = YAML.parse(value)
-    }
     return YAML.stringify(value)
   } catch {
     return null

@@ -4,9 +4,6 @@ export function formatJson(value, tabSpaces = 2) {
   }
 
   try {
-    if (typeof value == 'string') {
-      value = JSON.parse(value)
-    }
     return JSON.stringify(value, null, tabSpaces)
   } catch {
     return null

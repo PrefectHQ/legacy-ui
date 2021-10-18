@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { formatJson, getJsonErrors } from '@/utils/json'
+import { parseJson, formatJson, getJsonErrors } from '@/utils/json'
 
 export default {
   props: {
@@ -43,7 +43,8 @@ export default {
   },
   methods: {
     handleBlur() {
-      const formatted = formatJson(this.internalValue)
+      const objectValue = parseJson(this.internalValue)
+      const formatted = formatJson(objectValue)
 
       if (formatted != null) {
         this.internalValue = formatted

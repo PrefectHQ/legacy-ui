@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { formatYaml, getYamlErrors } from '@/utils/yaml'
+import { parseYaml, formatYaml, getYamlErrors } from '@/utils/yaml'
 
 export default {
   props: {
@@ -48,7 +48,8 @@ export default {
   },
   methods: {
     handleBlur() {
-      const formatted = formatYaml(this.internalValue)
+      const objectValue = parseYaml(this.internalValue)
+      const formatted = formatYaml(objectValue)
 
       if (formatted != null) {
         this.internalValue = formatted
