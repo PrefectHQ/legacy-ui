@@ -77,7 +77,7 @@ const handleSwitchTenant = async tenantId => {
 
   console.connect({
     message: 'handleSwitchTenant',
-    token: state.authorizationToken,
+    tokenExpiration: state.authorizationToken.expires_at || 'No token',
     tenantId: tenantId,
     currentTime: Date.now()
   })
@@ -104,7 +104,7 @@ const setAuthorizationToken = token => {
 
     console.connect({
       message: 'setAuthorizationToken',
-      token: token.expires_at || 'No token',
+      tokenExpiration: token.expires_at || 'No token',
       currentTime: new Date().toString()
     })
     authorizationTimeout = setTimeout(() => {
