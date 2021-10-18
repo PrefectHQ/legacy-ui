@@ -1,14 +1,19 @@
 <template>
-  <div>
+  <div class="code-input">
     <v-textarea
       v-model="internalValue"
+      class="code-input__textarea"
+      spellcheck="false"
       :error-messages="errors"
       outlined
       @blur="handleBlur"
-    />
-    <highlight-code lang="json">
-      {{ internalValue }}
-    </highlight-code>
+    >
+      <template #append>
+        <highlight-code lang="json" class="code-input__preview">
+          {{ internalValue }}
+        </highlight-code>
+      </template>
+    </v-textarea>
   </div>
 </template>
 

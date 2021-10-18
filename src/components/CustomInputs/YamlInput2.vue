@@ -1,20 +1,24 @@
 <template>
-  <div>
+  <div class="code-input">
     <v-textarea
       v-model="internalValue"
+      class="code-input__textarea"
+      spellcheck="false"
       :error-messages="errors"
       outlined
       @blur="handleBlur"
     >
+      <template #append>
+        <highlight-code lang="yaml" class="code-input__preview">
+          {{ internalValue }}
+        </highlight-code>
+      </template>
       <template #message="{message}">
         <p style="white-space: pre-line">
           {{ message }}
         </p>
       </template>
     </v-textarea>
-    <highlight-code lang="yaml">
-      {{ internalValue }}
-    </highlight-code>
   </div>
 </template>
 

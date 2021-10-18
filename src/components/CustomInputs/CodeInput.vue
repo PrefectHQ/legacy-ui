@@ -72,7 +72,6 @@ export default {
   methods: {
     setMode(mode) {
       const value = this.tryGetValueObject(this.internalValue)
-      console.log(value, this.formatValueToString(value))
 
       this.internalValue = this.formatValueToString(mode, value)
       this.mode = mode
@@ -93,3 +92,48 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.code-input {
+  .v-input__append-inner {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    width: 50%;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+
+  .v-input__control {
+    padding: 0;
+  }
+
+  .code-input__textarea .v-text-field__slot {
+    width: 50%;
+    margin-bottom: 4px;
+    flex-grow: 0 !important;
+
+    textarea {
+      font-family: monospace, monospace;
+      font-size: 13px;
+      line-height: 13px !important;
+    }
+  }
+
+  .code-input__preview {
+    color: rgba(0, 0, 0, 0.87);
+    width: 100%;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+
+    code {
+      height: 100%;
+      padding-top: 10px;
+      padding-bottom: 8px;
+      font-family: monospace, monospace;
+      font-size: 13px;
+      line-height: 13px;
+    }
+  }
+}
+</style>
