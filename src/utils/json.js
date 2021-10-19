@@ -1,5 +1,5 @@
 export function formatJson(value, tabSpaces = 2) {
-  if (!value) {
+  if (value == null) {
     return null
   }
 
@@ -19,7 +19,7 @@ export function parseJson(value) {
 }
 
 export function getJsonErrors(value) {
-  if (!value) {
+  if (value == null) {
     return []
   }
 

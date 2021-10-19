@@ -1,7 +1,7 @@
 import YAML from 'yaml'
 
 export function formatYaml(value) {
-  if (!value) {
+  if (value == null) {
     return null
   }
 
@@ -21,7 +21,7 @@ export function parseYaml(value) {
 }
 
 export function getYamlErrors(value) {
-  if (!value) {
+  if (value == null) {
     return []
   }
 

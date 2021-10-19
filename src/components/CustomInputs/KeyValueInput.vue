@@ -2,13 +2,14 @@
   <div class="key-value-input">
     <v-text-field
       ref="keyInput"
-      v-model="internalKey"
+      :value="internalKey"
       label="Key"
       class="key-value-input__key-input"
       :error-messages="keyErrors"
       :disabled="readonly"
       outlined
       dense
+      @input="handleKeyInput"
     />
     <template v-if="showTypes && types && types.length > 0">
       <v-select
@@ -24,13 +25,14 @@
     </template>
     <v-text-field
       ref="valueInput"
-      v-model="internalValue"
+      :value="internalValue"
       label="Value"
       class="key-value-input__value-input"
       :error-messages="valueErrors"
       outlined
       dense
       @keydown.tab="$emit('tab', $event)"
+      @input="handleValueInput"
     />
   </div>
 </template>
@@ -66,7 +68,9 @@ export default {
   },
   data() {
     return {
-      showErrors: false
+      keyErrors: [],
+      typeErrors: [],
+      valueErrors: []
     }
   },
   computed: {
@@ -120,48 +124,21 @@ export default {
     singleTypeMode() {
       return this.types?.length === 1
     },
-    keyIsEmpty() {
-      return this.internalKey == null || this.internalKey.length == 0
-    },
-    keyErrors() {
-      if (this.showErrors && this.keyIsEmpty) {
-        return ['Key is required']
-      }
-
-      return []
-    },
     valueCanBeEmpty() {
       return this.isTypeAcceptable('null') || this.isTypeAcceptable('string')
-    },
-    valueIsEmpty() {
-      const json = formatJson(this.internalValue)
-
-      return json == null || json.length == 0
-    },
-    valueErrors() {
-      if (this.showErrors && this.valueIsEmpty && !this.valueCanBeEmpty) {
-        return ['Value is required']
-      }
-
-      if (
-        this.showErrors &&
-        this.singleTypeMode &&
-        this.tryDiscoveringType(this.internalValue) != this.types[0]
-      ) {
-        return ['Value does not match expected type']
-      }
-
-      return []
-    },
-    typeErrors() {
-      if (this.showErrors && this.internalType == null) {
-        return ['Type is required']
-      }
-
-      return []
     }
   },
   methods: {
+    handleKeyInput(value) {
+      if (this.validateKey(value)) {
+        this.internalKey = value
+      }
+    },
+    handleValueInput(value) {
+      if (this.validateValue(value)) {
+        this.internalValue = value
+      }
+    },
     isTypeAcceptable(type) {
       return this.types == null || this.types.includes(type)
     },
@@ -215,19 +192,71 @@ export default {
       this.$refs.keyInput.focus()
       this.showErrors = false
     },
-    trySetDefaultValue() {
-      if (this.internalValue != null || this.isTypeAcceptable('null')) {
-        return
+    isEmpty(value) {
+      const json = formatJson(value)
+
+      return json == null || json.length == 0
+    },
+    getAcceptableDefaultValue() {
+      if (this.isTypeAcceptable('null')) {
+        return null
       }
 
       if (this.isTypeAcceptable('string')) {
-        this.internalValue = ''
+        return ''
       }
+    },
+    getKeyErrors(value) {
+      if (value == null || value.length == 0) {
+        return ['Key is required']
+      }
+
+      return []
+    },
+    getTypeErrors(value) {
+      if (value == null) {
+        return ['Type is required']
+      }
+
+      return []
+    },
+    getValueErrors(value) {
+      if (this.isEmpty(value) && !this.valueCanBeEmpty) {
+        return ['Value is required']
+      }
+
+      if (
+        this.singleTypeMode &&
+        this.tryDiscoveringType(value) != this.types[0]
+      ) {
+        return [`Value does not match expected type (${this.types[0]})`]
+      }
+
+      return []
+    },
+    validateKey(value) {
+      this.keyErrors = this.getKeyErrors(value ?? this.internalKey)
+
+      return this.keyErrors.length == 0
+    },
+    validateType(value) {
+      this.typeErrors = this.getTypeErrors(value ?? this.internalType)
+
+      return this.typeErrors.length == 0
+    },
+    validateValue(value) {
+      this.valueErrors = this.getValueErrors(
+        value ?? this.internalValue ?? this.getAcceptableDefaultValue()
+      )
+
+      return this.valueErrors.length == 0
     },
     validate() {
       this.showErrors = true
 
-      this.trySetDefaultValue()
+      this.validateKey()
+      this.validateType()
+      this.validateValue()
 
       return (
         this.keyErrors.length == 0 &&
@@ -251,5 +280,10 @@ export default {
 
 .key-value-input__type-input {
   flex-basis: 0;
+}
+
+.key-value-input__value-input {
+  flex-basis: 0;
+  flex-grow: 2;
 }
 </style>
