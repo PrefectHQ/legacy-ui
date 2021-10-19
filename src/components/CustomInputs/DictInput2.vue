@@ -5,8 +5,13 @@
       :key="entry.key"
       class="dict-input__row"
     >
-      <key-value-input :value="entry" @input="setEntryAtIndex(index, $event)" />
+      <key-value-input
+        :value="entry"
+        :readonly="readonly"
+        @input="setEntryAtIndex(index, $event)"
+      />
       <v-btn
+        v-if="!readonly"
         class="dict-input__remove"
         x-smll
         icon
@@ -15,7 +20,7 @@
         <v-icon color="red">remove_circle</v-icon>
       </v-btn>
     </div>
-    <div class="dict-input__row">
+    <div v-if="!readonly" class="dict-input__row dict-input__row-last">
       <key-value-input
         ref="newPropertyForm"
         v-model="newProperty"
@@ -42,10 +47,10 @@ export default {
       required: false,
       default: null
     },
-    readonlyKeys: {
+    readonly: {
       type: Boolean,
       required: false,
-      default: false
+      default: true
     }
   },
   data() {
@@ -153,7 +158,7 @@ export default {
   display: flex;
 }
 
-.dict-input__row:last-of-type:not(:focus-within) {
+.dict-input__row-last:not(:focus-within) {
   opacity: 0.5;
 }
 

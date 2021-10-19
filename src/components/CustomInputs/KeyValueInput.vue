@@ -5,6 +5,7 @@
       v-model="internalKey"
       class="key-value-input__key-input"
       :error-messages="keyErrors"
+      :disabled="readonly"
       outlined
       dense
     >
@@ -41,6 +42,11 @@ export default {
       type: Object,
       required: false,
       default: null
+    },
+    readonly: {
+      type: Boolean,
+      required: false,
+      default: false
     }
     // coerced-type (current)? user selects type?
   },
