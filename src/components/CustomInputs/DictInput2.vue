@@ -2,7 +2,7 @@
   <div class="dict-input">
     <div
       v-for="(entry, index) in arrayValue"
-      :key="entry[keyLabel]"
+      :key="entry.key"
       class="dict-input__row"
     >
       <key-value-input :value="entry" @input="setEntryAtIndex(index, $event)" />
@@ -42,15 +42,10 @@ export default {
       required: false,
       default: null
     },
-    keyLabel: {
-      type: String,
+    readonlyKeys: {
+      type: Boolean,
       required: false,
-      default: 'key'
-    },
-    valueLabel: {
-      type: String,
-      required: false,
-      default: 'value'
+      default: false
     }
   },
   data() {
@@ -92,7 +87,7 @@ export default {
   },
   methods: {
     resetNewProperty() {
-      this.newProperty = { [this.keyLabel]: null, [this.valueLabel]: null }
+      this.newProperty = { key: null, value: null }
     },
     handleTab(event) {
       if (this.tryAddNewProperty()) {
@@ -130,8 +125,8 @@ export default {
       }
 
       return Object.entries(value).map(([key, value]) => ({
-        [this.keyLabel]: key,
-        [this.valueLabel]: value
+        key,
+        value
       }))
     },
     convertArrayToValue(array) {
@@ -144,7 +139,7 @@ export default {
       }
 
       return array.reduce((objectValue, entry) => {
-        objectValue[entry[this.keyLabel]] = entry[this.valueLabel]
+        objectValue[entry.key] = entry.value
 
         return objectValue
       }, {})
@@ -156,6 +151,10 @@ export default {
 <style lang="scss">
 .dict-input__row {
   display: flex;
+}
+
+.dict-input__row:last-of-type:not(:focus-within) {
+  opacity: 0.5;
 }
 
 .key-value-input {

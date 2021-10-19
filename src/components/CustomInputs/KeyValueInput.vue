@@ -3,7 +3,6 @@
     <v-text-field
       ref="keyInput"
       v-model="internalKey"
-      label="keyLabel"
       class="key-value-input__key-input"
       :error-messages="keyErrors"
       outlined
@@ -18,7 +17,6 @@
     <v-text-field
       ref="valueInput"
       v-model="internalValue"
-      label="valueLabel"
       class="key-value-input__value-input"
       :error-messages="valueErrors"
       outlined
@@ -43,18 +41,8 @@ export default {
       type: Object,
       required: false,
       default: null
-    },
-    // coerced-type (current)? user selects type?
-    keyLabel: {
-      type: String,
-      required: false,
-      default: 'key'
-    },
-    valueLabel: {
-      type: String,
-      required: false,
-      default: 'value'
     }
+    // coerced-type (current)? user selects type?
   },
   data() {
     return {
@@ -68,10 +56,10 @@ export default {
           return null
         }
 
-        return this.value[this.keyLabel]
+        return this.value.key
       },
       set(value) {
-        this.$emit('input', { ...this.value, [this.keyLabel]: value })
+        this.$emit('input', { ...this.value, key: value })
       }
     },
     internalValue: {
@@ -80,7 +68,7 @@ export default {
           return null
         }
 
-        const internalValue = this.value[this.valueLabel]
+        const internalValue = this.value.value
 
         if (typeof internalValue === 'object') {
           return formatJson(internalValue, 0)
@@ -92,10 +80,10 @@ export default {
         if (isValidJson(value)) {
           this.$emit('input', {
             ...this.value,
-            [this.valueLabel]: parseJson(value)
+            value: parseJson(value)
           })
         } else {
-          this.$emit('input', { ...this.value, [this.valueLabel]: value })
+          this.$emit('input', { ...this.value, value: value })
         }
       }
     },
