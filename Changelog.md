@@ -9,6 +9,7 @@
 
 ### Bugfixes
 
+- Disable start run button for late flow runs -[#1087](https://github.com/PrefectHQ/ui/pull/1087)
 - Filter by scheduled runs in the Flow runs table - [#1079](https://github.com/PrefectHQ/ui/pull/1079)
 
 - When editing a schedule, update the action button to "Save" - [#1083](https://github.com/PrefectHQ/ui/pull/1083)
