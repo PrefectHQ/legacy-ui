@@ -3,38 +3,41 @@
     <v-text-field
       ref="keyInput"
       v-model="internalKey"
+      label="Key"
       class="key-value-input__key-input"
       :error-messages="keyErrors"
       :disabled="readonly"
       outlined
       dense
-    >
-      <template #label>
-        <slot name="key-label">
-          Key
-        </slot>
-      </template>
-    </v-text-field>
+    />
+    <template v-if="showTypes && types && types.length > 0">
+      <v-select
+        v-model="internalType"
+        :items="types"
+        label="Type"
+        class="key-value-input__type-input"
+        :error-messages="typeErrors"
+        :disabled="readonly"
+        outlined
+        dense
+      />
+    </template>
     <v-text-field
       ref="valueInput"
       v-model="internalValue"
+      label="Value"
       class="key-value-input__value-input"
       :error-messages="valueErrors"
       outlined
       dense
-      @keydown.tab="handleTab"
-    >
-      <template #label>
-        <slot name="value-label">
-          Value
-        </slot>
-      </template>
-    </v-text-field>
+      @keydown.tab="$emit('tab', $event)"
+    />
   </div>
 </template>
 
 <script>
 import { parseJson, formatJson, isValidJson } from '@/utils/json'
+import { isIsoDateString } from '@/utils/dateTime'
 
 export default {
   props: {
@@ -47,8 +50,30 @@ export default {
       type: Boolean,
       required: false,
       default: false
+    },
+    showTypes: {
+      type: Boolean,
+      required: false,
+      default: true
+    },
+    types: {
+      type: Array,
+      required: false,
+      default: null,
+      validator: value =>
+        value.length === 0 ||
+        value.every(type =>
+          [
+            'null',
+            'boolean',
+            'number',
+            'string',
+            'object',
+            'array',
+            'date'
+          ].includes(type)
+        )
     }
-    // coerced-type (current)? user selects type?
   },
   data() {
     return {
@@ -58,11 +83,7 @@ export default {
   computed: {
     internalKey: {
       get() {
-        if (!this.value) {
-          return null
-        }
-
-        return this.value.key
+        return this.value?.key
       },
       set(value) {
         this.$emit('input', { ...this.value, key: value })
@@ -70,11 +91,7 @@ export default {
     },
     internalValue: {
       get() {
-        if (!this.value) {
-          return null
-        }
-
-        const internalValue = this.value.value
+        const internalValue = this.value?.value
 
         if (typeof internalValue === 'object') {
           return formatJson(internalValue, 0)
@@ -93,51 +110,131 @@ export default {
         }
       }
     },
+    internalType: {
+      get() {
+        const type = this.tryDiscoveringType(this.internalValue)
+
+        if (this.isTypeAcceptable(type)) {
+          return type
+        }
+
+        return null
+      },
+      set(value) {
+        const current = this.tryConvertingStringToType(this.internalValue)
+        const converted = this.isTypeAcceptable(value)
+          ? this.coerceType(current, value)
+          : null
+
+        this.$emit('input', { ...this.value, value: converted })
+      }
+    },
+    keyIsEmpty() {
+      return this.internalKey == null || this.internalKey.length == 0
+    },
     keyErrors() {
-      if (this.showErrors && this.isEmpty(this.internalKey)) {
+      if (this.showErrors && this.keyIsEmpty) {
         return ['Key is required']
       }
 
       return []
     },
+    valueCanBeEmpty() {
+      return this.isTypeAcceptable('null') || this.isTypeAcceptable('string')
+    },
+    valueIsEmpty() {
+      const json = formatJson(this.internalValue)
+
+      return json == null || json.length == 0
+    },
     valueErrors() {
-      if (this.showErrors && this.isEmpty(this.internalValue)) {
+      if (this.showErrors && this.valueIsEmpty && !this.valueCanBeEmpty) {
         return ['Value is required']
+      }
+
+      return []
+    },
+    typeErrors() {
+      if (this.showErrors && this.internalType == null) {
+        return ['Type is required']
       }
 
       return []
     }
   },
   methods: {
-    handleTab(event) {
-      this.$emit('tab', event)
+    isTypeAcceptable(type) {
+      return this.types == null || this.types.includes(type)
     },
-    getLength(value) {
-      switch (typeof value) {
+    tryConvertingStringToType(value) {
+      const converted = isValidJson(value) ? parseJson(value) : value
+
+      return converted
+    },
+    tryDiscoveringType(value) {
+      const converted = isValidJson(value) ? parseJson(value) : value
+
+      return this.discoverType(converted)
+    },
+    discoverType(value) {
+      if (value === null) {
+        return 'null'
+      }
+
+      const type = typeof value
+      if (type == 'object' && value instanceof Array) {
+        return 'array'
+      }
+      if (type == 'object' && value instanceof Date) {
+        return 'date'
+      }
+      if (type == 'string' && isIsoDateString(value)) {
+        return 'date'
+      }
+
+      return type
+    },
+    coerceType(value, type) {
+      switch (type) {
+        case 'null':
+          return null
+        case 'boolean':
+          return Boolean(value)
+        case 'number':
+          return isNaN(value) ? 0 : Number(value)
         case 'string':
-          return value.length
+          return String(value)
+        case 'array':
+          return [value]
+        case 'date':
+          return new Date(value)
         case 'object':
-          return Array.isArray(value) ? value.length : Object.keys(value).length
+          return { key: value }
       }
-    },
-    isEmpty(value) {
-      if (value == null) {
-        return true
-      }
-
-      if (this.getLength(value) === 0) {
-        return true
-      }
-
-      return false
     },
     focus() {
       this.$refs.keyInput.focus()
       this.showErrors = false
     },
+    trySetDefaultValue() {
+      if (this.internalValue != null || this.isTypeAcceptable('null')) {
+        return
+      }
+
+      if (this.isTypeAcceptable('string')) {
+        this.internalValue = ''
+      }
+    },
     validate() {
       this.showErrors = true
-      return this.keyErrors.length == 0 && this.valueErrors == 0
+
+      this.trySetDefaultValue()
+
+      return (
+        this.keyErrors.length == 0 &&
+        this.typeErrors.length == 0 &&
+        this.valueErrors.length == 0
+      )
     }
   }
 }
@@ -150,6 +247,10 @@ export default {
 }
 
 .key-value-input__key-input {
+  flex-basis: 0;
+}
+
+.key-value-input__type-input {
   flex-basis: 0;
 }
 </style>

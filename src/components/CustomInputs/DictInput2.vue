@@ -8,6 +8,8 @@
       <key-value-input
         :value="entry"
         :readonly="readonly"
+        :show-types="showTypes"
+        :types="types"
         @input="setEntryAtIndex(index, $event)"
       />
       <v-btn
@@ -24,6 +26,8 @@
       <key-value-input
         ref="newPropertyForm"
         v-model="newProperty"
+        :show-types="showTypes"
+        :types="types"
         @tab="handleTab"
       />
       <v-btn class="dict-input__remove" x-smll icon @click="tryAddNewProperty">
@@ -51,6 +55,29 @@ export default {
       type: Boolean,
       required: false,
       default: false
+    },
+    showTypes: {
+      type: Boolean,
+      required: false,
+      default: true
+    },
+    types: {
+      type: Array,
+      required: false,
+      default: () => ['boolean', 'number', 'object', 'array', 'date'],
+      validator: value =>
+        value.length === 0 ||
+        value.every(type =>
+          [
+            'null',
+            'boolean',
+            'number',
+            'string',
+            'object',
+            'array',
+            'date'
+          ].includes(type)
+        )
     }
   },
   data() {
@@ -89,6 +116,9 @@ export default {
   },
   created() {
     this.resetNewProperty()
+  },
+  beforeDestroy() {
+    this.tryAddNewProperty()
   },
   methods: {
     resetNewProperty() {
