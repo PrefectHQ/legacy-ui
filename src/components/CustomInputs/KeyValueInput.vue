@@ -38,6 +38,7 @@
 <script>
 import { parseJson, formatJson, isValidJson } from '@/utils/json'
 import { isIsoDateString } from '@/utils/dateTime'
+import { types, isValidType } from '@/utils/types'
 
 export default {
   props: {
@@ -54,25 +55,13 @@ export default {
     showTypes: {
       type: Boolean,
       required: false,
-      default: true
+      default: false
     },
     types: {
       type: Array,
       required: false,
-      default: null,
-      validator: value =>
-        value.length === 0 ||
-        value.every(type =>
-          [
-            'null',
-            'boolean',
-            'number',
-            'string',
-            'object',
-            'array',
-            'date'
-          ].includes(type)
-        )
+      default: () => types,
+      validator: value => value.every(isValidType)
     }
   },
   data() {

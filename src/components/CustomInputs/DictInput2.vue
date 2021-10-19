@@ -38,8 +38,9 @@
 </template>
 
 <script>
-import { parseJson, formatJson } from '@/utils/json'
 import KeyValueInput from '@/components/CustomInputs/KeyValueInput'
+import { parseJson, formatJson } from '@/utils/json'
+import { types, isValidType } from '@/utils/types'
 
 export default {
   components: {
@@ -59,25 +60,13 @@ export default {
     showTypes: {
       type: Boolean,
       required: false,
-      default: true
+      default: false
     },
     types: {
       type: Array,
       required: false,
-      default: null,
-      validator: value =>
-        value.length === 0 ||
-        value.every(type =>
-          [
-            'null',
-            'boolean',
-            'number',
-            'string',
-            'object',
-            'array',
-            'date'
-          ].includes(type)
-        )
+      default: () => types,
+      validator: value => value.every(isValidType)
     }
   },
   data() {
