@@ -17,7 +17,11 @@
         {{ language }}
       </v-btn>
     </v-btn-toggle>
-    <component :is="editorComponent" v-model="internalValue" />
+    <component
+      :is="editorComponent"
+      v-model="internalValue"
+      :readonly="readonly"
+    />
   </div>
 </template>
 
@@ -34,6 +38,11 @@ export default {
       type: String,
       required: false,
       default: null
+    },
+    readonly: {
+      type: Boolean,
+      required: false,
+      default: false
     },
     languages: {
       type: Array,

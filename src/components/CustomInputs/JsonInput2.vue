@@ -6,6 +6,7 @@
       spellcheck="false"
       rows="8"
       :error-messages="errors"
+      :disabled="readonly"
       outlined
       @blur="handleBlur"
     >
@@ -27,6 +28,11 @@ export default {
       type: String,
       required: false,
       default: null
+    },
+    readonly: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   computed: {

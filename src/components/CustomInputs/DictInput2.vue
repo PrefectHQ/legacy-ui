@@ -50,7 +50,7 @@ export default {
     readonly: {
       type: Boolean,
       required: false,
-      default: true
+      default: false
     }
   },
   data() {
