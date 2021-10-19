@@ -4,9 +4,9 @@
       v-model="internalValue"
       class="json-input__textarea"
       spellcheck="false"
-      rows="8"
       :error-messages="errors"
       :disabled="readonly"
+      auto-grow
       outlined
       @blur="handleBlur"
     >
@@ -69,8 +69,8 @@ export default {
     padding: 0;
     width: 50%;
     right: 0;
-    top: 0;
-    bottom: 0;
+    top: 2px;
+    bottom: 2px;
   }
 
   .v-input__control {
@@ -87,6 +87,8 @@ export default {
       font-size: 13px;
       line-height: 13px !important;
       min-height: 56px;
+      resize: vertical;
+      overflow-y: auto;
     }
   }
 
