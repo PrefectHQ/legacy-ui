@@ -5,7 +5,7 @@
     :get-errors="getJsonErrors"
     :format="formatJson"
     :parse="parseJson"
-    language="JSON"
+    language="json"
   />
 </template>
 

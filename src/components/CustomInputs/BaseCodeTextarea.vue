@@ -11,13 +11,14 @@
       @blur="handleBlur"
     >
       <template #append>
-        <highlight-code
-          lang="yaml"
-          class="base-code-textarea__preview"
-          style="{styles.preview}"
-        >
+        <highlight-code lang="yaml" class="base-code-textarea__preview">
           {{ internalValue }}
         </highlight-code>
+        <span
+          class="base-code-textarea__language"
+          :class="`base-code-textarea__language-${language}`"
+          >{{ language }}</span
+        >
       </template>
       <template #message="{message}">
         <p style="white-space: pre-line">
@@ -44,7 +45,7 @@ export default {
     language: {
       type: String,
       required: true,
-      validator: value => ['json', 'yaml', 'dict'].includes(value)
+      validator: value => ['json', 'yaml'].includes(value)
     },
     getErrors: {
       type: Function,
@@ -70,13 +71,6 @@ export default {
     },
     errors() {
       return this.getErrors(this.internalValue)
-    },
-    styles() {
-      return {
-        preview: {
-          '--language-name': this.language
-        }
-      }
     }
   },
   methods: {
@@ -136,14 +130,21 @@ export default {
       font-size: 13px;
       line-height: 13px;
     }
+  }
 
-    &::after {
-      content: var(--language-name);
-      color: rgba(255, 152, 0, 0.35);
-      position: absolute;
-      bottom: 5px;
-      right: 5px;
-    }
+  .base-code-textarea__language {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    text-transform: uppercase;
+  }
+
+  .base-code-textarea__language-json {
+    color: rgba(76, 175, 80, 0.35);
+  }
+
+  .base-code-textarea__language-yaml {
+    color: rgba(255, 152, 0, 0.35);
   }
 }
 </style>

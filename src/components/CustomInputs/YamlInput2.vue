@@ -5,7 +5,7 @@
     :get-errors="getYamlErrors"
     :format="formatYaml"
     :parse="parseYaml"
-    language="YAML"
+    language="yaml"
   />
 </template>
 
