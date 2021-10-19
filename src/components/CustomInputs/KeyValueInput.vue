@@ -1,9 +1,11 @@
 <template>
   <div class="key-value-input">
     <v-text-field
+      ref="keyInput"
       v-model="internalKey"
       label="keyLabel"
       class="key-value-input__key-input"
+      :error-messages="keyErrors"
       outlined
       dense
     >
@@ -14,11 +16,14 @@
       </template>
     </v-text-field>
     <v-text-field
+      ref="valueInput"
       v-model="internalValue"
       label="valueLabel"
       class="key-value-input__value-input"
+      :error-messages="valueErrors"
       outlined
       dense
+      @keydown.tab="handleTab"
     >
       <template #label>
         <slot name="value-label">
@@ -49,6 +54,11 @@ export default {
       type: String,
       required: false,
       default: 'value'
+    }
+  },
+  data() {
+    return {
+      showErrors: false
     }
   },
   computed: {
@@ -88,6 +98,52 @@ export default {
           this.$emit('input', { ...this.value, [this.valueLabel]: value })
         }
       }
+    },
+    keyErrors() {
+      if (this.showErrors && this.isEmpty(this.internalKey)) {
+        return ['Key is required']
+      }
+
+      return []
+    },
+    valueErrors() {
+      if (this.showErrors && this.isEmpty(this.internalValue)) {
+        return ['Value is required']
+      }
+
+      return []
+    }
+  },
+  methods: {
+    handleTab(event) {
+      this.$emit('tab', event)
+    },
+    getLength(value) {
+      switch (typeof value) {
+        case 'string':
+          return value.length
+        case 'object':
+          return Array.isArray(value) ? value.length : Object.keys(value).length
+      }
+    },
+    isEmpty(value) {
+      if (value == null) {
+        return true
+      }
+
+      if (this.getLength(value) === 0) {
+        return true
+      }
+
+      return false
+    },
+    focus() {
+      this.$refs.keyInput.focus()
+      this.showErrors = false
+    },
+    validate() {
+      this.showErrors = true
+      return this.keyErrors.length == 0 && this.valueErrors == 0
     }
   }
 }
