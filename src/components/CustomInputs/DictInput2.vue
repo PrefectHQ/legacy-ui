@@ -64,7 +64,7 @@ export default {
     types: {
       type: Array,
       required: false,
-      default: () => ['boolean', 'number', 'object', 'array', 'date'],
+      default: null,
       validator: value =>
         value.length === 0 ||
         value.every(type =>

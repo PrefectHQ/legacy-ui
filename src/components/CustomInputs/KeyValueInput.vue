@@ -17,7 +17,7 @@
         label="Type"
         class="key-value-input__type-input"
         :error-messages="typeErrors"
-        :disabled="readonly"
+        :disabled="singleTypeMode"
         outlined
         dense
       />
@@ -100,18 +100,17 @@ export default {
         return internalValue
       },
       set(value) {
-        if (isValidJson(value)) {
-          this.$emit('input', {
-            ...this.value,
-            value: parseJson(value)
-          })
-        } else {
-          this.$emit('input', { ...this.value, value: value })
-        }
+        const converted = this.tryConvertingFromJson(value)
+
+        this.$emit('input', { ...this.value, value: converted })
       }
     },
     internalType: {
       get() {
+        if (this.singleTypeMode) {
+          return this.types[0]
+        }
+
         const type = this.tryDiscoveringType(this.internalValue)
 
         if (this.isTypeAcceptable(type)) {
@@ -121,13 +120,16 @@ export default {
         return null
       },
       set(value) {
-        const current = this.tryConvertingStringToType(this.internalValue)
+        const current = this.tryConvertingFromJson(this.internalValue)
         const converted = this.isTypeAcceptable(value)
           ? this.coerceType(current, value)
           : null
 
         this.$emit('input', { ...this.value, value: converted })
       }
+    },
+    singleTypeMode() {
+      return this.types?.length === 1
     },
     keyIsEmpty() {
       return this.internalKey == null || this.internalKey.length == 0
@@ -152,6 +154,14 @@ export default {
         return ['Value is required']
       }
 
+      if (
+        this.showErrors &&
+        this.singleTypeMode &&
+        this.tryDiscoveringType(this.internalValue) != this.types[0]
+      ) {
+        return ['Value does not match expected type']
+      }
+
       return []
     },
     typeErrors() {
@@ -166,13 +176,13 @@ export default {
     isTypeAcceptable(type) {
       return this.types == null || this.types.includes(type)
     },
-    tryConvertingStringToType(value) {
+    tryConvertingFromJson(value) {
       const converted = isValidJson(value) ? parseJson(value) : value
 
       return converted
     },
     tryDiscoveringType(value) {
-      const converted = isValidJson(value) ? parseJson(value) : value
+      const converted = this.tryConvertingFromJson(value)
 
       return this.discoverType(converted)
     },
