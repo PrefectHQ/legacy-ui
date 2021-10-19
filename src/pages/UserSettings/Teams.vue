@@ -48,7 +48,7 @@ export default {
       ]
     },
     isLastTenant() {
-      return this.tenants.length === 1
+      return this.tenants?.length === 1
     }
   },
   methods: {
