@@ -222,6 +222,20 @@ export default {
 
         <v-list-item
           :disabled="!isCloud"
+          :to="{ name: 'actions', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+        >
+          <v-list-item-action>
+            <i class="fad fa-random" style="width: 24px; height: 24px;"></i>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Automation Actions</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          :disabled="!isCloud"
           :to="{ name: 'secrets', params: { tenant: tenant.slug } }"
           ripple
           exact

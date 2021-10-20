@@ -1,0 +1,8 @@
+query pagerdutyactions ($includeIds: [uuid!]) {
+   actions: action (where: {id: {_in: $includeIds}}) {
+    action_type
+    action_config
+    id
+    name
+  }
+}

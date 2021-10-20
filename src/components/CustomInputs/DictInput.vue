@@ -48,6 +48,11 @@ export default {
       type: Array,
       required: false,
       default: () => []
+    },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
@@ -247,6 +252,7 @@ export default {
       </v-btn>
 
       <v-switch
+        v-if="!disabled"
         v-model="json"
         inset
         label="JSON"
@@ -289,6 +295,7 @@ export default {
               class="text-body-1"
               hide-details
               outlined
+              :disabled="disabled"
               dense
               :placeholder="keyLabel"
               :readonly="disabledKeys.includes(keys[i])"
@@ -300,6 +307,7 @@ export default {
               v-model="values[i]"
               class="text-body-1"
               hide-details
+              :disabled="disabled"
               outlined
               dense
               :placeholder="

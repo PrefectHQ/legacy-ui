@@ -102,6 +102,20 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
+        <v-list-item :to="'/team/actions'">
+          <v-list-item-avatar>
+            <span class="auto-icon">
+              <i class="fad fa-random" style="width: 24px; height: 24px;"></i>
+            </span>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title>Automation Actions</v-list-item-title>
+            <v-list-item-subtitle>
+              View and manage automation actions
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
         <v-list-item :disabled="!isCloud" :to="'/team/members'">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-users fa-2x" />
@@ -233,6 +247,11 @@ $dark-blue-icon: var(--v-primaryDark-base);
 }
 
 .fa-abacus {
+  --fa-primary-color: #{$dark-grey-icon};
+  --fa-secondary-color: #{$dark-blue-icon};
+}
+
+.fa-random {
   --fa-primary-color: #{$dark-grey-icon};
   --fa-secondary-color: #{$dark-blue-icon};
 }

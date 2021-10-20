@@ -1,0 +1,8 @@
+query actions {
+   actions: action {
+    action_type
+    action_config
+    id
+    name
+  }
+}
