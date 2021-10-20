@@ -61,6 +61,7 @@ export default {
     },
     allDefaultParameters() {
       if (!this.defaultParameters) {
+        console.log(true)
         return {}
       }
       const paramObj = this.defaultParameters.reduce(
@@ -91,27 +92,28 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     async createClock(val) {
-      let isNew = false
-      this.loading = true
-      if (this.selectedClock > -1) {
-        this.clocks[this.selectedClock] = {
-          ...this.clocks[this.selectedClock],
-          ...val
-        }
+      console.log('SHCEDULE VAL: ', val)
+      // let isNew = false
+      // this.loading = true
+      // if (this.selectedClock > -1) {
+      //   this.clocks[this.selectedClock] = {
+      //     ...this.clocks[this.selectedClock],
+      //     ...val
+      //   }
 
-        let shifted = [...this.clocks]
-        shifted.unshift(shifted.splice(this.selectedClock, 1)[0])
+      //   let shifted = [...this.clocks]
+      //   shifted.unshift(shifted.splice(this.selectedClock, 1)[0])
 
-        this.clocks = shifted
-      } else {
-        isNew = true
-        this.clocks.push({ ...val, scheduleType: 'flow-group' })
-        this.clocks = this.clocks.reverse()
-      }
+      //   this.clocks = shifted
+      // } else {
+      //   isNew = true
+      //   this.clocks.push({ ...val, scheduleType: 'flow-group' })
+      //   this.clocks = this.clocks.reverse()
+      // }
 
-      await this.modifySchedules({ new: isNew })
-      this.selectedClock = null
-      this.loading = false
+      // await this.modifySchedules({ new: isNew })
+      // this.selectedClock = null
+      // this.loading = false
     },
     async deleteClock() {
       this.loading = true
@@ -338,7 +340,23 @@ export default {
                   <v-tab>Parameters</v-tab>
                 </v-tabs>
 
-                <div v-show="selectedTab === 0">
+                <ClockForm
+                  :flow-group-clocks="flowGroupClocks"
+                  :timezone="
+                    this.timezone ||
+                      Intl.DateTimeFormat().resolvedOptions().timeZone
+                  "
+                  :selected-tab="selectedTab"
+                  :param="
+                    checkDefualtParameters(allDefaultParameters)
+                      ? allDefaultParameters
+                      : []
+                  "
+                  @cancel="selectedClock = null"
+                  @confirm="createClock"
+                />
+
+                <!-- <div v-show="selectedTab === 0">
                   <ClockForm
                     :flow-group-clocks="flowGroupClocks"
                     :param="parameter"
@@ -375,7 +393,7 @@ export default {
                     <span class="font-weight-bold">{{ flow.name }}</span>
                     has no default parameters.
                   </div>
-                </div>
+                </div> -->
               </div>
               <div
                 v-else
