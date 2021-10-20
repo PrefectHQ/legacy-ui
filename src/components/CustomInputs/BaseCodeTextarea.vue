@@ -113,6 +113,7 @@ export default {
       font-size: 13px;
       line-height: 13px !important;
       min-height: 56px;
+      overflow-y: auto;
       resize: vertical;
     }
   }

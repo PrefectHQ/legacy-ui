@@ -56,7 +56,6 @@ export default {
         return this.value
       },
       set(value) {
-        console.log('emitting from argument.vue')
         this.$emit('input', value)
       }
     }

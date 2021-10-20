@@ -15,7 +15,6 @@ import BaseDictInput from '@/components/CustomInputs/BaseDictInput'
 import { convertValueToArray } from '@/utils/array'
 import { parseJson, formatJson } from '@/utils/json'
 import { types, isValidType } from '@/utils/types'
-import { alphabeticallyByKey } from '@/utils/sort'
 
 export default {
   name: 'DictInput',
@@ -69,9 +68,7 @@ export default {
     },
     arrayValue: {
       get() {
-        return convertValueToArray(this.objectValue).sort((a, b) =>
-          alphabeticallyByKey(a, b, 'key')
-        )
+        return convertValueToArray(this.objectValue)
       },
       set(value) {
         this.objectValue = this.convertArrayToValue(value)
@@ -94,12 +91,12 @@ export default {
         return objectValue
       }, {})
     },
-    handleAdd({ key, value }) {
-      this.arrayValue = [...this.arrayValue, { key, value }]
+    handleAdd(entry) {
+      this.arrayValue = [...this.arrayValue, entry]
     },
-    handleUpdate({ key, value }) {
+    handleUpdate([entry, previous]) {
       this.arrayValue = [
-        ...this.arrayValue.map(x => (x.key == key ? { key, value } : x))
+        ...this.arrayValue.map(x => (x.key == previous.key ? entry : x))
       ]
     },
     handleRemove({ key }) {

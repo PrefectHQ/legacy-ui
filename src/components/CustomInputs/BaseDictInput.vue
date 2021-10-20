@@ -16,7 +16,7 @@
       <slot name="after-existing" :entry="entry" />
       <v-btn
         v-if="!readonly"
-        class="base-dict-input__remove"
+        class="base-dict-input__action"
         x-small
         icon
         @click="$emit('remove', entry)"
@@ -38,7 +38,7 @@
       />
       <slot name="after-new" :entry="newProperty">
         <v-btn
-          class="base-dict-input__remove"
+          class="base-dict-input__action"
           x-small
           icon
           @click="tryAddNewProperty"
@@ -129,7 +129,8 @@ export default {
   flex-grow: 1;
 }
 
-.base-dict-input__remove {
+.base-dict-input__action {
   flex-grow: 0;
+  margin-top: 8px;
 }
 </style>
