@@ -4,11 +4,38 @@
 
 ### Features and Improvements
 
-- None
+- Add warning that users will be locked out if not part of a team - [#1078](https://github.com/PrefectHQ/ui/pull/1078)
+- Update the PagerDuty logo to match new branding - [#1073](https://github.com/PrefectHQ/ui/pull/1073)
 
 ### Bugfixes
 
 - Internal: update CircleCI config slack orb (add `@` to mentions) - [#1053](https://github.com/PrefectHQ/ui/pull/1053)
+- Disable start run button for late flow runs -[#1087](https://github.com/PrefectHQ/ui/pull/1087)
+- Filter by scheduled runs in the Flow runs table - [#1079](https://github.com/PrefectHQ/ui/pull/1079)
+- When editing a schedule, update the action button to "Save" - [#1083](https://github.com/PrefectHQ/ui/pull/1083)
+- Fixed issue discovered on 1066 where missing tabs caused wrong tab content to display - [#1081](https://github.com/PrefectHQ/ui/pull/1081)
+- Update command on getting start agent section - [#1076](https://github.com/PrefectHQ/ui/pull/1076)
+
+## 2021-10-06
+
+### Bugfixes
+
+- Fix bug where overview tile would not show on the Flow detail page - [#1074](https://github.com/PrefectHQ/ui/pull/1074)
+
+## 2021-10-05
+
+### Features and Improvements
+
+- Remove requirement to add an API Secret for PagerDuty - [#1065](https://github.com/PrefectHQ/ui/pull/1065)
+- Updated experience of "tabs" on all tiles from buttons next to the title to standard v-tabs - [#1064](https://github.com/PrefectHQ/ui/pull/1064)
+
+### Bugfixes
+
+- Fix member invitation bug - [#1062](https://github.com/PrefectHQ/ui/pull/1062)
+- Fixed [#1056](https://github.com/PrefectHQ/ui/issues/1056) with improvements above - [#1064](https://github.com/PrefectHQ/ui/pull/1064)
+- Submittable/Upcoming Runs Tiles would automatically switch tabs when user explicitly set the tab they want to view - [#1064](https://github.com/PrefectHQ/ui/pull/1064)
+- Loading indicator was not showing up for Submittable Runs Tile - [#1064](https://github.com/PrefectHQ/ui/pull/1064)
+- Loading indicator was showing whenever there was no upcoming runs for Upcoming Runs Tile - [#1064](https://github.com/PrefectHQ/ui/pull/1064)
 
 ## 2021-09-20
 
