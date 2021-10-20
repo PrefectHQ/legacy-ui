@@ -43,6 +43,7 @@ import { parseJson, formatJson } from '@/utils/json'
 import { types, isValidType } from '@/utils/types'
 
 export default {
+  name: 'DictInput',
   components: {
     KeyValueInput
   },

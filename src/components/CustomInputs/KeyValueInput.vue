@@ -43,6 +43,7 @@ import { isIsoDateString } from '@/utils/dateTime'
 import { types, isValidType } from '@/utils/types'
 
 export default {
+  name: 'KeyValueInput',
   props: {
     value: {
       type: Object,

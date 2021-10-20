@@ -33,6 +33,7 @@ import { parseJson, formatJson } from '@/utils/json'
 import { parseYaml, formatYaml } from '@/utils/yaml'
 
 export default {
+  name: 'CodeInput',
   props: {
     value: {
       type: String,

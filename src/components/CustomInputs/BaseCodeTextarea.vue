@@ -31,6 +31,7 @@
 
 <script>
 export default {
+  name: 'BaseCodeTextarea',
   props: {
     value: {
       type: String,

@@ -14,6 +14,7 @@ import BaseCodeTextarea from '@/components/CustomInputs/BaseCodeTextarea'
 import { parseYaml, formatYaml, getYamlErrors } from '@/utils/yaml'
 
 export default {
+  name: 'YamlInput',
   components: {
     BaseCodeTextarea
   },

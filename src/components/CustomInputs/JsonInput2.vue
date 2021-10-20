@@ -14,6 +14,7 @@ import BaseCodeTextarea from '@/components/CustomInputs/BaseCodeTextarea'
 import { parseJson, formatJson, getJsonErrors } from '@/utils/json'
 
 export default {
+  name: 'JsonInput',
   components: {
     BaseCodeTextarea
   },
