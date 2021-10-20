@@ -1,44 +1,18 @@
 <template>
-  <div class="dict-input">
-    <div
-      v-for="(entry, index) in arrayValue"
-      :key="entry.key"
-      class="dict-input__row"
-    >
-      <key-value-input
-        :value="entry"
-        :readonly="readonly"
-        :show-types="showTypes"
-        :types="types"
-        @input="setEntryAtIndex(index, $event)"
-      />
-      <v-btn
-        v-if="!readonly"
-        class="dict-input__remove"
-        x-smll
-        icon
-        @click="setEntryAtIndex(index)"
-      >
-        <v-icon color="red">remove_circle</v-icon>
-      </v-btn>
-    </div>
-    <div v-if="!readonly" class="dict-input__row dict-input__row-last">
-      <key-value-input
-        ref="newPropertyForm"
-        v-model="newProperty"
-        :show-types="showTypes"
-        :types="types"
-        @tab="handleTab"
-      />
-      <v-btn class="dict-input__remove" x-smll icon @click="tryAddNewProperty">
-        <v-icon color="green">add_circle</v-icon>
-      </v-btn>
-    </div>
-  </div>
+  <base-dict-input
+    :entries="arrayValue"
+    :readonly="readonly"
+    :show-types="showTypes"
+    :types="types"
+    @add="handleAdd"
+    @update="handleUpdate"
+    @remove="handleRemove"
+  />
 </template>
 
 <script>
-import KeyValueInput from '@/components/CustomInputs/KeyValueInput'
+import BaseDictInput from '@/components/CustomInputs/BaseDictInput'
+import { convertValueToArray } from '@/utils/array'
 import { parseJson, formatJson } from '@/utils/json'
 import { types, isValidType } from '@/utils/types'
 import { alphabeticallyByKey } from '@/utils/sort'
@@ -46,7 +20,7 @@ import { alphabeticallyByKey } from '@/utils/sort'
 export default {
   name: 'DictInput',
   components: {
-    KeyValueInput
+    BaseDictInput
   },
   props: {
     value: {
@@ -85,9 +59,6 @@ export default {
         this.$emit('input', value)
       }
     },
-    valueIsArray() {
-      return Array.isArray(this.objectValue)
-    },
     objectValue: {
       get() {
         return parseJson(this.internalValue)
@@ -98,7 +69,7 @@ export default {
     },
     arrayValue: {
       get() {
-        return this.convertValueToArray(this.objectValue).sort((a, b) =>
+        return convertValueToArray(this.objectValue).sort((a, b) =>
           alphabeticallyByKey(a, b, 'key')
         )
       },
@@ -107,62 +78,13 @@ export default {
       }
     }
   },
-  created() {
-    this.resetNewProperty()
-  },
-  beforeDestroy() {
-    this.tryAddNewProperty()
-  },
   methods: {
-    resetNewProperty() {
-      this.newProperty = { key: null, value: null }
-    },
-    handleTab(event) {
-      if (this.tryAddNewProperty()) {
-        event.preventDefault()
-      }
-    },
-    tryAddNewProperty() {
-      if (!this.$refs.newPropertyForm.validate()) {
-        return false
-      }
-
-      this.setEntryAtIndex(this.arrayValue.length, this.newProperty)
-      this.resetNewProperty()
-      this.$refs.newPropertyForm.focus()
-      return true
-    },
-    setEntryAtIndex(index, entry) {
-      const newArray = [...this.arrayValue]
-
-      if (entry != null) {
-        newArray.splice(index, 1, entry)
-      } else {
-        newArray.splice(index, 1)
-      }
-
-      this.arrayValue = newArray
-    },
-    convertValueToArray(value) {
-      if (value == null) {
-        return []
-      }
-
-      if (this.valueIsArray) {
-        return value
-      }
-
-      return Object.entries(value).map(([key, value]) => ({
-        key,
-        value
-      }))
-    },
     convertArrayToValue(array) {
       if (array == null) {
         return null
       }
 
-      if (this.valueIsArray) {
+      if (Array.isArray(this.objectValue)) {
         return array
       }
 
@@ -171,25 +93,18 @@ export default {
 
         return objectValue
       }, {})
+    },
+    handleAdd({ key, value }) {
+      this.arrayValue = [...this.arrayValue, { key, value }]
+    },
+    handleUpdate({ key, value }) {
+      this.arrayValue = [
+        ...this.arrayValue.map(x => (x.key == key ? { key, value } : x))
+      ]
+    },
+    handleRemove({ key }) {
+      this.arrayValue = [...this.arrayValue.filter(x => x.key != key)]
     }
   }
 }
 </script>
-
-<style lang="scss">
-.dict-input__row {
-  display: flex;
-}
-
-.dict-input__row-last:not(:focus-within) {
-  opacity: 0.5;
-}
-
-.key-value-input {
-  flex-grow: 1;
-}
-
-.dict-input__remove {
-  flex-grow: 0;
-}
-</style>

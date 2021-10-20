@@ -20,3 +20,18 @@ export function shuffle(inputArray) {
 
   return array
 }
+
+export function convertValueToArray(value) {
+  if (value == null) {
+    return []
+  }
+
+  if (Array.isArray(value)) {
+    return value
+  }
+
+  return Object.entries(value).map(([key, value]) => ({
+    key,
+    value
+  }))
+}
