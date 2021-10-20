@@ -13,6 +13,7 @@
 - When editing a schedule, update the action button to "Save" - [#1083](https://github.com/PrefectHQ/ui/pull/1083)
 - Fixed issue discovered on 1066 where missing tabs caused wrong tab content to display - [#1081](https://github.com/PrefectHQ/ui/pull/1081)
 - Update command on getting start agent section - [#1076](https://github.com/PrefectHQ/ui/pull/1076)
+- Fix issue where tokens are sent to LogRocket when switching tenants - [#1091](https://github.com/PrefectHQ/ui/pull/1091)
 
 ## 2021-10-06
 
