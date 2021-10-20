@@ -41,6 +41,7 @@
 import KeyValueInput from '@/components/CustomInputs/KeyValueInput'
 import { parseJson, formatJson } from '@/utils/json'
 import { types, isValidType } from '@/utils/types'
+import { alphabeticallyByKey } from '@/utils/sort'
 
 export default {
   name: 'DictInput',
@@ -97,7 +98,9 @@ export default {
     },
     arrayValue: {
       get() {
-        return this.convertValueToArray(this.objectValue)
+        return this.convertValueToArray(this.objectValue).sort((a, b) =>
+          alphabeticallyByKey(a, b, 'key')
+        )
       },
       set(value) {
         this.objectValue = this.convertArrayToValue(value)
