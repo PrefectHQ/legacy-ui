@@ -103,7 +103,7 @@ export default {
         case 'dict':
           return formatJson(value)
         case 'text':
-          return value
+          return formatJson(value)
       }
     },
     tryGetValueObject(value) {

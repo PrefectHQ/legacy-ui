@@ -41,7 +41,8 @@ export default {
   },
   mounted() {
     if (typeof this.value != 'boolean') {
-      this.internalValue = this.value === 1 || this.value === 'true'
+      this.internalValue =
+        this.value === 1 || this.value === 'true' || this.value === '1'
     }
   },
   methods: {

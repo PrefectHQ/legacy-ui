@@ -70,32 +70,11 @@ export default {
     }
   },
   computed: {
-    internalValue: {
-      get() {
-        return this.convertValueToArray(this.value)
-      },
-      set(value) {
-        if (this.isArrayString(this.value)) {
-          this.$emit('input', formatJson(value))
-        }
-
-        this.$emit('input', formatJson(this.convertArrayToObject(value)))
-      }
+    internalValue() {
+      return this.convertValueToArray(this.value)
     },
-    internalEntries: {
-      get() {
-        return this.convertValueToArray(this.entries)
-      },
-      set(value) {
-        if (this.isArrayString(this.entries)) {
-          this.$emit('input', formatJson(value))
-        }
-
-        this.$emit(
-          'update:entries',
-          formatJson(this.convertArrayToObject(value))
-        )
-      }
+    internalEntries() {
+      return this.convertValueToArray(this.entries)
     }
   },
   methods: {
@@ -104,6 +83,24 @@ export default {
     },
     isArrayString(value) {
       return isValidJson(value) && this.isArray(parseJson(value))
+    },
+    emitValueAndEntries(value) {
+      this.emitValue(value)
+      this.emitEntries(value)
+    },
+    emitValue(value) {
+      const jsonValue = this.isArrayString(this.value)
+        ? formatJson(value)
+        : formatJson(this.convertArrayToObject(value))
+
+      this.$emit('input', jsonValue)
+    },
+    emitEntries(value) {
+      const jsonValue = this.isArrayString(this.value)
+        ? formatJson(value)
+        : formatJson(this.convertArrayToObject(value))
+
+      this.$emit('update:entries', jsonValue)
     },
     convertValueToArray(value) {
       if (value == null || !isValidJson(value)) {
@@ -134,46 +131,41 @@ export default {
     entryIsUnchecked({ key }) {
       return this.internalValue.every(x => x.key != key)
     },
-    addChecked(entry) {
-      this.internalValue = [...this.internalValue, entry]
+    addEntry(entry) {
+      this.emitValueAndEntries([...this.internalEntries, entry])
     },
-    updateChecked(key, entry) {
-      this.internalValue = [
-        ...this.internalValue.map(x => (x.key == key ? entry : x))
-      ]
-    },
-    removeFromChecked({ key }) {
-      this.internalValue = [...this.internalValue.filter(x => x.key != key)]
-    },
-    addUnchecked(entry) {
-      this.internalEntries = [...this.internalEntries, entry]
-    },
-    updateUnchecked(key, entry) {
-      this.internalEntries = [
+    updateEntry(key, entry) {
+      this.emitValueAndEntries([
         ...this.internalEntries.map(x => (x.key == key ? entry : x))
-      ]
+      ])
     },
-    removeFromUnchecked({ key }) {
-      this.internalEntries = [...this.internalEntries.filter(x => x.key != key)]
+    removeEntry({ key }) {
+      this.emitValueAndEntries([
+        ...this.internalEntries.filter(x => x.key != key)
+      ])
+    },
+    addToValue(entry) {
+      this.emitValue([...this.internalValue, entry])
+    },
+    removeFromValue({ key }) {
+      this.emitValue([...this.internalValue.filter(x => x.key != key)])
     },
     handleCheck(checked, entry) {
+      console.log('checked', checked, entry)
       if (checked) {
-        this.addChecked(entry)
+        this.addToValue(entry)
       } else {
-        this.removeFromChecked(entry)
+        this.removeFromValue(entry)
       }
     },
     handleAdd(entry) {
-      this.addUnchecked(entry)
-      this.addChecked(entry)
+      this.addEntry(entry)
     },
     handleUpdate([entry, previous]) {
-      this.updateUnchecked(previous.key, entry)
-      this.updateChecked(previous.key, entry)
+      this.updateEntry(previous.key, entry)
     },
     handleRemove(entry) {
-      this.removeFromUnchecked(entry)
-      this.removeFromChecked(entry)
+      this.removeEntry(entry)
     }
   }
 }

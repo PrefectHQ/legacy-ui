@@ -114,6 +114,10 @@ export default {
   },
   methods: {
     trySetInitialSelectedType() {
+      if (this.types?.length === 1) {
+        this.selectedType = this.types[0]
+      }
+
       if (
         !this.showTypes ||
         this.internalKey == null ||
@@ -182,7 +186,7 @@ export default {
       return keyIsValid && typeIsValid
     },
     reset() {
-      this.selectedType = null
+      this.trySetInitialSelectedType()
       this.$emit('input', { value: null, key: null })
     }
   }
