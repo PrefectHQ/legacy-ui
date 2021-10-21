@@ -165,7 +165,9 @@ export default {
       return this.keyErrors.length == 0
     },
     validateType(value) {
-      this.typeErrors = this.getTypeErrors(value)
+      if (this.showTypes) {
+        this.typeErrors = this.getTypeErrors(value)
+      }
 
       return this.typeErrors.length == 0
     },

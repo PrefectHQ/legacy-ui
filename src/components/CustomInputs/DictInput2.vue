@@ -1,6 +1,6 @@
 <template>
   <base-dict-input
-    :entries="arrayValue"
+    :entries="internalValue"
     :readonly="readonly"
     :show-types="showTypes"
     :types="types"
@@ -12,8 +12,7 @@
 
 <script>
 import BaseDictInput from '@/components/CustomInputs/BaseDictInput'
-import { convertValueToArray } from '@/utils/array'
-import { parseJson, formatJson } from '@/utils/json'
+import { isValidJson, parseJson, formatJson } from '@/utils/json'
 import { types, isValidType } from '@/utils/types'
 
 export default {
@@ -44,63 +43,63 @@ export default {
       validator: value => value.every(isValidType)
     }
   },
-  data() {
-    return {
-      newProperty: null
-    }
-  },
   computed: {
     internalValue: {
       get() {
-        return this.value
+        return this.convertValueToArray(this.value)
       },
       set(value) {
-        this.$emit('input', value)
-      }
-    },
-    objectValue: {
-      get() {
-        return parseJson(this.internalValue)
-      },
-      set(value) {
-        this.internalValue = formatJson(value)
-      }
-    },
-    arrayValue: {
-      get() {
-        return convertValueToArray(this.objectValue)
-      },
-      set(value) {
-        this.objectValue = this.convertArrayToValue(value)
+        if (this.isArrayString(this.value)) {
+          this.$emit('input', formatJson(value))
+        }
+
+        this.$emit('input', formatJson(this.convertArrayToObject(value)))
       }
     }
   },
   methods: {
-    convertArrayToValue(array) {
-      if (array == null) {
-        return null
+    isArray(value) {
+      return typeof value === 'object' && Array.isArray(value)
+    },
+    isArrayString(value) {
+      return isValidJson(value) && this.isArray(parseJson(value))
+    },
+    convertValueToArray(value) {
+      if (value == null || !isValidJson(value)) {
+        return []
       }
 
-      if (Array.isArray(this.objectValue)) {
-        return array
+      if (this.isArray(value)) {
+        return value
       }
 
-      return array.reduce((objectValue, entry) => {
-        objectValue[entry.key] = entry.value
+      const objectValue = parseJson(value)
 
+      if (this.isArray(objectValue)) {
         return objectValue
+      }
+
+      const objectEntries = Object.entries(objectValue)
+
+      return objectEntries.map(([key, value]) => ({ key, value }))
+    },
+    convertArrayToObject(array) {
+      return array.reduce((value, entry) => {
+        value[entry.key] = entry.value
+
+        return value
       }, {})
     },
     handleAdd(entry) {
-      this.arrayValue = [...this.arrayValue, entry]
+      this.internalValue = [...this.internalValue, entry]
     },
     handleUpdate([entry, previous]) {
-      this.arrayValue = [
-        ...this.arrayValue.map(x => (x.key == previous.key ? entry : x))
+      this.internalValue = [
+        ...this.internalValue.map(x => (x.key == previous.key ? entry : x))
       ]
     },
     handleRemove({ key }) {
-      this.arrayValue = [...this.arrayValue.filter(x => x.key != key)]
+      this.internalValue = [...this.internalValue.filter(x => x.key != key)]
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <base-dict-input
-    :entries="combinedValue"
+    :entries="internalEntries"
     :readonly="readonly"
     :show-types="showTypes"
     :types="types"
@@ -9,11 +9,11 @@
     @update="handleUpdate"
     @remove="handleRemove"
   >
-    <template #before-existing="{entry}">
+    <template #before-existing="{entry, index}">
       <v-checkbox
-        :input-value="arrayValue.some(x => x.key == entry.key)"
+        :input-value="internalValue.some(x => x.key == entry.key)"
         class="checkbox-dict-input__checkbox"
-        @change="handleCheck($event, entry)"
+        @change="handleCheck($event, entry, index)"
       />
     </template>
     <template #before-new>
@@ -28,10 +28,8 @@
 
 <script>
 import BaseDictInput from '@/components/CustomInputs/BaseDictInput'
-import { convertValueToArray } from '@/utils/array'
-import { parseJson, formatJson } from '@/utils/json'
+import { isValidJson, parseJson, formatJson } from '@/utils/json'
 import { types, isValidType } from '@/utils/types'
-import { alphabeticallyByKey } from '@/utils/sort'
 
 export default {
   name: 'CheckboxDictInput',
@@ -40,6 +38,11 @@ export default {
   },
   props: {
     value: {
+      type: String,
+      required: false,
+      default: null
+    },
+    entries: {
       type: String,
       required: false,
       default: null
@@ -63,110 +66,114 @@ export default {
   },
   data() {
     return {
-      newProperty: null,
-      uncheckedEntries: []
+      newProperty: null
     }
   },
   computed: {
     internalValue: {
       get() {
-        return this.value
+        return this.convertValueToArray(this.value)
       },
       set(value) {
-        this.$emit('input', value)
+        if (this.isArrayString(this.value)) {
+          this.$emit('input', formatJson(value))
+        }
+
+        this.$emit('input', formatJson(this.convertArrayToObject(value)))
       }
     },
-    objectValue: {
+    internalEntries: {
       get() {
-        return parseJson(this.internalValue)
+        return this.convertValueToArray(this.entries)
       },
       set(value) {
-        this.internalValue = formatJson(value)
+        if (this.isArrayString(this.entries)) {
+          this.$emit('input', formatJson(value))
+        }
+
+        this.$emit(
+          'update:entries',
+          formatJson(this.convertArrayToObject(value))
+        )
       }
-    },
-    arrayValue: {
-      get() {
-        return convertValueToArray(this.objectValue)
-      },
-      set(value) {
-        this.objectValue = this.convertArrayToValue(value)
-      }
-    },
-    combinedValue() {
-      return [...this.arrayValue, ...this.uncheckedEntries].sort((a, b) =>
-        alphabeticallyByKey(a, b, 'key')
-      )
     }
   },
   methods: {
-    convertArrayToValue(array) {
-      if (array == null) {
-        return null
+    isArray(value) {
+      return typeof value === 'object' && Array.isArray(value)
+    },
+    isArrayString(value) {
+      return isValidJson(value) && this.isArray(parseJson(value))
+    },
+    convertValueToArray(value) {
+      if (value == null || !isValidJson(value)) {
+        return []
       }
 
-      if (Array.isArray(this.objectValue)) {
-        return array
+      if (this.isArray(value)) {
+        return value
       }
 
-      return array.reduce((objectValue, entry) => {
-        objectValue[entry.key] = entry.value
+      const objectValue = parseJson(value)
 
+      if (this.isArray(objectValue)) {
         return objectValue
+      }
+
+      const objectEntries = Object.entries(objectValue)
+
+      return objectEntries.map(([key, value]) => ({ key, value }))
+    },
+    convertArrayToObject(array) {
+      return array.reduce((value, entry) => {
+        value[entry.key] = entry.value
+
+        return value
       }, {})
     },
     entryIsUnchecked({ key }) {
-      return this.uncheckedEntries.some(x => x.key == key)
+      return this.internalValue.every(x => x.key != key)
     },
     addChecked(entry) {
-      this.arrayValue = [...this.arrayValue, entry]
+      this.internalValue = [...this.internalValue, entry]
     },
     updateChecked(key, entry) {
-      this.arrayValue = [
-        ...this.arrayValue.map(x => (x.key == key ? entry : x))
+      this.internalValue = [
+        ...this.internalValue.map(x => (x.key == key ? entry : x))
       ]
     },
     removeFromChecked({ key }) {
-      this.arrayValue = [...this.arrayValue.filter(x => x.key != key)]
+      this.internalValue = [...this.internalValue.filter(x => x.key != key)]
     },
     addUnchecked(entry) {
-      this.uncheckedEntries = [...this.uncheckedEntries, entry]
+      this.internalEntries = [...this.internalEntries, entry]
     },
     updateUnchecked(key, entry) {
-      this.uncheckedEntries = [
-        ...this.uncheckedEntries.map(x => (x.key == key ? entry : x))
+      this.internalEntries = [
+        ...this.internalEntries.map(x => (x.key == key ? entry : x))
       ]
     },
     removeFromUnchecked({ key }) {
-      this.uncheckedEntries = [
-        ...this.uncheckedEntries.filter(x => x.key != key)
-      ]
+      this.internalEntries = [...this.internalEntries.filter(x => x.key != key)]
     },
     handleCheck(checked, entry) {
       if (checked) {
-        this.removeFromUnchecked(entry)
         this.addChecked(entry)
       } else {
         this.removeFromChecked(entry)
-        this.addUnchecked(entry)
       }
     },
     handleAdd(entry) {
-      this.removeFromUnchecked(entry)
+      this.addUnchecked(entry)
       this.addChecked(entry)
     },
     handleUpdate([entry, previous]) {
-      if (this.entryIsUnchecked(previous)) {
-        this.updateUnchecked(previous.key, entry)
-      } else {
-        this.updateChecked(previous.key, entry)
-      }
+      this.updateUnchecked(previous.key, entry)
+      this.updateChecked(previous.key, entry)
     },
     handleRemove(entry) {
-      if (this.entryIsUnchecked(entry)) {
-        this.removeFromUnchecked(entry)
-      } else {
-        this.removeFromChecked(entry)
-      }
+      this.removeFromUnchecked(entry)
+      this.removeFromChecked(entry)
     }
   }
 }
