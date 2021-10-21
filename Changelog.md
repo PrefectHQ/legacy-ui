@@ -7,7 +7,7 @@
 - Update the PagerDuty logo to match new branding - [#1073](https://github.com/PrefectHQ/ui/pull/1073)
 
 ### Bugfixes
-
+- Adds a try/catch block when deleting a membership in the removeUser method - [#1094](https://github.com/PrefectHQ/ui/pull/1094)
 - Disable start run button for late flow runs -[#1087](https://github.com/PrefectHQ/ui/pull/1087)
 - Filter by scheduled runs in the Flow runs table - [#1079](https://github.com/PrefectHQ/ui/pull/1079)
 
