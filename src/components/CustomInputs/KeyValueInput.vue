@@ -114,7 +114,11 @@ export default {
   },
   methods: {
     trySetInitialSelectedType() {
-      if (this.internalKey == null || this.selectedType != null) {
+      if (
+        !this.showTypes ||
+        this.internalKey == null ||
+        this.selectedType != null
+      ) {
         return
       }
 
