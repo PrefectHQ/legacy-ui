@@ -18,9 +18,9 @@
       </v-btn>
     </v-btn-toggle>
     <component
-      :is="editorComponent"
+      :is="editors[mode]"
       v-model="internalValue"
-      :readonly="readonly"
+      v-bind="editorProps[mode]"
     />
   </div>
 </template>
@@ -29,6 +29,7 @@
 import JsonInput2 from '@/components/CustomInputs/JsonInput2'
 import YamlInput2 from '@/components/CustomInputs/YamlInput2'
 import DictInput2 from '@/components/CustomInputs/DictInput2'
+import Textarea from 'vuetify/lib/components/VTextarea'
 import { parseJson, formatJson } from '@/utils/json'
 import { parseYaml, formatYaml } from '@/utils/yaml'
 
@@ -48,10 +49,10 @@ export default {
     languages: {
       type: Array,
       required: false,
-      default: () => ['json'],
+      default: () => ['dict', 'json'],
       validator: value =>
         value.length > 0 &&
-        value.every(lang => ['json', 'yaml', 'dict'].includes(lang))
+        value.every(lang => ['json', 'yaml', 'dict', 'text'].includes(lang))
     }
   },
   data() {
@@ -60,7 +61,8 @@ export default {
       editors: {
         json: JsonInput2,
         yaml: YamlInput2,
-        dict: DictInput2
+        dict: DictInput2,
+        text: Textarea
       }
     }
   },
@@ -73,8 +75,13 @@ export default {
         this.$emit('input', value)
       }
     },
-    editorComponent() {
-      return this.editors[this.mode]
+    editorProps() {
+      return {
+        json: {},
+        yaml: {},
+        dict: { readonly: this.readonly },
+        text: { outlined: true, dense: true }
+      }
     }
   },
   created() {
@@ -95,6 +102,8 @@ export default {
           return formatJson(value)
         case 'dict':
           return formatJson(value)
+        case 'text':
+          return value
       }
     },
     tryGetValueObject(value) {
