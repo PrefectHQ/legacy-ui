@@ -17,7 +17,6 @@
       <v-btn
         v-if="!readonly"
         class="base-dict-input__action"
-        x-small
         icon
         @click="$emit('remove', entry)"
       >
@@ -26,6 +25,7 @@
     </div>
     <div
       v-if="!readonly"
+      ref="newPropertyContainer"
       class="base-dict-input__row base-dict-input__row-last"
     >
       <slot name="before-new" :entry="newProperty" />
@@ -34,15 +34,10 @@
         v-model="newProperty"
         :show-types="showTypes"
         :types="types"
-        @tab="handleTab"
+        @focusout.native="handleFocusout"
       />
       <slot name="after-new" :entry="newProperty">
-        <v-btn
-          class="base-dict-input__action"
-          x-small
-          icon
-          @click="tryAddNewProperty"
-        >
+        <v-btn class="base-dict-input__action" icon @click="tryAddNewProperty">
           <v-icon color="green">add_circle</v-icon>
         </v-btn>
       </slot>
@@ -62,7 +57,7 @@ export default {
   props: {
     entries: {
       type: Array,
-      required: true,
+      required: false,
       default: null
     },
     readonly: {
@@ -84,22 +79,15 @@ export default {
   },
   data() {
     return {
-      newProperty: null
+      newProperty: { key: null, value: null }
     }
   },
-  created() {
-    this.resetNewProperty()
-  },
-  beforeDestroy() {
-    this.tryAddNewProperty()
-  },
   methods: {
-    resetNewProperty() {
-      this.newProperty = { key: null, value: null }
-    },
-    handleTab(event) {
-      if (this.tryAddNewProperty()) {
-        event.preventDefault()
+    handleFocusout(event) {
+      const target = event.relatedTarget
+
+      if (!this.$refs.newPropertyContainer.contains(target)) {
+        this.tryAddNewProperty()
       }
     },
     tryAddNewProperty() {
@@ -108,8 +96,7 @@ export default {
       }
 
       this.$emit('add', this.newProperty)
-      this.resetNewProperty()
-      this.$refs.newPropertyForm.focus()
+      this.$refs.newPropertyForm.reset()
       return true
     }
   }
@@ -131,6 +118,5 @@ export default {
 
 .base-dict-input__action {
   flex-grow: 0;
-  margin-top: 8px;
 }
 </style>
