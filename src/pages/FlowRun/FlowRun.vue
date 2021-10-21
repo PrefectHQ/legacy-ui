@@ -1,4 +1,6 @@
 <script>
+/* eslint-disable */
+
 import { mapActions, mapGetters } from 'vuex'
 
 import Actions from '@/pages/FlowRun/Actions'
@@ -233,13 +235,13 @@ export default {
     <SubPageNav icon="pi-flow-run" page-type="Flow Run">
       <span
         slot="page-title"
-        style="
-        max-width: 100%;
-        min-width: 300px;
-        width: auto;
-        "
         :style="[
-          { display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block' }
+          { display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block' },
+          {
+            width: $vuetify.breakpoint.smAndDown
+              ? flowRun.name.length / 2 + 'ch'
+              : flowRun.name.length / 1.5 + 'ch'
+          }
         ]"
       >
         <EditableTextField
