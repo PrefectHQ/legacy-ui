@@ -1,0 +1,63 @@
+<template>
+  <v-text-field
+    v-model="internalValue"
+    :error-messages="errors"
+    v-bind="{ label: 'Value', outlined: true, dense: true }"
+  />
+</template>
+
+<script>
+export default {
+  name: 'StringInput',
+  props: {
+    value: {
+      type: [String, Number, Boolean, Object, Array],
+      required: false,
+      default: null
+    }
+  },
+  data() {
+    return {
+      errors: []
+    }
+  },
+  computed: {
+    internalValue: {
+      get() {
+        return this.value
+      },
+      set(value) {
+        if (this.validate(value)) {
+          this.$emit('input', value)
+        }
+      }
+    }
+  },
+  mounted() {
+    if (typeof this.value != 'string') {
+      this.internalValue = this.tryCallingToString(this.value) ?? ''
+    }
+  },
+  methods: {
+    tryCallingToString(value) {
+      if (value != null && typeof this.value.toString === 'function') {
+        return value.toString()
+      }
+
+      return null
+    },
+    validate(value) {
+      this.errors = this.getErrors(value)
+
+      return this.errors.length === 0
+    },
+    getErrors(value) {
+      if (value == null) {
+        return ['Value is required']
+      }
+
+      return []
+    }
+  }
+}
+</script>

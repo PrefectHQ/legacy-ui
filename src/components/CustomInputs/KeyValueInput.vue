@@ -1,46 +1,38 @@
 <template>
-  <div class="key-value-input">
+  <fieldset class="key-value-input">
     <v-text-field
-      ref="keyInput"
-      :value="internalKey"
+      v-model="internalKey"
       label="Key"
       class="key-value-input__key-input"
       :error-messages="keyErrors"
       :disabled="readonly"
       outlined
       dense
-      @input="handleKeyInput"
     />
     <template v-if="showTypes && types && types.length > 0">
       <v-select
-        v-model="internalType"
+        v-model="selectedType"
         :items="types"
         label="Type"
         class="key-value-input__type-input"
         :error-messages="typeErrors"
-        :disabled="singleTypeMode"
+        :disabled="types == null || types.length <= 1"
         outlined
         dense
       />
     </template>
-    <v-text-field
-      ref="valueInput"
-      :value="internalValue"
-      label="Value"
+    <component
+      :is="valueComponent"
+      v-model="internalValue"
       class="key-value-input__value-input"
-      :error-messages="valueErrors"
-      outlined
-      dense
-      @keydown.tab="$emit('tab', $event)"
-      @input="handleValueInput"
     />
-  </div>
+  </fieldset>
 </template>
 
 <script>
-import { parseJson, formatJson, isValidJson } from '@/utils/json'
 import { isIsoDateString } from '@/utils/dateTime'
 import { types, isValidType } from '@/utils/types'
+import InputTypes from '@/components/CustomInputs/KeyValueTypeInputs'
 
 export default {
   name: 'KeyValueInput',
@@ -69,9 +61,9 @@ export default {
   },
   data() {
     return {
+      selectedType: null,
       keyErrors: [],
-      typeErrors: [],
-      valueErrors: []
+      typeErrors: []
     }
   },
   computed: {
@@ -80,78 +72,60 @@ export default {
         return this.value?.key
       },
       set(value) {
-        this.$emit('input', { ...this.value, key: value })
+        if (this.validateKey(value)) {
+          this.$emit('input', { ...this.value, key: value })
+        }
       }
     },
     internalValue: {
       get() {
-        const internalValue = this.value?.value
-
-        if (typeof internalValue === 'object') {
-          return formatJson(internalValue, 0)
-        }
-
-        return internalValue
+        return this.value?.value
       },
       set(value) {
-        const converted = this.tryConvertingFromJson(value)
-
-        this.$emit('input', { ...this.value, value: converted })
+        this.$emit('input', { ...this.value, value: value })
       }
     },
-    internalType: {
-      get() {
-        if (this.singleTypeMode) {
-          return this.types[0]
-        }
-
-        const type = this.tryDiscoveringType(this.internalValue)
-
-        if (this.isTypeAcceptable(type)) {
-          return type
-        }
-
-        return null
-      },
-      set(value) {
-        const current = this.tryConvertingFromJson(this.internalValue)
-        const converted = this.isTypeAcceptable(value)
-          ? this.coerceType(current, value)
-          : null
-
-        this.$emit('input', { ...this.value, value: converted })
+    valueComponent() {
+      switch (this.selectedType) {
+        case 'null':
+          return InputTypes.NullInput
+        case 'boolean':
+          return InputTypes.BooleanInput
+        case 'number':
+          return InputTypes.NumberInput
+        case 'string':
+          return InputTypes.StringInput
+        case 'array':
+          return InputTypes.ArrayInput
+        case 'date':
+          return InputTypes.DateInput
+        case 'object':
+          return InputTypes.ObjectInput
+        default:
+          return InputTypes.StringInput
       }
-    },
-    singleTypeMode() {
-      return this.types?.length === 1
     },
     valueCanBeEmpty() {
       return this.isTypeAcceptable('null') || this.isTypeAcceptable('string')
     }
   },
+  created() {
+    this.trySetInitialSelectedType()
+  },
   methods: {
-    handleKeyInput(value) {
-      if (this.validateKey(value)) {
-        this.internalKey = value
+    trySetInitialSelectedType() {
+      if (this.internalKey == null || this.selectedType != null) {
+        return
       }
-    },
-    handleValueInput(value) {
-      if (this.validateValue(value)) {
-        this.internalValue = value
+
+      const type = this.discoverType(this.internalValue)
+
+      if (this.isTypeAcceptable(type)) {
+        this.selectedType = type
       }
     },
     isTypeAcceptable(type) {
       return this.types == null || this.types.includes(type)
-    },
-    tryConvertingFromJson(value) {
-      const converted = isValidJson(value) ? parseJson(value) : value
-
-      return converted
-    },
-    tryDiscoveringType(value) {
-      const converted = this.tryConvertingFromJson(value)
-
-      return this.discoverType(converted)
     },
     discoverType(value) {
       if (value === null) {
@@ -171,42 +145,6 @@ export default {
 
       return type
     },
-    coerceType(value, type) {
-      switch (type) {
-        case 'null':
-          return null
-        case 'boolean':
-          return Boolean(value)
-        case 'number':
-          return isNaN(value) ? 0 : Number(value)
-        case 'string':
-          return String(value)
-        case 'array':
-          return [value]
-        case 'date':
-          return new Date(value)
-        case 'object':
-          return { key: value }
-      }
-    },
-    focus() {
-      this.$refs.keyInput.focus()
-      this.showErrors = false
-    },
-    isEmpty(value) {
-      const json = formatJson(value)
-
-      return json == null || json.length == 0
-    },
-    getAcceptableDefaultValue() {
-      if (this.isTypeAcceptable('null')) {
-        return null
-      }
-
-      if (this.isTypeAcceptable('string')) {
-        return ''
-      }
-    },
     getKeyErrors(value) {
       if (value == null || value.length == 0) {
         return ['Key is required']
@@ -221,49 +159,25 @@ export default {
 
       return []
     },
-    getValueErrors(value) {
-      if (this.isEmpty(value) && !this.valueCanBeEmpty) {
-        return ['Value is required']
-      }
-
-      if (
-        this.singleTypeMode &&
-        this.tryDiscoveringType(value) != this.types[0]
-      ) {
-        return [`Value does not match expected type (${this.types[0]})`]
-      }
-
-      return []
-    },
     validateKey(value) {
-      this.keyErrors = this.getKeyErrors(value ?? this.internalKey)
+      this.keyErrors = this.getKeyErrors(value)
 
       return this.keyErrors.length == 0
     },
     validateType(value) {
-      this.typeErrors = this.getTypeErrors(value ?? this.internalType)
+      this.typeErrors = this.getTypeErrors(value)
 
       return this.typeErrors.length == 0
     },
-    validateValue(value) {
-      this.valueErrors = this.getValueErrors(
-        value ?? this.internalValue ?? this.getAcceptableDefaultValue()
-      )
-
-      return this.valueErrors.length == 0
-    },
     validate() {
-      this.showErrors = true
+      const keyIsValid = this.validateKey(this.internalKey)
+      const typeIsValid = this.validateType(this.selectedType)
 
-      this.validateKey()
-      this.validateType()
-      this.validateValue()
-
-      return (
-        this.keyErrors.length == 0 &&
-        this.typeErrors.length == 0 &&
-        this.valueErrors.length == 0
-      )
+      return keyIsValid && typeIsValid
+    },
+    reset() {
+      this.selectedType = null
+      this.$emit('input', { value: null, key: null })
     }
   }
 }
@@ -273,6 +187,7 @@ export default {
 .key-value-input {
   display: flex;
   gap: 24px;
+  border: none;
 }
 
 .key-value-input__key-input {
@@ -284,7 +199,7 @@ export default {
 }
 
 .key-value-input__value-input {
-  flex-basis: 0;
-  flex-grow: 2;
+  flex-basis: 0 !important;
+  flex-grow: 2 !important;
 }
 </style>
