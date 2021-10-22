@@ -11,7 +11,7 @@
       @blur="handleBlur"
     >
       <template #append>
-        <highlight-code lang="yaml" class="base-code-textarea__preview">
+        <highlight-code :lang="language" class="base-code-textarea__preview">
           {{ internalValue }}
         </highlight-code>
         <span
@@ -61,17 +61,23 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      errors: []
+    }
+  },
   computed: {
     internalValue: {
       get() {
         return this.value
       },
       set(value) {
-        this.$emit('input', value)
+        this.errors = this.getErrors(value)
+
+        if (this.errors.length === 0) {
+          this.$emit('input', value)
+        }
       }
-    },
-    errors() {
-      return this.getErrors(this.internalValue)
     }
   },
   methods: {
