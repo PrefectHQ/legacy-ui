@@ -7,15 +7,22 @@
 </template>
 
 <script>
-import { formatJson } from '@/utils/json'
+import { isValidJson, parseJson, formatJson } from '@/utils/json'
+import { types, isValidType } from '@/utils/types'
 
 export default {
-  name: 'StringInput',
+  name: 'JsonParsingInput',
   props: {
     value: {
       type: [String, Number, Boolean, Object, Array],
       required: false,
       default: null
+    },
+    types: {
+      type: Array,
+      required: false,
+      default: () => types,
+      validator: value => value.every(isValidType)
     }
   },
   data() {
@@ -26,29 +33,22 @@ export default {
   computed: {
     internalValue: {
       get() {
-        return this.value
+        return typeof this.value === 'object'
+          ? formatJson(this.value, 0)
+          : this.value
       },
       set(value) {
         if (this.validate(value)) {
-          this.$emit('input', value)
+          const converted = this.tryParsingFromString(value)
+
+          this.$emit('input', converted)
         }
       }
     }
   },
-  mounted() {
-    if (typeof this.value == 'object') {
-      this.internalValue = formatJson(this.value, 0)
-    } else if (typeof this.value != 'string') {
-      this.internalValue = this.tryCallingToString(this.value)
-    }
-  },
   methods: {
-    tryCallingToString(value) {
-      if (value != null && typeof this.value.toString === 'function') {
-        return value.toString()
-      }
-
-      return null
+    tryParsingFromString(value) {
+      return isValidJson(value) ? parseJson(value) : value
     },
     validate(value) {
       this.errors = this.getErrors(value)

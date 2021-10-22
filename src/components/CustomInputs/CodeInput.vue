@@ -11,8 +11,8 @@
         v-for="language in languages"
         :key="language"
         :value="language"
-        class="mb-1"
-        small
+        class="code-input__language-btn"
+        x-small
       >
         {{ language }}
       </v-btn>
@@ -136,5 +136,6 @@ export default {
 
 .code-input__toggle {
   align-self: end;
+  margin-bottom: 8px;
 }
 </style>

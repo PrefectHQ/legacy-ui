@@ -9,30 +9,32 @@
       outlined
       dense
     />
-    <template v-if="showTypes && types && types.length > 0">
+    <template v-if="showTypes && hasTypes">
       <v-select
         v-model="selectedType"
         :items="types"
         label="Type"
         class="key-value-input__type-input"
         :error-messages="typeErrors"
-        :disabled="types == null || types.length <= 1"
+        :disabled="singleTypeMode"
         outlined
         dense
+        @change="handleSelectedTypeChange"
       />
     </template>
     <component
       :is="valueComponent"
       v-model="internalValue"
       class="key-value-input__value-input"
+      v-bind="valueProps"
     />
   </fieldset>
 </template>
 
 <script>
+import InputTypes from '@/components/CustomInputs/KeyValueTypeInputs'
 import { isIsoDateString } from '@/utils/dateTime'
 import { types, isValidType } from '@/utils/types'
-import InputTypes from '@/components/CustomInputs/KeyValueTypeInputs'
 
 export default {
   name: 'KeyValueInput',
@@ -62,6 +64,8 @@ export default {
   data() {
     return {
       selectedType: null,
+      typeIsInferred: true,
+      valueComponent: InputTypes.JsonParsingInput,
       keyErrors: [],
       typeErrors: []
     }
@@ -82,76 +86,118 @@ export default {
         return this.value?.value
       },
       set(value) {
+        if (this.shouldTrySettingType) {
+          this.trySettingType(value)
+        }
+
         this.$emit('input', { ...this.value, value: value })
       }
     },
-    valueComponent() {
-      switch (this.selectedType) {
-        case 'None':
-          return InputTypes.NullInput
+    valueProps() {
+      if (this.valueComponent == InputTypes.JsonParsingInput) {
+        return { types: this.types }
+      }
+
+      return {}
+    },
+    valueCanBeEmpty() {
+      return this.isTypeAcceptable('None') || this.isTypeAcceptable('String')
+    },
+    shouldTrySettingType() {
+      return this.showTypes && this.typeIsInferred && !this.singleTypeMode
+    },
+    hasTypes() {
+      return this.types?.length > 0
+    },
+    singleTypeMode() {
+      return this.types?.length === 1
+    }
+  },
+  created() {
+    this.checkSingleTypeMode()
+
+    if (this.shouldTrySettingType) {
+      this.trySettingType(this.internalValue)
+    }
+
+    if (this.selectedType != null) {
+      this.handleSelectedTypeChange(this.selectedType)
+    }
+  },
+  methods: {
+    checkSingleTypeMode() {
+      if (this.singleTypeMode) {
+        this.selectedType = this.types[0]
+      }
+    },
+    trySettingType(value) {
+      const type = this.discoverType(value)
+
+      this.selectedType = this.isTypeAcceptable(type) ? type : null
+    },
+    handleSelectedTypeChange(type) {
+      this.typeIsInferred = false
+      this.valueComponent = this.getValueComponentForType(type)
+    },
+    getValueComponentForType(type) {
+      switch (type) {
         case 'Boolean':
           return InputTypes.BooleanInput
         case 'Integer':
           return InputTypes.NumberInput
-        case 'String':
-          return InputTypes.StringInput
         case 'List':
           return InputTypes.ArrayInput
         case 'Date':
           return InputTypes.DateInput
         case 'Dictionary':
           return InputTypes.ObjectInput
+        case 'String':
+        case 'None':
         default:
           return InputTypes.StringInput
-      }
-    },
-    valueCanBeEmpty() {
-      return this.isTypeAcceptable('None') || this.isTypeAcceptable('String')
-    }
-  },
-  created() {
-    this.trySetInitialSelectedType()
-  },
-  methods: {
-    trySetInitialSelectedType() {
-      if (this.types?.length === 1) {
-        this.selectedType = this.types[0]
-      }
-
-      if (!this.showTypes || this.selectedType != null) {
-        return
-      }
-
-      const type = this.discoverType(this.internalValue)
-
-      if (this.isTypeAcceptable(type)) {
-        this.selectedType = type
-      }
-
-      if (this.isTypeAcceptable('String')) {
-        this.selectedType = 'String'
       }
     },
     isTypeAcceptable(type) {
       return this.types == null || this.types.includes(type)
     },
     discoverType(value) {
-      if (value === null) {
-        return 'None'
+      const type = typeof value
+
+      switch (type) {
+        case 'object':
+          return this.discoverObjectType(value)
+        case 'string':
+          return this.discoverStringType(value)
+        case 'number':
+        case 'bigint':
+          return 'Integer'
+        case 'boolean':
+          return 'Boolean'
       }
 
-      const type = typeof value
-      if (type == 'object' && value instanceof Array) {
+      return null
+    },
+    discoverStringType(value) {
+      if (isIsoDateString(value)) {
+        return 'Date'
+      }
+
+      return 'String'
+    },
+    discoverObjectType(value) {
+      if (value === null) {
+        return null
+      }
+
+      if (value instanceof Array) {
         return 'List'
       }
-      if (type == 'object' && value instanceof Date) {
-        return 'Date'
-      }
-      if (type == 'string' && isIsoDateString(value)) {
+
+      if (value instanceof Date) {
         return 'Date'
       }
 
-      return type
+      return 'Dictionary'
     },
     getKeyErrors(value) {
       if (value == null || value.length == 0) {
@@ -173,7 +219,7 @@ export default {
       return this.keyErrors.length == 0
     },
     validateType(value) {
-      if (this.showTypes) {
+      if (this.showTypes && this.hasTypes) {
         this.typeErrors = this.getTypeErrors(value)
       }
 
@@ -186,7 +232,9 @@ export default {
       return keyIsValid && typeIsValid
     },
     reset() {
-      this.trySetInitialSelectedType()
+      this.typeIsInferred = true
+      this.valueComponent = InputTypes.JsonParsingInput
+      this.checkSingleTypeMode()
       this.$emit('input', { value: null, key: null })
     }
   }
