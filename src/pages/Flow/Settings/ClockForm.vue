@@ -20,6 +20,11 @@ export default {
     DictInput
   },
   props: {
+    defaultParameters: {
+      type: Array,
+      required: false,
+      default: () => {}
+    },
     selectedTab: {
       type: [Number, String],
       required: false,
@@ -86,6 +91,15 @@ export default {
     }
   },
   computed: {
+    allDefaultParameters() {
+      if (!this.defaultParameters) return {}
+
+      const paramObj = this.defaultParameters.reduce(
+        (obj, item) => ((obj[item.name] = item.default), obj),
+        {}
+      )
+      return this.paramVal(paramObj)
+    },
     clockToAdd() {
       return this.advanced ? `${this.advancedType}Model` : 'simpleModel'
     },
@@ -96,6 +110,33 @@ export default {
     }
   },
   methods: {
+    paramVal(clock) {
+      if (!clock) {
+        return
+      }
+      let parameters = []
+
+      for (const [key, value] of Object.entries(clock)) {
+        parameters.push({ key: key, value: value, disabled: true })
+      }
+      return parameters
+    },
+    checkDefualtParameters(parameterObj) {
+      return Object.values(parameterObj).length > 0
+    },
+    removeDoubleParam(clock) {
+      if (clock && this.allDefaultParameters.length !== 0) {
+        return Object.values(
+          [...this.allDefaultParameters, ...this.paramVal(clock)]
+            .reverse()
+            .reduce((r, c) => ((r[c.key] = r[c.key] || c), r), {})
+        )
+      }
+
+      if (this.allDefaultParameters.length !== 0) {
+        return this.allDefaultParameters
+      }
+    },
     cancel() {
       this.$emit('cancel')
     },
@@ -123,17 +164,9 @@ export default {
           ? this.selectedTimezone
           : this.simpleSelectedTimezone
       }
-
-      //console.log('updating clock', clock)
-      this.$emit('confirm', clock)
+      console.log('CLOCK', clock)
+      //this.$emit('confirm', clock)
     }
-  },
-  mounted() {
-    console.log('flow group clocks', this.flowGroupClocks)
-    console.log('clock', this.clock)
-    console.log('parameter', this.param)
-    console.log('interval', this.interval)
-    console.log('timezone', this.timezone)
   }
 }
 </script>
@@ -246,24 +279,24 @@ export default {
     </div>
 
     <div v-show="selectedTab === 1">
-      <div v-if="param.length > 0">
-        <p class="mt-8 text-body-1">
-          Checked parameters will override their corresponding defaults for runs
-          generated from this schedule.
-        </p>
-        <DictInput
-          v-model="parameter"
-          style="padding: 20px;"
-          include-checkbox
-          :dict="param"
-          disable-edit
-          allow-reset
-        />
-      </div>
-
-      <div v-else class="mt-8 text-body-1">
+      <div
+        v-if="!checkDefualtParameters(allDefaultParameters)"
+        class="mt-8 text-body-1"
+      >
         This flow has no default parameters.
       </div>
+      <DictInput
+        v-else
+        v-model="parameter"
+        style="padding: 20px;"
+        :dict="removeDoubleParam(param)"
+        :default-checked-keys="
+          Object.keys(param ? param : allDefaultParameters)
+        "
+        include-checkbox
+        disable-edit
+        allow-reset
+      />
     </div>
 
     <div
