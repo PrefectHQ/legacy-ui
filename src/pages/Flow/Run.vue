@@ -12,7 +12,7 @@ import { parametersMixin } from '@/mixins/parametersMixin.js'
 import throttle from 'lodash.throttle'
 import { adjectives } from '@/components/RunConfig/adjectives'
 import { animals } from '@/components/RunConfig/animals'
-import { isValidJson, parseJson, formatJson } from '@/utils/json'
+import { parseJson, formatJson } from '@/utils/json'
 import CodeInput from '@/components/CustomInputs/CodeInput'
 import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
 
@@ -59,7 +59,7 @@ export default {
       parameters: null,
 
       // Context
-      context: {},
+      context: null,
       labels: null,
 
       // Schedule
@@ -108,14 +108,30 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
+    contextValue: {
+      get() {
+        return parseJson(this.context)
+      },
+      set(value) {
+        this.context = formatJson(value)
+      }
+    },
     contextModified() {
-      if (!this.context) return false
-      return Object.keys(this.context).filter(c => c !== '').length > 0
+      if (!this.contextValue) return false
+      return Object.keys(this.contextValue).filter(c => c !== '').length > 0
+    },
+    parametersValue: {
+      get() {
+        return parseJson(this.parameters)
+      },
+      set(value) {
+        this.parameters = formatJson(value)
+      }
     },
     parametersModified() {
-      if (!this.parameters) return false
+      if (!this.parametersValue) return false
 
-      const entries = Object.entries(this.parameters)
+      const entries = Object.entries(this.parametersValue)
       const defaults = Object.fromEntries(
         this.parameterDefaults?.map(entry => [entry.name, entry.default]) ?? []
       )
@@ -129,33 +145,13 @@ export default {
     },
     runConfigTemplate() {
       return this.runConfig && this.runConfigs[this.runConfig.type]
-    },
-    stringifiedParameters: {
-      get() {
-        return formatJson(this.parameters, 0)
-      },
-      set(value) {
-        if (isValidJson(value)) {
-          this.parameters = parseJson(value)
-        }
-      }
-    },
-    stringifiedContext: {
-      get() {
-        return formatJson(this.context, 0)
-      },
-      set(value) {
-        if (isValidJson(value)) {
-          this.context = parseJson(value)
-        }
-      }
     }
   },
   destroyed() {
     window.removeEventListener('scroll', this.handleScroll)
   },
   created() {
-    this.parameters = this.defaultParameters.reduce((acc, param) => {
+    this.parametersValue = this.defaultParameters.reduce((acc, param) => {
       acc[param.name] = param.default
       return acc
     }, {})
@@ -446,10 +442,10 @@ export default {
 
           <v-col cols="12" md="9" class="mt-n4 mt-md-0 ">
             <resettable-wrapper
-              v-model="stringifiedParameters"
+              v-model="parameters"
               class="resettable-dictionary"
             >
-              <code-input v-model="stringifiedParameters" readonly />
+              <code-input v-model="parameters" readonly />
             </resettable-wrapper>
           </v-col>
         </v-row>
@@ -576,11 +572,8 @@ export default {
           </v-col>
 
           <v-col cols="12" md="9" class="mt-n4 mt-md-0 text-body-1">
-            <resettable-wrapper
-              v-model="stringifiedContext"
-              class="resettable-dictionary"
-            >
-              <code-input v-model="stringifiedContext" />
+            <resettable-wrapper v-model="context" class="resettable-dictionary">
+              <code-input v-model="context" />
             </resettable-wrapper>
           </v-col>
         </v-row>
