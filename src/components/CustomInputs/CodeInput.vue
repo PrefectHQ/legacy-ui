@@ -32,6 +32,7 @@ import DictInput2 from '@/components/CustomInputs/DictInput2'
 import Textarea from 'vuetify/lib/components/VTextarea'
 import { parseJson, formatJson } from '@/utils/json'
 import { parseYaml, formatYaml } from '@/utils/yaml'
+import { types, isValidType } from '@/utils/types'
 
 export default {
   name: 'CodeInput',
@@ -53,6 +54,17 @@ export default {
       validator: value =>
         value.length > 0 &&
         value.every(lang => ['json', 'yaml', 'dict', 'text'].includes(lang))
+    },
+    showTypes: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    types: {
+      type: Array,
+      required: false,
+      default: () => types,
+      validator: value => value.every(isValidType)
     }
   },
   data() {
@@ -79,7 +91,11 @@ export default {
       return {
         json: {},
         yaml: {},
-        dict: { readonly: this.readonly },
+        dict: {
+          readonly: this.readonly,
+          showTypes: this.showTypes,
+          types: this.types
+        },
         text: { outlined: true, dense: true }
       }
     }

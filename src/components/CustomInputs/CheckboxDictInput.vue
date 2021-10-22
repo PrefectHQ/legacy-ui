@@ -151,7 +151,6 @@ export default {
       this.emitValue([...this.internalValue.filter(x => x.key != key)])
     },
     handleCheck(checked, entry) {
-      console.log('checked', checked, entry)
       if (checked) {
         this.addToValue(entry)
       } else {

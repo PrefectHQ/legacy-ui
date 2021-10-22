@@ -87,26 +87,26 @@ export default {
     },
     valueComponent() {
       switch (this.selectedType) {
-        case 'null':
+        case 'None':
           return InputTypes.NullInput
-        case 'boolean':
+        case 'Boolean':
           return InputTypes.BooleanInput
-        case 'number':
+        case 'Integer':
           return InputTypes.NumberInput
-        case 'string':
+        case 'String':
           return InputTypes.StringInput
-        case 'array':
+        case 'List':
           return InputTypes.ArrayInput
-        case 'date':
+        case 'Date':
           return InputTypes.DateInput
-        case 'object':
+        case 'Dictionary':
           return InputTypes.ObjectInput
         default:
           return InputTypes.StringInput
       }
     },
     valueCanBeEmpty() {
-      return this.isTypeAcceptable('null') || this.isTypeAcceptable('string')
+      return this.isTypeAcceptable('None') || this.isTypeAcceptable('String')
     }
   },
   created() {
@@ -118,11 +118,7 @@ export default {
         this.selectedType = this.types[0]
       }
 
-      if (
-        !this.showTypes ||
-        this.internalKey == null ||
-        this.selectedType != null
-      ) {
+      if (!this.showTypes || this.selectedType != null) {
         return
       }
 
@@ -131,24 +127,28 @@ export default {
       if (this.isTypeAcceptable(type)) {
         this.selectedType = type
       }
+
+      if (this.isTypeAcceptable('String')) {
+        this.selectedType = 'String'
+      }
     },
     isTypeAcceptable(type) {
       return this.types == null || this.types.includes(type)
     },
     discoverType(value) {
       if (value === null) {
-        return 'null'
+        return 'None'
       }
 
       const type = typeof value
       if (type == 'object' && value instanceof Array) {
-        return 'array'
+        return 'List'
       }
       if (type == 'object' && value instanceof Date) {
-        return 'date'
+        return 'Date'
       }
       if (type == 'string' && isIsoDateString(value)) {
-        return 'date'
+        return 'Date'
       }
 
       return type

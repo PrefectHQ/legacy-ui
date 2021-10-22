@@ -1,11 +1,11 @@
 export const types = [
-  'null',
-  'boolean',
-  'number',
-  'string',
-  'object',
-  'array',
-  'date'
+  'None',
+  'Boolean',
+  'Integer',
+  'String',
+  'Dictionary',
+  'List',
+  'Date'
 ]
 
 export function isValidType(type) {
