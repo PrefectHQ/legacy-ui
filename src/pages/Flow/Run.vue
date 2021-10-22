@@ -3,7 +3,6 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import DateTimeSelector from '@/components/RunConfig/DateTimeSelector'
-import DictInput from '@/components/CustomInputs/DictInput'
 import ExternalLink from '@/components/ExternalLink'
 import ListInput from '@/components/CustomInputs/ListInput'
 import MenuTooltip from '@/components/MenuTooltip'
@@ -13,6 +12,9 @@ import { parametersMixin } from '@/mixins/parametersMixin.js'
 import throttle from 'lodash.throttle'
 import { adjectives } from '@/components/RunConfig/adjectives'
 import { animals } from '@/components/RunConfig/animals'
+import { isValidJson, parseJson, formatJson } from '@/utils/json'
+import CodeInput from '@/components/CustomInputs/CodeInput'
+import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
 
 const adjectivesLength = adjectives.length
 const animalsLength = animals.length
@@ -20,11 +22,12 @@ const animalsLength = animals.length
 export default {
   components: {
     DateTimeSelector,
-    DictInput,
     ExternalLink,
     ListInput,
     MenuTooltip,
-    RunConfig
+    RunConfig,
+    CodeInput,
+    ResettableWrapper
   },
   mixins: [formatTime, parametersMixin],
   props: {
@@ -77,7 +80,6 @@ export default {
       showAdvanced: false,
       showParameters: this.flow.parameters?.length > 0,
       parameterDefaults: this.flow.parameters,
-      parameterJsonMode: false,
 
       when: 'now',
       runConfigs: {
@@ -106,16 +108,6 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
-    parameterItems() {
-      return this.defaultParameters?.map(parameter => {
-        return {
-          disabled: true,
-          key: parameter.name,
-          value: parameter.default,
-          required: parameter.required
-        }
-      })
-    },
     contextModified() {
       if (!this.context) return false
       return Object.keys(this.context).filter(c => c !== '').length > 0
@@ -137,6 +129,26 @@ export default {
     },
     runConfigTemplate() {
       return this.runConfig && this.runConfigs[this.runConfig.type]
+    },
+    stringifiedParameters: {
+      get() {
+        return formatJson(this.parameters, 0)
+      },
+      set(value) {
+        if (isValidJson(value)) {
+          this.parameters = parseJson(value)
+        }
+      }
+    },
+    stringifiedContext: {
+      get() {
+        return formatJson(this.context, 0)
+      },
+      set(value) {
+        if (isValidJson(value)) {
+          this.context = parseJson(value)
+        }
+      }
     }
   },
   destroyed() {
@@ -147,6 +159,7 @@ export default {
       acc[param.name] = param.default
       return acc
     }, {})
+
     this.resetRunConfigValues()
 
     // run config > flow group > flow group run config > flow run config > flow > flow environment ?
@@ -167,20 +180,6 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     async run() {
-      const parseObject = obj => {
-        if (!obj) return
-        Object.keys(obj).forEach(key => {
-          try {
-            if (typeof obj[key] == 'string') {
-              obj[key] = JSON.parse(obj[key])
-            }
-          } catch {
-            //
-          }
-        })
-        return obj
-      }
-
       try {
         this.loading = true
         // if the user has specified a logging level, pass it
@@ -189,12 +188,10 @@ export default {
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-flow-run.gql'),
           variables: {
-            context: parseObject(this.context),
+            context: this.context,
             id: this.flow.id,
             flowRunName: this.flowRunName,
-            parameters: this.parameterJsonMode
-              ? this.parameters
-              : parseObject(this.parameters),
+            parameters: this.parameters,
             scheduledStartTime: this.scheduledStartDateTime,
             runConfig: this.runConfig?.type
               ? { ...this.runConfig, labels: [] }
@@ -215,9 +212,6 @@ export default {
       } finally {
         this.loading = false
       }
-    },
-    handleToggleJsonEditor(val) {
-      this.parameterJsonMode = val
     },
     generateRandomName() {
       const adjective = adjectives[Math.floor(Math.random() * adjectivesLength)]
@@ -342,27 +336,29 @@ export default {
           </v-col>
 
           <v-col cols="12" md="9">
-            <div class=" mt-4 mt-md-0 d-flex align-center">
-              <v-btn
-                color="primary"
-                fab
-                depressed
-                x-small
-                title="Randomize run name"
-                @click="flowRunName = generateRandomName()"
-              >
-                <v-icon>fad fa-random</v-icon>
-              </v-btn>
+            <resettable-wrapper v-model="flowRunName">
+              <div class=" mt-4 mt-md-0 d-flex align-center">
+                <v-btn
+                  color="primary"
+                  fab
+                  depressed
+                  x-small
+                  title="Randomize run name"
+                  @click="flowRunName = generateRandomName()"
+                >
+                  <v-icon>fad fa-random</v-icon>
+                </v-btn>
 
-              <v-text-field
-                v-model="flowRunName"
-                placeholder="name"
-                class="ml-2 text-h5"
-                hide-details
-                outlined
-                dense
-              />
-            </div>
+                <v-text-field
+                  v-model="flowRunName"
+                  placeholder="name"
+                  class="ml-2 text-h5"
+                  hide-details
+                  outlined
+                  dense
+                />
+              </div>
+            </resettable-wrapper>
           </v-col>
         </v-row>
 
@@ -449,13 +445,12 @@ export default {
           </v-col>
 
           <v-col cols="12" md="9" class="mt-n4 mt-md-0 ">
-            <DictInput
-              v-model="parameters"
-              :dict="parameterItems"
-              disable-edit
-              allow-reset
-              @toggle-json-editor="handleToggleJsonEditor"
-            />
+            <resettable-wrapper
+              v-model="stringifiedParameters"
+              class="resettable-dictionary"
+            >
+              <code-input v-model="stringifiedParameters" readonly />
+            </resettable-wrapper>
           </v-col>
         </v-row>
 
@@ -522,28 +517,34 @@ export default {
             </v-col>
 
             <v-col cols="12" md="9" class="mt-n4 mt-md-0">
-              <v-select v-model="loggingLevel" outlined :items="loggingLevels">
-                <template #item="{ item }">
-                  <div>
-                    <v-chip
-                      class="ma-2 debuglevel cursor-pointer"
-                      :class="item.text.toLowerCase()"
-                    >
-                      {{ item.text }}
-                    </v-chip>
-                  </div>
-                </template>
-                <template #selection="{ item }">
-                  <div>
-                    <v-chip
-                      class="ma-2 debuglevel cursor-pointer"
-                      :class="item.text.toLowerCase()"
-                    >
-                      {{ item.text }}
-                    </v-chip>
-                  </div>
-                </template>
-              </v-select>
+              <resettable-wrapper v-model="loggingLevel">
+                <v-select
+                  v-model="loggingLevel"
+                  outlined
+                  :items="loggingLevels"
+                >
+                  <template #item="{ item }">
+                    <div>
+                      <v-chip
+                        class="ma-2 debuglevel cursor-pointer"
+                        :class="item.text.toLowerCase()"
+                      >
+                        {{ item.text }}
+                      </v-chip>
+                    </div>
+                  </template>
+                  <template #selection="{ item }">
+                    <div>
+                      <v-chip
+                        class="ma-2 debuglevel cursor-pointer"
+                        :class="item.text.toLowerCase()"
+                      >
+                        {{ item.text }}
+                      </v-chip>
+                    </div>
+                  </template>
+                </v-select>
+              </resettable-wrapper>
             </v-col>
           </v-row>
         </v-row>
@@ -575,7 +576,12 @@ export default {
           </v-col>
 
           <v-col cols="12" md="9" class="mt-n4 mt-md-0 text-body-1">
-            <DictInput v-model="context" />
+            <resettable-wrapper
+              v-model="stringifiedContext"
+              class="resettable-dictionary"
+            >
+              <code-input v-model="stringifiedContext" />
+            </resettable-wrapper>
           </v-col>
         </v-row>
 
@@ -930,6 +936,15 @@ export default {
       --fa-secondary-color: var(--v-accentPink-base);
       --fa-secondary-opacity: 1;
     }
+  }
+}
+
+.resettable-dictionary {
+  position: relative;
+
+  .resettable-wrapper__button-container {
+    position: absolute;
+    right: 110px;
   }
 }
 </style>
