@@ -1,4 +1,6 @@
 <script>
+/* eslint-disable */
+
 import { mapGetters, mapActions } from 'vuex'
 
 import ConfirmDialog from '@/components/ConfirmDialog'
@@ -61,7 +63,6 @@ export default {
     },
     allDefaultParameters() {
       if (!this.defaultParameters) {
-        console.log(true)
         return {}
       }
       const paramObj = this.defaultParameters.reduce(
@@ -92,28 +93,24 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     async createClock(val) {
-      console.log('SHCEDULE VAL: ', val)
-      // let isNew = false
-      // this.loading = true
-      // if (this.selectedClock > -1) {
-      //   this.clocks[this.selectedClock] = {
-      //     ...this.clocks[this.selectedClock],
-      //     ...val
-      //   }
-
-      //   let shifted = [...this.clocks]
-      //   shifted.unshift(shifted.splice(this.selectedClock, 1)[0])
-
-      //   this.clocks = shifted
-      // } else {
-      //   isNew = true
-      //   this.clocks.push({ ...val, scheduleType: 'flow-group' })
-      //   this.clocks = this.clocks.reverse()
-      // }
-
-      // await this.modifySchedules({ new: isNew })
-      // this.selectedClock = null
-      // this.loading = false
+      let isNew = false
+      this.loading = true
+      if (this.selectedClock > -1) {
+        this.clocks[this.selectedClock] = {
+          ...this.clocks[this.selectedClock],
+          ...val
+        }
+        let shifted = [...this.clocks]
+        shifted.unshift(shifted.splice(this.selectedClock, 1)[0])
+        this.clocks = shifted
+      } else {
+        isNew = true
+        this.clocks.push({ ...val, scheduleType: 'flow-group' })
+        this.clocks = this.clocks.reverse()
+      }
+      await this.modifySchedules({ new: isNew })
+      this.selectedClock = null
+      this.loading = false
     },
     async deleteClock() {
       this.loading = true
@@ -340,6 +337,7 @@ export default {
                   <v-tab>Parameters</v-tab>
                 </v-tabs>
 
+                <!-- CREATION CLOCKFORM -->
                 <ClockForm
                   :flow-group-clocks="flowGroupClocks"
                   :timezone="
@@ -355,45 +353,6 @@ export default {
                   @cancel="selectedClock = null"
                   @confirm="createClock"
                 />
-
-                <!-- <div v-show="selectedTab === 0">
-                  <ClockForm
-                    :flow-group-clocks="flowGroupClocks"
-                    :param="parameter"
-                    :timezone="
-                      this.timezone ||
-                        Intl.DateTimeFormat().resolvedOptions().timeZone
-                    "
-                    @cancel="selectedClock = null"
-                    @confirm="createClock"
-                  />
-                </div>
-                <div v-show="selectedTab === 1">
-                  <p
-                    v-if="checkDefualtParameters(allDefaultParameters)"
-                    class="mt-8 text-body-1"
-                  >
-                    Checked parameters will override their corresponding
-                    defaults for runs generated from this schedule.
-                  </p>
-
-                  <DictInput
-                    v-if="checkDefualtParameters(allDefaultParameters)"
-                    v-model="parameter"
-                    style="padding: 20px;"
-                    include-checkbox
-                    :dict="allDefaultParameters"
-                    disable-edit
-                    allow-reset
-                  />
-                  <div
-                    v-else-if="!checkDefualtParameters(allDefaultParameters)"
-                    class="mt-8 text-body-1"
-                  >
-                    <span class="font-weight-bold">{{ flow.name }}</span>
-                    has no default parameters.
-                  </div>
-                </div> -->
               </div>
               <div
                 v-else
@@ -450,7 +409,29 @@ export default {
                 <v-tab>Parameters</v-tab>
               </v-tabs>
 
-              <div v-show="selectedTab === 0">
+              <!-- EDITABLE CLOCKFORM -->
+              {{
+                checkDefualtParameters(allDefaultParameters)
+                  ? allDefaultParameters
+                  : []
+              }}
+              <!-- <ClockForm
+                :flow-group-clocks="flowGroupClocks"
+                :clock="clock"
+                :cron="clock.cron"
+                :param="
+                  checkDefualtParameters(allDefaultParameters)
+                    ? allDefaultParameters
+                    : []
+                "
+                :interval="clock.interval"
+                :timezone="timezoneVal(clock)"
+                :selected-tab="selectedTab"
+                @cancel="selectedClock = null"
+                @confirm="createClock"
+              /> -->
+
+              <!-- <div v-show="selectedTab === 0">
                 <ClockForm
                   :flow-group-clocks="flowGroupClocks"
                   :clock="clock"
@@ -486,7 +467,7 @@ export default {
                   disable-edit
                   allow-reset
                 />
-              </div>
+              </div> -->
             </div>
 
             <div v-else key="2" style="height: 100%;">

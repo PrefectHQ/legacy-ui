@@ -124,8 +124,16 @@ export default {
           : this.simpleSelectedTimezone
       }
 
+      //console.log('updating clock', clock)
       this.$emit('confirm', clock)
     }
+  },
+  mounted() {
+    console.log('flow group clocks', this.flowGroupClocks)
+    console.log('clock', this.clock)
+    console.log('parameter', this.param)
+    console.log('interval', this.interval)
+    console.log('timezone', this.timezone)
   }
 }
 </script>
@@ -238,14 +246,24 @@ export default {
     </div>
 
     <div v-show="selectedTab === 1">
-      <DictInput
-        v-model="parameter"
-        style="padding: 20px;"
-        include-checkbox
-        :dict="param"
-        disable-edit
-        allow-reset
-      />
+      <div v-if="param.length > 0">
+        <p class="mt-8 text-body-1">
+          Checked parameters will override their corresponding defaults for runs
+          generated from this schedule.
+        </p>
+        <DictInput
+          v-model="parameter"
+          style="padding: 20px;"
+          include-checkbox
+          :dict="param"
+          disable-edit
+          allow-reset
+        />
+      </div>
+
+      <div v-else class="mt-8 text-body-1">
+        This flow has no default parameters.
+      </div>
     </div>
 
     <div
