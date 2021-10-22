@@ -143,7 +143,6 @@ export default {
     async handleResultSelected(searchResultName) {
       // If this is called with no argument
       // we return immediately
-      console.log('searchresname', searchResultName)
       if (!searchResultName) return
 
       // The search result that we use is found in the
