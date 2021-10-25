@@ -74,9 +74,7 @@ export default {
       set(value) {
         this.errors = this.getErrors(value)
 
-        if (this.errors.length === 0) {
-          this.$emit('input', value)
-        }
+        this.$emit('input', value)
       }
     }
   },
