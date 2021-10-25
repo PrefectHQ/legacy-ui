@@ -38,7 +38,7 @@ export default {
   name: 'CodeInput',
   props: {
     value: {
-      type: String,
+      type: [String, Object],
       required: false,
       default: null
     },
@@ -81,10 +81,15 @@ export default {
   computed: {
     internalValue: {
       get() {
-        return this.value
+        return typeof this.value === 'object'
+          ? this.getStringValue(this.value)
+          : this.value
       },
       set(value) {
-        this.$emit('input', value)
+        this.$emit(
+          'input',
+          typeof this.value === 'object' ? this.getObjectValue(value) : value
+        )
       }
     },
     editorProps() {
@@ -104,6 +109,12 @@ export default {
     this.setMode(this.languages[0])
   },
   methods: {
+    getStringValue(value) {
+      return this.mode === 'yaml' ? formatYaml(value) : formatJson(value)
+    },
+    getObjectValue(value) {
+      return parseYaml(value) ?? parseJson(value)
+    },
     setMode(mode) {
       const value = this.tryGetValueObject(this.internalValue)
 

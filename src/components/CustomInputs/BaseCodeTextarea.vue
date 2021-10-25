@@ -100,7 +100,7 @@ export default {
     margin: 0;
     padding: 0;
     width: 50%;
-    right: 0;
+    right: 2px;
     top: 2px;
     bottom: 2px;
   }

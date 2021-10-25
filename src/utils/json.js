@@ -19,7 +19,7 @@ export function parseJson(value) {
 }
 
 export function getJsonErrors(value) {
-  if (value == null) {
+  if (value == null || value == '') {
     return []
   }
 

@@ -21,7 +21,7 @@ export function parseYaml(value) {
 }
 
 export function getYamlErrors(value) {
-  if (value == null) {
+  if (value == null || value == '') {
     return []
   }
 
