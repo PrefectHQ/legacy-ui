@@ -12,7 +12,6 @@ import { parametersMixin } from '@/mixins/parametersMixin.js'
 import throttle from 'lodash.throttle'
 import { adjectives } from '@/components/RunConfig/adjectives'
 import { animals } from '@/components/RunConfig/animals'
-import { parseJson, formatJson } from '@/utils/json'
 import CodeInput from '@/components/CustomInputs/CodeInput'
 import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
 
@@ -108,30 +107,14 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
-    contextValue: {
-      get() {
-        return parseJson(this.context)
-      },
-      set(value) {
-        this.context = formatJson(value)
-      }
-    },
     contextModified() {
-      if (!this.contextValue) return false
-      return Object.keys(this.contextValue).filter(c => c !== '').length > 0
-    },
-    parametersValue: {
-      get() {
-        return parseJson(this.parameters)
-      },
-      set(value) {
-        this.parameters = formatJson(value)
-      }
+      if (!this.context) return false
+      return Object.keys(this.context).filter(c => c !== '').length > 0
     },
     parametersModified() {
-      if (!this.parametersValue) return false
+      if (!this.parameters) return false
 
-      const entries = Object.entries(this.parametersValue)
+      const entries = Object.entries(this.parameters)
       const defaults = Object.fromEntries(
         this.parameterDefaults?.map(entry => [entry.name, entry.default]) ?? []
       )
@@ -151,7 +134,7 @@ export default {
     window.removeEventListener('scroll', this.handleScroll)
   },
   created() {
-    this.parametersValue = this.defaultParameters.reduce((acc, param) => {
+    this.parameters = this.defaultParameters.reduce((acc, param) => {
       acc[param.name] = param.default
       return acc
     }, {})
