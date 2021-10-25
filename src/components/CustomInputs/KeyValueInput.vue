@@ -232,6 +232,7 @@ export default {
       return keyIsValid && typeIsValid
     },
     reset() {
+      this.selectedType = null
       this.typeIsInferred = true
       this.valueComponent = InputTypes.JsonParsingInput
       this.checkSingleTypeMode()

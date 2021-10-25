@@ -65,7 +65,7 @@
       description="Additional environment variables to set on the task."
     >
       <resettable-wrapper v-model="envValue" class="resettable-dictionary">
-        <code-input v-model="envValue" />
+        <code-input v-model="envValue" show-types />
       </resettable-wrapper>
     </argument-input>
     <argument-input v-model="internalValue.cpu" argument="cpu" title="CPU">
@@ -118,7 +118,7 @@
         v-model="runTaskKwargsValue"
         class="resettable-dictionary"
       >
-        <code-input v-model="runTaskKwargsValue" />
+        <code-input v-model="runTaskKwargsValue" show-types />
       </resettable-wrapper>
     </argument-input>
   </div>
@@ -173,7 +173,7 @@ export default {
           : this.internalValue.env
       },
       set(value) {
-        this.internalValue.env = value
+        this.internalValue = { ...this.internalValue, env: value }
       }
     },
     taskDefinitionValue: {
@@ -183,7 +183,7 @@ export default {
           : this.internalValue.task_definition
       },
       set(value) {
-        this.internalValue.task_definition = value
+        this.internalValue = { ...this.internalValue, task_definition: value }
       }
     },
     runTaskKwargsValue: {
@@ -193,7 +193,7 @@ export default {
           : this.internalValue.run_task_kwargs
       },
       set(value) {
-        this.internalValue.run_task_kwargs = value
+        this.internalValue = { ...this.internalValue, run_task_kwargs: value }
       }
     }
   }

@@ -6,7 +6,7 @@
       description="Additional environment variables to set in the container."
     >
       <resettable-wrapper v-model="envValue" class="resettable-dictionary">
-        <code-input v-model="envValue" />
+        <code-input v-model="envValue" show-types />
       </resettable-wrapper>
     </argument-input>
   </div>
@@ -46,7 +46,7 @@ export default {
           : this.internalValue.env
       },
       set(value) {
-        this.internalValue.env = value
+        this.internalValue = { ...this.internalValue, env: value }
       }
     }
   }

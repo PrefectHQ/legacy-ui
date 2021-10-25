@@ -266,7 +266,7 @@ export default {
       }
     },
     resetRunConfigValues() {
-      this.runConfig = { ...this.flow.run_config }
+      this.runConfig = { type: 'UniversalRun', ...this.flow.run_config }
     },
     handleScroll: throttle(
       function() {
@@ -439,7 +439,7 @@ export default {
               v-model="parameters"
               class="resettable-dictionary"
             >
-              <code-input v-model="parameters" readonly />
+              <code-input v-model="parameters" show-types readonly />
             </resettable-wrapper>
           </v-col>
         </v-row>
@@ -567,7 +567,7 @@ export default {
 
           <v-col cols="12" md="9" class="mt-n4 mt-md-0 text-body-1">
             <resettable-wrapper v-model="context" class="resettable-dictionary">
-              <code-input v-model="context" />
+              <code-input v-model="context" show-types />
             </resettable-wrapper>
           </v-col>
         </v-row>

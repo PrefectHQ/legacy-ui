@@ -42,7 +42,7 @@
       description="Additional environment variables to set on the job."
     >
       <resettable-wrapper v-model="envValue" class="resettable-dictionary">
-        <code-input v-model="envValue" />
+        <code-input v-model="envValue" show-types />
       </resettable-wrapper>
     </argument-input>
     <argument-input
@@ -179,7 +179,7 @@ export default {
           : this.internalValue.env
       },
       set(value) {
-        this.internalValue.env = value
+        this.internalValue = { ...this.internalValue, env: value }
       }
     },
     jobTemplateValue: {
@@ -189,7 +189,7 @@ export default {
           : this.internalValue.job_template
       },
       set(value) {
-        this.internalValue.job_template = value
+        this.internalValue = { ...this.internalValue, job_template: value }
       }
     }
   }

@@ -12,7 +12,7 @@
       description="Additional environment variables to set in the container."
     >
       <resettable-wrapper v-model="envValue" class="resettable-dictionary">
-        <code-input v-model="envValue" />
+        <code-input v-model="envValue" show-types />
       </resettable-wrapper>
     </argument-input>
     <argument-input
@@ -24,7 +24,7 @@
         v-model="hostConfigValue"
         class="resettable-dictionary"
       >
-        <code-input v-model="hostConfigValue" />
+        <code-input v-model="hostConfigValue" show-types />
       </resettable-wrapper>
     </argument-input>
   </div>
@@ -64,7 +64,7 @@ export default {
           : this.internalValue.env
       },
       set(value) {
-        this.internalValue.env = value
+        this.internalValue = { ...this.internalValue, env: value }
       }
     },
     hostConfigValue: {
@@ -74,7 +74,7 @@ export default {
           : this.internalValue.host_config
       },
       set(value) {
-        this.internalValue.host_config = value
+        this.internalValue = { ...this.internalValue, host_config: value }
       }
     }
   }

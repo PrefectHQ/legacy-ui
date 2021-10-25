@@ -4,11 +4,14 @@
 
 ### Features and Improvements
 
+- Rebuilt various inputs responsible for code input (Dict, Json, Yaml) - [#1095](https://github.com/PrefectHQ/ui/pull/1095)
+- Allow users to specify type explicitly for env variables - [#1095](https://github.com/PrefectHQ/ui/pull/1095)
 - Add warning that users will be locked out if not part of a team - [#1078](https://github.com/PrefectHQ/ui/pull/1078)
 - Update the PagerDuty logo to match new branding - [#1073](https://github.com/PrefectHQ/ui/pull/1073)
 
 ### Bugfixes
 
+- Rebuilt Run-Config editor to preserve original run_config values, allows resetting fields - [#1095](https://github.com/PrefectHQ/ui/pull/1095)
 - Internal: update CircleCI config slack orb (add `@` to mentions) - [#1053](https://github.com/PrefectHQ/ui/pull/1053)
 - Disable start run button for late flow runs -[#1087](https://github.com/PrefectHQ/ui/pull/1087)
 - Filter by scheduled runs in the Flow runs table - [#1079](https://github.com/PrefectHQ/ui/pull/1079)

@@ -111,9 +111,12 @@ export default {
       return parseYaml(value) ?? parseJson(value)
     },
     setMode(mode) {
-      const value = this.tryGetValueObject(this.internalValue)
+      if (this.internalValue != null) {
+        const value = this.tryGetValueObject(this.internalValue)
 
-      this.internalValue = this.formatValueToString(mode, value)
+        this.internalValue = this.formatValueToString(mode, value)
+      }
+
       this.mode = mode
     },
     formatValueToString(mode, value) {

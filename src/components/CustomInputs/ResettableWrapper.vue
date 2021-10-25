@@ -25,9 +25,9 @@ export default {
   name: 'ResettableWrapper',
   props: {
     value: {
-      type: [String, Boolean, Number, Array, Object, Function, Promise],
+      type: [String, Boolean, Number, Array, Object],
       required: false,
-      default: true
+      default: null
     }
   },
   data() {
