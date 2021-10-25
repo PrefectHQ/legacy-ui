@@ -1,18 +1,10 @@
 <script>
-/* eslint-disable vue/no-v-html */
 import RunConfigTypeSelect from '@/components/RunConfig/RunConfigTypeSelect'
 import UniversalRunForm from '@/components/RunConfig/UniversalRunForm'
 import LocalRunForm from '@/components/RunConfig/LocalRunForm'
 import DockerRunForm from '@/components/RunConfig/DockerRunForm'
 import KubernetesRunForm from '@/components/RunConfig/KubernetesRunForm'
 import EcsRunForm from '@/components/RunConfig/EcsRunForm'
-
-const nullValues = {
-  list: [],
-  multiline: null,
-  object: {},
-  string: null
-}
 
 export default {
   components: {
@@ -21,20 +13,7 @@ export default {
   props: {
     value: {
       type: Object,
-      required: false,
-      default: () => {
-        return {
-          type: 'UniversalRun'
-        }
-      }
-    }
-  },
-  data() {
-    return {
-      internalValue: { type: 'UniversalRun', ...this.value },
-      shownArgs: {},
-      initialValue: { ...this.value },
-      templateType: this.value?.type || 'UniversalRun'
+      required: true
     }
   },
   computed: {
@@ -48,108 +27,25 @@ export default {
           return KubernetesRunForm
         case 'ECSRun':
           return EcsRunForm
+        case 'UniversalRun':
         default:
           return UniversalRunForm
       }
     },
-    fields() {
-      return Object.keys(this.template.args)
-    }
-    // template() {
-    //   return runConfigs[this.internalValue.type]
-    // },
-    // templateArgs() {
-    //   return runConfigs[this.internalValue.type].args
-    //     .map(a =>
-    //       a.options ? a.options.filter(a_ => !!a_.arg).map(a_ => a_.arg) : a.arg
-    //     )
-    //     .flat()
-    // }
-  },
-  watch: {
     internalValue: {
-      handler: function(val) {
-        const dict = { type: val.type }
-        // Filter values that don't exist as template args
-        Object.keys(val).map(key => {
-          if (this.templateArgs.includes(key)) {
-            dict[key] = val[key]
-          }
-        })
-
-        // Add any missing template args to the emitted internal value
-        this.templateArgs.forEach(key => {
-          if (key in dict) return
-          dict[key] = null
-        })
-
-        this.$emit('input', dict)
+      get() {
+        return this.value ?? {}
       },
-      deep: true
-    },
-    templateType: {
-      handler: function() {
-        this.$emit('input', { ...this.internalValue })
-      },
-      deep: true
-    }
-  },
-  mounted() {
-    this.createArgs()
-  },
-  methods: {
-    createArgs() {
-      const dict = {}
-      // Object.keys(runConfigs).forEach(config => {
-      //   if (!runConfigs[config]) return
-      //   runConfigs[config].args.forEach(arg => {
-      //     if (arg.arg) {
-      //       try {
-      //         dict[arg.arg] =
-      //           JSON.parse(this.value?.[arg.arg]) || nullValues[arg.type]
-      //       } catch {
-      //         dict[arg.arg] = this.value?.[arg.arg] || nullValues[arg.type]
-      //       }
-      //     }
-
-      //     arg.options?.forEach((option, i) => {
-      //       if (option.arg) {
-      //         try {
-      //           dict[option.arg] =
-      //             JSON.parse(this.value?.[option.arg]) || nullValues[arg.type]
-      //         } catch (e) {
-      //           dict[option.arg] =
-      //             this.value?.[option.arg] || nullValues[arg.type]
-      //         }
-
-      //         if (this.value?.[option.arg]) {
-      //           this.shownArgs[arg.ref] = i
-      //         }
-      //       }
-      //     })
-      //   })
-      // })
-      this.internalValue = { type: this.templateType, ...dict }
-    },
-    handleArgOptionClick(arg) {
-      arg.options.forEach((o, i) => {
-        if (!o.arg || !this.template) return
-        // If the option arg is defined (not a "default" option), set it to its null value
-        this.internalValue[o.arg] =
-          this.shownArgs[arg.ref] === i
-            ? this.value?.[o.arg] || this.initialValue?.[o.arg]
-            : nullValues[this.template.args.find(a => a.arg == o.arg)?.type]
-      })
-    },
-    handleInput(arg, val) {
-      this.$set(this.internalValue, arg, val)
+      set(value) {
+        this.$emit('input', value)
+      }
     }
   }
 }
 </script>
 
 <template>
-  <div style="min-width: 100%;">
+  <div style="min-width: 100%">
     <run-config-type-select v-model="internalValue.type" class="pb-8" />
     <component :is="formComponent" v-model="internalValue" />
   </div>
@@ -161,24 +57,9 @@ export default {
   margin: 0;
 }
 
-.run-config-form__input {
-  margin-top: 26px;
-}
-
-.run-config-form__input .v-input-radio-group {
-  margin-top: -26px;
-  justify-content: center;
-}
-
-.run-config-form__input .list-input {
-  margin-top: -26px;
-}
-
-.run-config-form__input .multiline-input {
-  margin-top: -26px;
-}
-
-.run-config-form__input .dict-input {
-  margin-top: -36px;
+@media (min-width: 960px) {
+  .run-config-form__input > .v-input {
+    margin-top: 26px;
+  }
 }
 </style>
