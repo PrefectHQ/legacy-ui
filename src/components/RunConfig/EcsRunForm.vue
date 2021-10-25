@@ -12,7 +12,7 @@
       </v-radio-group>
     </argument-input>
     <template v-if="selectedTaskDefinition == taskDefinitions.path">
-      <argument
+      <argument-input
         v-model="internalValue.task_definition_path"
         argument="task_definition_path"
         title="Template path"
@@ -29,10 +29,15 @@
           />
           for more information on task definitions.
         </template>
-        <code-input
+        <resettable-wrapper
           v-model="taskDefinitionValue"
-          :languages="['json', 'yaml']"
-        />
+          class="resettable-dictionary"
+        >
+          <code-input
+            v-model="taskDefinitionValue"
+            :languages="['json', 'yaml']"
+          />
+        </resettable-wrapper>
       </argument-input>
     </template>
     <template v-if="selectedTaskDefinition == taskDefinitions.arn">
@@ -59,7 +64,9 @@
       title="Environment Variables"
       description="Additional environment variables to set on the task."
     >
-      <code-input v-model="envValue" />
+      <resettable-wrapper v-model="envValue" class="resettable-dictionary">
+        <code-input v-model="envValue" />
+      </resettable-wrapper>
     </argument-input>
     <argument-input v-model="internalValue.cpu" argument="cpu" title="CPU">
       <template slot="description">
@@ -107,7 +114,12 @@
         />
         for more information.
       </template>
-      <code-input v-model="runTaskKwargsValue" />
+      <resettable-wrapper
+        v-model="runTaskKwargsValue"
+        class="resettable-dictionary"
+      >
+        <code-input v-model="runTaskKwargsValue" />
+      </resettable-wrapper>
     </argument-input>
   </div>
 </template>
@@ -116,12 +128,14 @@
 import ArgumentInput from '@/components/RunConfig/ArgumentInput'
 import ArgumentReference from '@/components/RunConfig/ArgumentReference'
 import CodeInput from '@/components/CustomInputs/CodeInput'
+import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
 import { formatJson } from '@/utils/json'
 
 export default {
   components: {
     ArgumentInput,
     ArgumentReference,
+    ResettableWrapper,
     CodeInput
   },
   props: {

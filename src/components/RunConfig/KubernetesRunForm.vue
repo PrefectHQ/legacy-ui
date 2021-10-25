@@ -24,7 +24,7 @@
       description="Specify an in-memory job template to use."
     >
       <resettable-wrapper
-        v-model="internalValue.job_template"
+        v-model="jobTemplateValue"
         class="resettable-dictionary"
       >
         <code-input v-model="jobTemplateValue" :languages="['json', 'yaml']" />
@@ -41,10 +41,7 @@
       title="Environment Variables"
       description="Additional environment variables to set on the job."
     >
-      <resettable-wrapper
-        v-model="internalValue.env"
-        class="resettable-dictionary"
-      >
+      <resettable-wrapper v-model="envValue" class="resettable-dictionary">
         <code-input v-model="envValue" />
       </resettable-wrapper>
     </argument-input>

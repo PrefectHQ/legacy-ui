@@ -9,14 +9,16 @@
     </v-col>
     <v-col cols="12" md="6" class="run-config-form__input">
       <slot>
-        <v-text-field
-          v-model="internalValue"
-          placeholder="Default"
-          :label="title"
-          hide-details
-          outlined
-          dense
-        />
+        <resettable-wrapper v-model="internalValue">
+          <v-text-field
+            v-model="internalValue"
+            placeholder="Default"
+            :label="title"
+            hide-details
+            outlined
+            dense
+          />
+        </resettable-wrapper>
       </slot>
     </v-col>
   </v-row>
@@ -24,10 +26,12 @@
 
 <script>
 import ArgumentHeading from '@/components/RunConfig/ArgumentHeading'
+import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
 
 export default {
   components: {
-    ArgumentHeading
+    ArgumentHeading,
+    ResettableWrapper
   },
   props: {
     argument: {

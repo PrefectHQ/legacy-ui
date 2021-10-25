@@ -5,7 +5,9 @@
       title="Environment Variables"
       description="Additional environment variables to set in the container."
     >
-      <code-input v-model="envValue" />
+      <resettable-wrapper v-model="envValue" class="resettable-dictionary">
+        <code-input v-model="envValue" />
+      </resettable-wrapper>
     </argument-input>
   </div>
 </template>
@@ -13,11 +15,13 @@
 <script>
 import ArgumentInput from '@/components/RunConfig/ArgumentInput'
 import CodeInput from '@/components/CustomInputs/CodeInput'
+import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
 import { formatJson } from '@/utils/json'
 
 export default {
   components: {
     ArgumentInput,
+    ResettableWrapper,
     CodeInput
   },
   props: {
