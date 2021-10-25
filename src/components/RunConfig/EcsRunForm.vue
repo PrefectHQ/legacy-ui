@@ -29,7 +29,10 @@
           />
           for more information on task definitions.
         </template>
-        <multi-line-input v-model="internalValue.task_definition" />
+        <code-input
+          v-model="internalValue.task_definition"
+          :languages="['json', 'yaml']"
+        />
       </argument-input>
     </template>
     <template v-if="selectedTaskDefinition == taskDefinitions.arn">
@@ -56,7 +59,7 @@
       title="Environment Variables"
       description="Additional environment variables to set on the task."
     >
-      <dict-input v-model="internalValue.env" />
+      <code-input v-model="internalValue.env" />
     </argument-input>
     <argument-input v-model="internalValue.cpu" argument="cpu" title="CPU">
       <template slot="description">
@@ -104,7 +107,7 @@
         />
         for more information.
       </template>
-      <dict-input v-model="internalValue.run_task_kwargs" />
+      <code-input v-model="internalValue.run_task_kwargs" />
     </argument-input>
   </div>
 </template>
@@ -112,15 +115,13 @@
 <script>
 import ArgumentInput from '@/components/RunConfig/ArgumentInput'
 import ArgumentReference from '@/components/RunConfig/ArgumentReference'
-import DictInput from '@/components/CustomInputs/DictInput'
-import MultiLineInput from '@/components/CustomInputs/MultiLineInput'
+import CodeInput from '@/components/CustomInputs/CodeInput'
 
 export default {
   components: {
     ArgumentInput,
     ArgumentReference,
-    DictInput,
-    MultiLineInput
+    CodeInput
   },
   props: {
     value: {

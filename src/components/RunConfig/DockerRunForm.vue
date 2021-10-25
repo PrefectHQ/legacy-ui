@@ -11,26 +11,26 @@
       title="Environment Variables"
       description="Additional environment variables to set in the container."
     >
-      <dict-input v-model="internalValue.env" />
+      <code-input v-model="internalValue.env" />
     </argument-input>
     <argument-input
       argument="host_config"
       title="Host Config"
       description="Runtime arguments to pass to the Docker Agent."
     >
-      <dict-input v-model="internalValue.host_config" />
+      <code-input v-model="internalValue.host_config" />
     </argument-input>
   </div>
 </template>
 
 <script>
 import ArgumentInput from '@/components/RunConfig/ArgumentInput'
-import DictInput from '@/components/CustomInputs/DictInput'
+import CodeInput from '@/components/CustomInputs/CodeInput'
 
 export default {
   components: {
     ArgumentInput,
-    DictInput
+    CodeInput
   },
   props: {
     value: {
