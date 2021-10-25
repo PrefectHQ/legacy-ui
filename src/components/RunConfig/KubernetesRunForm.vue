@@ -27,10 +27,7 @@
         v-model="internalValue.job_template"
         class="resettable-dictionary"
       >
-        <code-input
-          v-model="internalValue.job_template"
-          :languages="['json', 'yaml']"
-        />
+        <code-input v-model="jobTemplateValue" :languages="['json', 'yaml']" />
       </resettable-wrapper>
     </argument-input>
     <argument-input
@@ -48,7 +45,7 @@
         v-model="internalValue.env"
         class="resettable-dictionary"
       >
-        <code-input v-model="internalValue.env" />
+        <code-input v-model="envValue" />
       </resettable-wrapper>
     </argument-input>
     <argument-input
@@ -141,6 +138,7 @@ import ArgumentReference from '@/components/RunConfig/ArgumentReference'
 import CodeInput from '@/components/CustomInputs/CodeInput'
 import ListInput from '@/components/CustomInputs/ListInput'
 import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
+import { formatJson } from '@/utils/json'
 
 export default {
   components: {
@@ -175,6 +173,26 @@ export default {
       },
       set(value) {
         this.$emit('input', value)
+      }
+    },
+    envValue: {
+      get() {
+        return typeof this.internalValue.env === 'object'
+          ? formatJson(this.internalValue.env)
+          : this.internalValue.env
+      },
+      set(value) {
+        this.internalValue.env = value
+      }
+    },
+    jobTemplateValue: {
+      get() {
+        return typeof this.internalValue.job_template === 'object'
+          ? formatJson(this.internalValue.job_template)
+          : this.internalValue.job_template
+      },
+      set(value) {
+        this.internalValue.job_template = value
       }
     }
   }

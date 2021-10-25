@@ -30,7 +30,7 @@
           for more information on task definitions.
         </template>
         <code-input
-          v-model="internalValue.task_definition"
+          v-model="taskDefinitionValue"
           :languages="['json', 'yaml']"
         />
       </argument-input>
@@ -59,7 +59,7 @@
       title="Environment Variables"
       description="Additional environment variables to set on the task."
     >
-      <code-input v-model="internalValue.env" />
+      <code-input v-model="envValue" />
     </argument-input>
     <argument-input v-model="internalValue.cpu" argument="cpu" title="CPU">
       <template slot="description">
@@ -107,7 +107,7 @@
         />
         for more information.
       </template>
-      <code-input v-model="internalValue.run_task_kwargs" />
+      <code-input v-model="runTaskKwargsValue" />
     </argument-input>
   </div>
 </template>
@@ -116,6 +116,7 @@
 import ArgumentInput from '@/components/RunConfig/ArgumentInput'
 import ArgumentReference from '@/components/RunConfig/ArgumentReference'
 import CodeInput from '@/components/CustomInputs/CodeInput'
+import { formatJson } from '@/utils/json'
 
 export default {
   components: {
@@ -149,6 +150,36 @@ export default {
       },
       set(value) {
         this.$emit('input', value)
+      }
+    },
+    envValue: {
+      get() {
+        return typeof this.internalValue.env === 'object'
+          ? formatJson(this.internalValue.env)
+          : this.internalValue.env
+      },
+      set(value) {
+        this.internalValue.env = value
+      }
+    },
+    taskDefinitionValue: {
+      get() {
+        return typeof this.internalValue.task_definition === 'object'
+          ? formatJson(this.internalValue.task_definition)
+          : this.internalValue.task_definition
+      },
+      set(value) {
+        this.internalValue.task_definition = value
+      }
+    },
+    runTaskKwargsValue: {
+      get() {
+        return typeof this.internalValue.run_task_kwargs === 'object'
+          ? formatJson(this.internalValue.run_task_kwargs)
+          : this.internalValue.run_task_kwargs
+      },
+      set(value) {
+        this.internalValue.run_task_kwargs = value
       }
     }
   }

@@ -5,7 +5,7 @@
       title="Environment Variables"
       description="Additional environment variables to set for the process."
     >
-      <code-input v-model="internalValue.env" />
+      <code-input v-model="envValue" />
     </argument-input>
     <argument-input
       v-model="internalValue.working_dir"
@@ -19,6 +19,7 @@
 <script>
 import ArgumentInput from '@/components/RunConfig/ArgumentInput'
 import CodeInput from '@/components/CustomInputs/CodeInput'
+import { formatJson } from '@/utils/json'
 
 export default {
   components: {
@@ -38,6 +39,16 @@ export default {
       },
       set(value) {
         this.$emit('input', value)
+      }
+    },
+    envValue: {
+      get() {
+        return typeof this.internalValue.env === 'object'
+          ? formatJson(this.internalValue.env)
+          : this.internalValue.env
+      },
+      set(value) {
+        this.internalValue.env = value
       }
     }
   }

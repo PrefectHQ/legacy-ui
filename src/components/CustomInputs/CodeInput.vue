@@ -38,7 +38,7 @@ export default {
   name: 'CodeInput',
   props: {
     value: {
-      type: [String, Object],
+      type: String,
       required: false,
       default: null
     },
@@ -81,15 +81,10 @@ export default {
   computed: {
     internalValue: {
       get() {
-        return typeof this.value === 'object'
-          ? this.getStringValue(this.value)
-          : this.value
+        return this.value
       },
       set(value) {
-        this.$emit(
-          'input',
-          typeof this.value === 'object' ? this.getObjectValue(value) : value
-        )
+        this.$emit('input', value)
       }
     },
     editorProps() {

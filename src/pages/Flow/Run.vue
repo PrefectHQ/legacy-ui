@@ -12,6 +12,7 @@ import { parametersMixin } from '@/mixins/parametersMixin.js'
 import throttle from 'lodash.throttle'
 import { adjectives } from '@/components/RunConfig/adjectives'
 import { animals } from '@/components/RunConfig/animals'
+import { isValidJson, parseJson, formatJson } from '@/utils/json'
 import CodeInput from '@/components/CustomInputs/CodeInput'
 import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
 
@@ -107,14 +108,30 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
+    contextValue: {
+      get() {
+        return parseJson(this.context)
+      },
+      set(value) {
+        this.context = formatJson(value)
+      }
+    },
     contextModified() {
-      if (!this.context) return false
-      return Object.keys(this.context).filter(c => c !== '').length > 0
+      if (!this.contextValue) return false
+      return Object.keys(this.contextValue).filter(c => c !== '').length > 0
+    },
+    parametersValue: {
+      get() {
+        return parseJson(this.parameters)
+      },
+      set(value) {
+        this.parameters = formatJson(value)
+      }
     },
     parametersModified() {
-      if (!this.parameters) return false
+      if (!this.parametersValue) return false
 
-      const entries = Object.entries(this.parameters)
+      const entries = Object.entries(this.parametersValue)
       const defaults = Object.fromEntries(
         this.parameterDefaults?.map(entry => [entry.name, entry.default]) ?? []
       )
@@ -134,7 +151,7 @@ export default {
     window.removeEventListener('scroll', this.handleScroll)
   },
   created() {
-    this.parameters = this.defaultParameters.reduce((acc, param) => {
+    this.parametersValue = this.defaultParameters.reduce((acc, param) => {
       acc[param.name] = param.default
       return acc
     }, {})
@@ -167,14 +184,12 @@ export default {
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-flow-run.gql'),
           variables: {
-            context: this.context,
+            context: this.contextValue,
             id: this.flow.id,
             flowRunName: this.flowRunName,
-            parameters: this.parameters,
+            parameters: this.parametersValue,
             scheduledStartTime: this.scheduledStartDateTime,
-            runConfig: this.runConfig?.type
-              ? { ...this.runConfig, labels: [] }
-              : null,
+            runConfig: this.getRunConfigValue(),
             labels: this.labels
           },
           errorPolicy: 'all'
@@ -191,6 +206,27 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    getRunConfigValue() {
+      if (!this.runConfig?.type) {
+        return null
+      }
+
+      const runConfig = { ...this.runConfig }
+      const jsonProperties = [
+        'env',
+        'host_config',
+        'job_template',
+        'run_task_kwargs',
+        'task_definition'
+      ]
+      jsonProperties.forEach(prop => {
+        if (runConfig[prop] && isValidJson(runConfig[prop])) {
+          runConfig[prop] = parseJson(runConfig[prop])
+        }
+      })
+
+      return runConfig
     },
     generateRandomName() {
       const adjective = adjectives[Math.floor(Math.random() * adjectivesLength)]
@@ -228,31 +264,6 @@ export default {
           PREFECT__LOGGING__LEVEL: this.loggingLevel
         }
       }
-    },
-    validContext() {
-      if (!this.$refs.contextRef) {
-        return true
-      }
-
-      // Check JSON using the JsonInput component's validation
-      const jsonValidationResult = this.$refs.contextRef.validateJson()
-
-      if (jsonValidationResult === 'SyntaxError') {
-        this.errorInContextInput = true
-        this.showErrorAlert(`
-        There is a syntax error in your flow context JSON.
-        Please correct the error and try again.
-      `)
-        return false
-      }
-
-      if (jsonValidationResult === 'MissingError') {
-        this.errorInContextInput = true
-        this.showErrorAlert('Please enter your flow context as a JSON object.')
-        return false
-      }
-
-      return true
     },
     resetRunConfigValues() {
       this.runConfig = { ...this.flow.run_config }
