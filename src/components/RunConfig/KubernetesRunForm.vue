@@ -23,7 +23,15 @@
       title="Template"
       description="Specify an in-memory job template to use."
     >
-      <multi-line-input v-model="internalValue.job_template" />
+      <resettable-wrapper
+        v-model="internalValue.job_template"
+        class="resettable-dictionary"
+      >
+        <code-input
+          v-model="internalValue.job_template"
+          :languages="['json', 'yaml']"
+        />
+      </resettable-wrapper>
     </argument-input>
     <argument-input
       v-model="internalValue.image"
@@ -36,7 +44,12 @@
       title="Environment Variables"
       description="Additional environment variables to set on the job."
     >
-      <dict-input v-model="internalValue.env" />
+      <resettable-wrapper
+        v-model="internalValue.env"
+        class="resettable-dictionary"
+      >
+        <code-input v-model="internalValue.env" />
+      </resettable-wrapper>
     </argument-input>
     <argument-input
       v-model="internalValue.cpu_limit"
@@ -125,16 +138,16 @@
 <script>
 import ArgumentInput from '@/components/RunConfig/ArgumentInput'
 import ArgumentReference from '@/components/RunConfig/ArgumentReference'
-import DictInput from '@/components/CustomInputs/DictInput'
-import MultiLineInput from '@/components/CustomInputs/MultiLineInput'
+import CodeInput from '@/components/CustomInputs/CodeInput'
 import ListInput from '@/components/CustomInputs/ListInput'
+import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
 
 export default {
   components: {
     ArgumentInput,
     ArgumentReference,
-    DictInput,
-    MultiLineInput,
+    ResettableWrapper,
+    CodeInput,
     ListInput
   },
   props: {
