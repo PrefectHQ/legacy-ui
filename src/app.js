@@ -85,27 +85,17 @@ Vue.prototype.$globalApolloQueries = {}
 
 // Vue Global Error Handler
 Vue.config.errorHandler = function(error, vm, trace) {
-  if (
-    error?.message?.includes(
-      "Cannot read properties of null (reading '_observe')"
-    )
-  )
+  if (error?.message?.includes("Cannot read property '_observe' of null"))
     return
   if (process.env.NODE_ENV === 'development')
     // eslint-disable-next-line no-console
     console.log('Vue Global Error Handler', { error, vm, trace })
   LogRocket.captureException(error)
   LogRocket.log('Related to error', vm, error)
-
-  throw error
 }
 
 Vue.config.warnHandler = function(error, vm, trace) {
-  if (
-    error?.message?.includes(
-      "Cannot read properties of null (reading '_observe')"
-    )
-  )
+  if (error?.message?.includes("Cannot read property '_observe' of null"))
     return
   if (process.env.NODE_ENV === 'development')
     // eslint-disable-next-line no-console
