@@ -5,7 +5,7 @@
       title="Environment Variables"
       description="Additional environment variables to set for the process."
     >
-      <resettable-wrapper v-model="envValue" class="resettable-dictionary">
+      <resettable-wrapper v-model="envValue" class="resettable-dictionary-json">
         <code-input v-model="envValue" show-types />
       </resettable-wrapper>
     </argument-input>

@@ -31,7 +31,7 @@
         </template>
         <resettable-wrapper
           v-model="taskDefinitionValue"
-          class="resettable-dictionary"
+          class="resettable-dictionary-json"
         >
           <code-input
             v-model="taskDefinitionValue"
@@ -64,7 +64,7 @@
       title="Environment Variables"
       description="Additional environment variables to set on the task."
     >
-      <resettable-wrapper v-model="envValue" class="resettable-dictionary">
+      <resettable-wrapper v-model="envValue" class="resettable-dictionary-json">
         <code-input v-model="envValue" show-types />
       </resettable-wrapper>
     </argument-input>
@@ -116,7 +116,7 @@
       </template>
       <resettable-wrapper
         v-model="runTaskKwargsValue"
-        class="resettable-dictionary"
+        class="resettable-dictionary-json"
       >
         <code-input v-model="runTaskKwargsValue" show-types />
       </resettable-wrapper>

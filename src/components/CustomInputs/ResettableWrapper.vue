@@ -52,4 +52,13 @@ export default {
   justify-content: end;
   margin-bottom: 8px;
 }
+
+.resettable-dictionary-json {
+  position: relative;
+
+  .resettable-wrapper__button-container {
+    position: absolute;
+    right: 110px;
+  }
+}
 </style>

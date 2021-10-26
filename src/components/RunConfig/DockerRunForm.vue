@@ -11,7 +11,7 @@
       title="Environment Variables"
       description="Additional environment variables to set in the container."
     >
-      <resettable-wrapper v-model="envValue" class="resettable-dictionary">
+      <resettable-wrapper v-model="envValue" class="resettable-dictionary-json">
         <code-input v-model="envValue" show-types />
       </resettable-wrapper>
     </argument-input>
@@ -22,7 +22,7 @@
     >
       <resettable-wrapper
         v-model="hostConfigValue"
-        class="resettable-dictionary"
+        class="resettable-dictionary-json"
       >
         <code-input v-model="hostConfigValue" show-types />
       </resettable-wrapper>

@@ -444,7 +444,7 @@ export default {
           <v-col cols="12" md="9" class="mt-n4 mt-md-0 ">
             <resettable-wrapper
               v-model="parameters"
-              class="resettable-dictionary"
+              class="resettable-dictionary-json"
             >
               <code-input v-model="parameters" show-types readonly />
             </resettable-wrapper>
@@ -573,7 +573,10 @@ export default {
           </v-col>
 
           <v-col cols="12" md="9" class="mt-n4 mt-md-0 text-body-1">
-            <resettable-wrapper v-model="context" class="resettable-dictionary">
+            <resettable-wrapper
+              v-model="context"
+              class="resettable-dictionary-json"
+            >
               <code-input v-model="context" show-types />
             </resettable-wrapper>
           </v-col>
@@ -930,15 +933,6 @@ export default {
       --fa-secondary-color: var(--v-accentPink-base);
       --fa-secondary-opacity: 1;
     }
-  }
-}
-
-.resettable-dictionary {
-  position: relative;
-
-  .resettable-wrapper__button-container {
-    position: absolute;
-    right: 110px;
   }
 }
 </style>
