@@ -84,10 +84,6 @@ export default {
     isArrayString(value) {
       return isValidJson(value) && this.isArray(parseJson(value))
     },
-    emitValueAndEntries(value) {
-      this.emitValue(value)
-      this.emitEntries(value)
-    },
     emitValue(value) {
       const jsonValue = this.isArrayString(this.value)
         ? formatJson(value)
@@ -132,17 +128,20 @@ export default {
       return this.internalValue.every(x => x.key != key)
     },
     addEntry(entry) {
-      this.emitValueAndEntries([...this.internalEntries, entry])
+      this.emitValue([...this.internalValue, entry])
+      this.emitEntries([...this.internalEntries, entry])
     },
     updateEntry(key, entry) {
-      this.emitValueAndEntries([
+      this.emitValue([
+        ...this.internalValue.map(x => (x.key == key ? entry : x))
+      ])
+      this.emitEntries([
         ...this.internalEntries.map(x => (x.key == key ? entry : x))
       ])
     },
     removeEntry({ key }) {
-      this.emitValueAndEntries([
-        ...this.internalEntries.filter(x => x.key != key)
-      ])
+      this.emitValue([...this.internalValue.filter(x => x.key != key)])
+      this.emitEntries([...this.internalEntries.filter(x => x.key != key)])
     },
     addToValue(entry) {
       this.emitValue([...this.internalValue, entry])
