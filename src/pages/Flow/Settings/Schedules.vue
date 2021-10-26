@@ -1,6 +1,4 @@
 <script>
-/* eslint-disable */
-
 import { mapGetters, mapActions } from 'vuex'
 
 import ConfirmDialog from '@/components/ConfirmDialog'
@@ -300,7 +298,6 @@ export default {
                   <v-tab>Parameters</v-tab>
                 </v-tabs>
 
-                <!-- CREATION CLOCKFORM -->
                 <ClockForm
                   :flow-group-clocks="flowGroupClocks"
                   :timezone="
@@ -367,8 +364,6 @@ export default {
                 <v-tab>Schedule</v-tab>
                 <v-tab>Parameters</v-tab>
               </v-tabs>
-
-              <!-- EDITABLE CLOCKFORM -->
 
               <ClockForm
                 :flow-group-clocks="flowGroupClocks"

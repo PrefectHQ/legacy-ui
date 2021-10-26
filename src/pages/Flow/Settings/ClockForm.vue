@@ -27,7 +27,7 @@ export default {
     },
     selectedTab: {
       type: [Number, String],
-      required: false,
+      required: true,
       default: () => 0
     },
     clock: {
@@ -176,7 +176,7 @@ export default {
       class="d-flex flex-column align-start justify-start"
       style="height: 100%;width: 100%;"
     >
-      <div class="d-flex justify-end mb-1" style="width: 100%;">
+      <div class="d-flex justify-end mt-4" style="width: 100%;">
         <v-switch
           v-show="selectedTab === 0"
           v-model="advanced"
@@ -259,7 +259,9 @@ export default {
               :menu-props="{ contentClass: 'tz' }"
             />
             <v-alert
-              v-if="flowGroupClocks.length > 0"
+              v-if="
+                flowGroupClocks.length > 0 && typeof simpleModel !== 'number'
+              "
               border="left"
               colored-border
               elevation="0"
@@ -284,18 +286,25 @@ export default {
       >
         This flow has no default parameters.
       </div>
-      <DictInput
-        v-else
-        v-model="parameter"
-        style="padding: 20px;"
-        :dict="removeDoubleParam(param)"
-        :default-checked-keys="
-          Object.keys(param ? param : allDefaultParameters)
-        "
-        include-checkbox
-        disable-edit
-        allow-reset
-      />
+
+      <div v-else>
+        <p class="mt-8 text-body-1">
+          Checked parameters will override their corresponding defaults for runs
+          generated from this schedule.
+        </p>
+
+        <DictInput
+          v-model="parameter"
+          style="padding: 20px;"
+          :dict="removeDoubleParam(param)"
+          :default-checked-keys="
+            Object.keys(param ? param : allDefaultParameters)
+          "
+          include-checkbox
+          disable-edit
+          allow-reset
+        />
+      </div>
     </div>
 
     <div
