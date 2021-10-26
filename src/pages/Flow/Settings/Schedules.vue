@@ -7,7 +7,6 @@ import ExternalLink from '@/components/ExternalLink'
 import IntervalClock from '@/components/Functional/IntervalClock'
 import LogRocket from 'logrocket'
 import ClockForm from '@/pages/Flow/Settings/ClockForm'
-import DictInput from '@/components/CustomInputs/DictInput'
 import { parametersMixin } from '@/mixins/parametersMixin.js'
 export default {
   components: {
@@ -15,8 +14,7 @@ export default {
     CronClock,
     ExternalLink,
     IntervalClock,
-    ClockForm,
-    DictInput
+    ClockForm
   },
   mixins: [parametersMixin],
   props: {
