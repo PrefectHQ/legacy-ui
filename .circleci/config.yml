@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   docker: circleci/docker@1.0.0
-  slack: circleci/slack@4.4.2
+  slack: circleci/slack@4.4.4
 
 aliases:
   - &install_docker
@@ -258,7 +258,7 @@ workflows:
   'Deploy prod':
     jobs:
       - slack/on-hold:
-          mentions: 'nicholas,chris'
+          mentions: '@nicholas, @chris'
           filters:
             branches:
               ignore:
