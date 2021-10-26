@@ -34,7 +34,7 @@ export default {
     internalValue: {
       get() {
         return typeof this.value === 'object'
-          ? formatJson(this.value, 0)
+          ? formatJson(this.value)
           : this.value
       },
       set(value) {

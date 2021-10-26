@@ -26,7 +26,7 @@ export default {
   computed: {
     internalValue: {
       get() {
-        return formatJson(this.value, 0)
+        return formatJson(this.value)
       },
       set(value) {
         if (this.validate(value)) {

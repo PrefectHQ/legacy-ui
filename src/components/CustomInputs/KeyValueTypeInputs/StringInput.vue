@@ -37,7 +37,7 @@ export default {
   },
   mounted() {
     if (typeof this.value == 'object') {
-      this.internalValue = formatJson(this.value, 0) ?? ''
+      this.internalValue = formatJson(this.value) ?? ''
     } else if (typeof this.value != 'string') {
       this.internalValue = this.tryCallingToString(this.value) ?? ''
     }

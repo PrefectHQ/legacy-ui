@@ -1,10 +1,12 @@
-export function formatJson(value, tabSpaces = 2) {
+import jsBeautify from 'js-beautify'
+
+export function formatJson(value) {
   if (value == null) {
     return null
   }
 
   try {
-    return JSON.stringify(value, null, tabSpaces)
+    return jsBeautify(JSON.stringify(value))
   } catch {
     return null
   }
