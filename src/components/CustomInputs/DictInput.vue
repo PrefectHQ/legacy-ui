@@ -236,7 +236,7 @@ export default {
 </script>
 
 <template>
-  <div class="dict-input position-relative">
+  <div class="position-relative">
     <div class="d-flex justify-end align-end mb-1" style="width: 100%;">
       <v-btn
         v-if="allowReset"
@@ -279,7 +279,7 @@ export default {
           :key="pair"
           no-gutters
           align="center"
-          class="my-2 position-relative"
+          class="my-4 position-relative"
           :class="{ 'pr-8': !disableEdit }"
         >
           <v-col v-if="includeCheckbox" cols="1">
@@ -295,7 +295,6 @@ export default {
               class="text-body-1"
               hide-details
               outlined
-              :label="keyLabel"
               :disabled="disabled"
               dense
               :placeholder="keyLabel"
@@ -310,7 +309,6 @@ export default {
               hide-details
               :disabled="disabled"
               outlined
-              :label="valueLabel"
               dense
               :placeholder="
                 inputIsArray && dict[i] && dict[i].value
