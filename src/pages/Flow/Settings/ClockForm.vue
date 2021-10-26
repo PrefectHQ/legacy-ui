@@ -164,8 +164,7 @@ export default {
           ? this.selectedTimezone
           : this.simpleSelectedTimezone
       }
-      console.log('CLOCK', clock)
-      //this.$emit('confirm', clock)
+      this.$emit('confirm', clock)
     }
   }
 }
