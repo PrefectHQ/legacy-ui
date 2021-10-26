@@ -1,24 +1,24 @@
 <template>
   <div class="code-input">
     <v-btn-toggle
-      v-if="languages.length > 1"
+      v-if="editors.length > 1"
       class="code-input__toggle"
       :value="mode"
       mandatory
       @change="setMode"
     >
       <v-btn
-        v-for="language in languages"
-        :key="language"
-        :value="language"
+        v-for="editor in editors"
+        :key="editor"
+        :value="editor"
         class="code-input__language-btn"
         x-small
       >
-        {{ language }}
+        {{ editor }}
       </v-btn>
     </v-btn-toggle>
     <component
-      :is="editors[mode]"
+      :is="editorComponents[mode]"
       v-model="internalValue"
       v-bind="editorProps[mode]"
       @update:entries="$emit('update:entries', $event)"
@@ -49,7 +49,7 @@ export default {
       required: false,
       default: false
     },
-    languages: {
+    editors: {
       type: Array,
       required: false,
       default: () => ['dict', 'json'],
@@ -93,7 +93,7 @@ export default {
         this.$emit('input', value)
       }
     },
-    editors() {
+    editorComponents() {
       return {
         json: JsonInput2,
         yaml: YamlInput2,
@@ -116,7 +116,7 @@ export default {
     }
   },
   created() {
-    this.setMode(this.languages[0])
+    this.setMode(this.editors[0])
   },
   methods: {
     getStringValue(value) {

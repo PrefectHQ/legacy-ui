@@ -27,7 +27,7 @@
         v-model="jobTemplateValue"
         class="resettable-dictionary-json"
       >
-        <code-input v-model="jobTemplateValue" :languages="['json', 'yaml']" />
+        <code-input v-model="jobTemplateValue" :editors="['json', 'yaml']" />
       </resettable-wrapper>
     </argument-input>
     <argument-input

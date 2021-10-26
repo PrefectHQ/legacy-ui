@@ -35,7 +35,7 @@
         >
           <code-input
             v-model="taskDefinitionValue"
-            :languages="['json', 'yaml']"
+            :editors="['json', 'yaml']"
           />
         </resettable-wrapper>
       </argument-input>

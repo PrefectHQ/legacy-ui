@@ -6,7 +6,11 @@ export function formatJson(value) {
   }
 
   try {
-    return jsBeautify(JSON.stringify(value))
+    return jsBeautify(JSON.stringify(value), {
+      indent_size: 2,
+      space_in_empty_paren: true,
+      preserve_newlines: false
+    })
   } catch {
     return null
   }
