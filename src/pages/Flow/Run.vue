@@ -189,7 +189,7 @@ export default {
             flowRunName: this.flowRunName,
             parameters: this.parametersValue,
             scheduledStartTime: this.scheduledStartDateTime,
-            runConfig: this.getRunConfigValue(),
+            runConfig: this.getRunConfigValues(),
             labels: this.labels
           },
           errorPolicy: 'all'
@@ -207,7 +207,7 @@ export default {
         this.loading = false
       }
     },
-    getRunConfigValue() {
+    getRunConfigValues() {
       if (!this.runConfig?.type) {
         return null
       }
@@ -220,13 +220,20 @@ export default {
         'run_task_kwargs',
         'task_definition'
       ]
-      jsonProperties.forEach(prop => {
-        if (runConfig[prop] && isValidJson(runConfig[prop])) {
-          runConfig[prop] = parseJson(runConfig[prop])
-        }
-      })
+      jsonProperties.forEach(
+        prop => (runConfig[prop] = this.getRunConfigValue(prop))
+      )
 
       return runConfig
+    },
+    getRunConfigValue(prop) {
+      const value = this.runConfig[prop]
+
+      if (value && isValidJson(value)) {
+        return parseJson(value)
+      }
+
+      return value
     },
     generateRandomName() {
       const adjective = adjectives[Math.floor(Math.random() * adjectivesLength)]
@@ -259,10 +266,10 @@ export default {
     },
     overrideLoggingEnvironmentVariable() {
       if (this.loggingLevel !== 'DEFAULT') {
-        this.runConfig.env = {
-          ...this.runConfig.env,
-          PREFECT__LOGGING__LEVEL: this.loggingLevel
-        }
+        const env = this.getRunConfigValue('env')
+        env.PREFECT__LOGGING__LEVEL = this.loggingLevel
+
+        this.runConfig.env = formatJson(env)
       }
     },
     resetRunConfigValues() {
