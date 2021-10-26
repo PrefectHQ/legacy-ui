@@ -1,16 +1,15 @@
 <template>
   <v-text-field
-    v-model="internalValue"
+    value="null"
     :error-messages="errors"
+    disabled
     v-bind="{ label: 'Value', outlined: true, dense: true }"
   />
 </template>
 
 <script>
-import { formatJson } from '@/utils/json'
-
 export default {
-  name: 'StringInput',
+  name: 'NullInput',
   props: {
     value: {
       type: [String, Number, Boolean, Object, Array],
@@ -36,28 +35,19 @@ export default {
     }
   },
   mounted() {
-    if (typeof this.value == 'object') {
-      this.internalValue = formatJson(this.value, 0) ?? ''
-    } else if (typeof this.value != 'string') {
-      this.internalValue = this.tryCallingToString(this.value) ?? ''
+    if (this.value != null) {
+      this.internalValue = null
     }
   },
   methods: {
-    tryCallingToString(value) {
-      if (value != null && typeof this.value.toString === 'function') {
-        return value.toString()
-      }
-
-      return null
-    },
     validate(value) {
       this.errors = this.getErrors(value)
 
       return this.errors.length === 0
     },
     getErrors(value) {
-      if (value === null) {
-        return ['Value is required']
+      if (value !== null) {
+        return ['Value is expected to be null']
       }
 
       return []

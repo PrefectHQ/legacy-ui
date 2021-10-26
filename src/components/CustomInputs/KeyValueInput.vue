@@ -12,7 +12,7 @@
     <template v-if="showTypes && hasTypes">
       <v-select
         v-model="selectedType"
-        :items="types"
+        :items="[{ text: '', value: null }, ...types]"
         label="Type"
         class="key-value-input__type-input"
         :error-messages="typeErrors"
@@ -136,11 +136,13 @@ export default {
       this.selectedType = this.isTypeAcceptable(type) ? type : null
     },
     handleSelectedTypeChange(type) {
-      this.typeIsInferred = false
+      this.typeIsInferred = type === null
       this.valueComponent = this.getValueComponentForType(type)
     },
     getValueComponentForType(type) {
       switch (type) {
+        case null:
+          return InputTypes.JsonParsingInput
         case 'Boolean':
           return InputTypes.BooleanInput
         case 'Integer':
@@ -151,8 +153,9 @@ export default {
           return InputTypes.DateInput
         case 'Dictionary':
           return InputTypes.ObjectInput
-        case 'String':
         case 'None':
+          return InputTypes.NullInput
+        case 'String':
         default:
           return InputTypes.StringInput
       }
@@ -186,7 +189,7 @@ export default {
     },
     discoverObjectType(value) {
       if (value === null) {
-        return null
+        return 'None'
       }
 
       if (value instanceof Array) {
@@ -233,8 +236,7 @@ export default {
     },
     reset() {
       this.selectedType = null
-      this.typeIsInferred = true
-      this.valueComponent = InputTypes.JsonParsingInput
+      this.handleSelectedTypeChange(null)
       this.checkSingleTypeMode()
       this.$emit('input', { value: null, key: null })
     }
