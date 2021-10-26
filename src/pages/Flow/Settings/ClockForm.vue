@@ -176,7 +176,7 @@ export default {
       class="d-flex flex-column align-start justify-start"
       style="height: 100%;width: 100%;"
     >
-      <div class="d-flex justify-end mt-4" style="width: 100%;">
+      <div class="d-flex justify-end mt-2" style="width: 100%;">
         <v-switch
           v-show="selectedTab === 0"
           v-model="advanced"
@@ -259,9 +259,7 @@ export default {
               :menu-props="{ contentClass: 'tz' }"
             />
             <v-alert
-              v-if="
-                flowGroupClocks.length > 0 && typeof simpleModel !== 'number'
-              "
+              v-if="flowGroupClocks.length > 0"
               border="left"
               colored-border
               elevation="0"
@@ -310,7 +308,7 @@ export default {
     <div
       style="
       bottom: 0;
-      padding: 20px;
+      padding: 15px;
       position: absolute;
       right: 0;
       "
