@@ -25,7 +25,12 @@ export default {
       ],
       isRemovingUser: false,
       pendingInvitations: [],
-      removeTenant: null
+      removeTenant: null,
+      confirmInput: null,
+      rules: {
+        confirm: value => value == this.tenant.slug || 'Input is incorrect.',
+        required: value => !!value || 'This field is is required.'
+      }
     }
   },
   computed: {
@@ -41,6 +46,9 @@ export default {
         }),
         ...this.pendingInvitations
       ]
+    },
+    isLastTenant() {
+      return this.tenants?.length === 1
     }
   },
   methods: {
@@ -168,8 +176,7 @@ export default {
       await this.getUser()
       await this.getTenants()
 
-      this.isRemovingUser = false
-      this.dialogRemoveUser = false
+      this.resetRemoveUserDialog()
     },
     async handleSwitchTenant(tenant) {
       this.loading = true
@@ -185,6 +192,11 @@ export default {
         name: 'dashboard',
         params: { tenant: this.tenant.slug }
       })
+    },
+    resetRemoveUserDialog() {
+      this.dialogRemoveUser = false
+      this.isRemovingUser = false
+      this.confirmInput = null
     }
   },
   apollo: {
@@ -289,14 +301,43 @@ export default {
             `Are you sure you want to remove yourself from ${removeTenant.name}?`
           "
           :dialog-props="{ 'max-width': '600' }"
-          :disabled="isRemovingUser"
+          :disabled="
+            (isLastTenant && confirmInput !== tenant.slug) || isRemovingUser
+          "
           :loading="isRemovingUser"
           @confirm="removeUser(removeTenant)"
+          @cancel="resetRemoveUserDialog"
         >
-          <div class="red--text"
-            >Are you sure you want to remove yourself from
-            {{ removeTenant.name }}? You'll no longer be able to access your run
-            data associated with {{ removeTenant.name }}.
+          <div>
+            <div class="red--text mb-2"
+              >You'll no longer be able to access your run data associated with
+              {{ removeTenant.name }}.</div
+            >
+            <div class="mt-2" v-show="isLastTenant">
+              <div class="deepRed--text text-subtitle-1 font-weight-medium">
+                This is the last team you are part of. If you remove it you will
+                not be able to log back in to Prefect Cloud.
+              </div>
+
+              <div class="mt-4">
+                To confirm, type
+                <span class="font-weight-bold"> your tenant URL slug </span>
+                below:
+              </div>
+
+              <v-text-field
+                v-model="confirmInput"
+                autocomplete="off"
+                class="my-1"
+                placeholder="Type your tenant URL slug"
+                single-line
+                outlined
+                color="primary"
+                :rules="[rules.required, rules.confirm]"
+                :loading="isRemovingUser"
+              >
+              </v-text-field>
+            </div>
           </div>
         </ConfirmDialog>
       </template>
