@@ -12,11 +12,12 @@
     <template v-if="showTypes && hasTypes">
       <v-select
         v-model="selectedType"
-        :items="[{ text: '', value: null }, ...types]"
+        :items="types"
         label="Type"
         class="key-value-input__type-input"
         :error-messages="typeErrors"
         :disabled="singleTypeMode"
+        clearable
         outlined
         dense
         @change="handleSelectedTypeChange"
@@ -161,6 +162,10 @@ export default {
       }
     },
     isTypeAcceptable(type) {
+      if (type == 'None' && this.internalKey == null) {
+        return false
+      }
+
       return this.types == null || this.types.includes(type)
     },
     discoverType(value) {
