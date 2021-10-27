@@ -142,20 +142,26 @@ export default {
         await this.setCurrentTenant(removalTenant.slug)
       }
 
-      const res = await this.$apollo.mutate({
-        mutation: require('@/graphql/Tenant/delete-membership.gql'),
-        variables: { membershipId }
-      })
+      let success
 
-      if (res?.data?.delete_membership?.success) {
-        this.$emit(
-          'successful-action',
-          'You have removed yourself from this team.'
-        )
-      } else {
-        this.$emit(
-          'failed-action',
-          'Something went wrong while trying to leave this team. Please try again.'
+      try {
+        await this.$apollo.mutate({
+          mutation: require('@/graphql/Tenant/delete-membership.gql'),
+          variables: { membershipId }
+        })
+        success = true
+      } catch (e) {
+        success = false
+      } finally {
+        this.setAlert(
+          {
+            alertShow: true,
+            alertMessage: success
+              ? 'You have removed yourself from this team.'
+              : 'Something went wrong while trying to leave this team. Please try again.',
+            alertType: success ? 'success' : 'error'
+          },
+          3000
         )
       }
 
