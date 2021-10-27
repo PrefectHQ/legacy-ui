@@ -6,6 +6,7 @@
       spellcheck="false"
       :error-messages="errors"
       :disabled="readonly"
+      :placeholder="placeholder"
       auto-grow
       outlined
       @blur="handleBlur"
@@ -47,6 +48,11 @@ export default {
       type: String,
       required: true,
       validator: value => ['json', 'yaml'].includes(value)
+    },
+    placeholder: {
+      type: String,
+      required: false,
+      default: null
     },
     getErrors: {
       type: Function,

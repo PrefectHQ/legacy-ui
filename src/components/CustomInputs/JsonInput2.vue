@@ -2,6 +2,7 @@
   <base-code-textarea
     v-model="internalValue"
     :readonly="readonly"
+    :placeholder="placeholder"
     :get-errors="getJsonErrors"
     :format="formatJson"
     :parse="parseJson"
@@ -28,6 +29,11 @@ export default {
       type: Boolean,
       required: false,
       default: false
+    },
+    placeholder: {
+      type: String,
+      required: false,
+      default: null
     }
   },
   computed: {
