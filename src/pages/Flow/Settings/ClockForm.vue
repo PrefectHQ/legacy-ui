@@ -121,7 +121,7 @@ export default {
       }
       return parameters
     },
-    checkDefualtParameters(parameterObj) {
+    checkDefaultParameters(parameterObj) {
       return Object.values(parameterObj).length > 0
     },
     removeDoubleParam(clock) {
@@ -279,7 +279,7 @@ export default {
 
     <div v-show="selectedTab === 1">
       <div
-        v-if="!checkDefualtParameters(allDefaultParameters)"
+        v-if="!checkDefaultParameters(allDefaultParameters)"
         class="mt-8 text-body-1"
       >
         This flow has no default parameters.
