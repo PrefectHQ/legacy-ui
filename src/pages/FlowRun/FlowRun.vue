@@ -101,6 +101,9 @@ export default {
     },
     loading() {
       return this.loadingKey > 0
+    },
+    flowRunNameLength() {
+      return this.flowRun?.name?.length
     }
   },
   watch: {
@@ -238,7 +241,7 @@ export default {
         style="max-width: 75vw;"
         :style="[
           { display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block' },
-          { width: flowRun.name.length + 'ch' }
+          { width: flowRunNameLength + 'ch' }
         ]"
       >
         <EditableTextField
