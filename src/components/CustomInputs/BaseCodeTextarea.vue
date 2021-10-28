@@ -84,6 +84,11 @@ export default {
       }
     }
   },
+  created() {
+    if (this.internalValue) {
+      this.errors = this.getErrors(this.internalValue)
+    }
+  },
   methods: {
     handleBlur() {
       const objectValue = this.parse(this.internalValue)
