@@ -3,7 +3,7 @@
     <v-btn-toggle
       v-if="editors.length > 1"
       class="code-input__toggle"
-      :value="mode"
+      :value="internalMode"
       mandatory
       @change="setMode"
     >
@@ -18,9 +18,9 @@
       </v-btn>
     </v-btn-toggle>
     <component
-      :is="editorComponents[mode]"
+      :is="editorComponents[internalMode]"
       v-model="internalValue"
-      v-bind="editorProps[mode]"
+      v-bind="editorProps[internalMode]"
       @update:entries="$emit('update:entries', $event)"
     />
   </div>
@@ -57,6 +57,12 @@ export default {
         value.length > 0 &&
         value.every(lang => ['json', 'yaml', 'dict', 'text'].includes(lang))
     },
+    mode: {
+      type: String,
+      required: false,
+      default: null,
+      validator: value => ['json', 'yaml', 'dict', 'text'].includes(value)
+    },
     showTypes: {
       type: Boolean,
       required: false,
@@ -66,6 +72,11 @@ export default {
       type: Boolean,
       required: false,
       default: false
+    },
+    placeholder: {
+      type: String,
+      required: false,
+      default: null
     },
     types: {
       type: Array,
@@ -81,7 +92,7 @@ export default {
   },
   data() {
     return {
-      mode: null
+      localMode: null
     }
   },
   computed: {
@@ -91,6 +102,18 @@ export default {
       },
       set(value) {
         this.$emit('input', value)
+      }
+    },
+    internalMode: {
+      get() {
+        return this.mode ?? this.localMode
+      },
+      set(value) {
+        if (this.mode) {
+          this.$emit('update:mode', value)
+        } else {
+          this.localMode = value
+        }
       }
     },
     editorComponents() {
@@ -103,24 +126,36 @@ export default {
     },
     editorProps() {
       return {
-        json: {},
-        yaml: {},
+        json: {
+          placeholder: this.placeholder
+        },
+        yaml: {
+          placeholder: this.placeholder
+        },
+        text: {
+          placeholder: this.placeholder,
+          outlined: true,
+          autoGrow: true
+        },
         dict: {
           readonly: this.readonly,
           showTypes: this.showTypes,
           types: this.types,
           entries: this.entries
-        },
-        text: { outlined: true, dense: true }
+        }
       }
     }
   },
   created() {
-    this.setMode(this.editors[0])
+    if (this.internalMode == null) {
+      this.setMode(this.editors[0])
+    }
   },
   methods: {
     getStringValue(value) {
-      return this.mode === 'yaml' ? formatYaml(value) : formatJson(value)
+      return this.internalMode === 'yaml'
+        ? formatYaml(value)
+        : formatJson(value)
     },
     getObjectValue(value) {
       return parseYaml(value) ?? parseJson(value)
@@ -132,7 +167,7 @@ export default {
         this.internalValue = this.formatValueToString(mode, value)
       }
 
-      this.mode = mode
+      this.internalMode = mode
     },
     formatValueToString(mode, value) {
       switch (mode) {
@@ -156,6 +191,15 @@ export default {
 .code-input {
   display: flex;
   flex-direction: column;
+
+  textarea {
+    font-family: monospace, monospace;
+    font-size: 13px;
+    line-height: 13px !important;
+    min-height: 56px;
+    overflow-y: auto;
+    resize: vertical;
+  }
 }
 
 .code-input__toggle {

@@ -117,19 +117,10 @@ export default {
     width: 50%;
     margin-bottom: 4px;
     flex-grow: 0 !important;
-
-    textarea {
-      font-family: monospace, monospace;
-      font-size: 13px;
-      line-height: 13px !important;
-      min-height: 56px;
-      overflow-y: auto;
-      resize: vertical;
-    }
   }
 
   .base-code-textarea__preview {
-    color: rgba(0, 0, 0, 0.87);
+    color: #666666;
     width: 100%;
     word-wrap: break-word;
     white-space: pre-wrap;
