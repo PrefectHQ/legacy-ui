@@ -261,7 +261,12 @@ export default {
             : $vuetify.breakpoint.smAndDown && { display: 'inline' }
         "
       >
-        <div v-if="flowGroup">
+        <div
+          v-if="flowGroup"
+          class="text-truncate"
+          style="max-width: 65vw"
+          :style="{ width: selectedFlow.name.length + 'ch' }"
+        >
           {{ selectedFlow.name }}
           <span
             v-if="selectedFlow.archived"
