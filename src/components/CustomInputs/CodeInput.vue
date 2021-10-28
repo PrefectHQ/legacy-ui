@@ -164,7 +164,9 @@ export default {
       if (this.internalValue != null) {
         const value = this.tryGetValueObject(this.internalValue)
 
-        this.internalValue = this.formatValueToString(mode, value)
+        if (value != null) {
+          this.internalValue = this.formatValueToString(mode, value)
+        }
       }
 
       this.internalMode = mode
