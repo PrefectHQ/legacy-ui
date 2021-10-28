@@ -52,7 +52,7 @@ export default {
         </v-icon>
       </v-list-item-avatar>
       <v-list-item-content class="position: relative;">
-        <v-list-item-title class="text-h6 pb-1 " style="max-width: 20vw;">
+        <v-list-item-title class="text-h6 pb-1 " style="max-width: 25vw;">
           <div v-if="$slots['title']" class="text-truncate">
             <slot name="title" />
           </div>
