@@ -12,12 +12,11 @@
     <template v-if="showTypes && hasTypes">
       <v-select
         v-model="selectedType"
-        :items="types"
+        :items="[emptyTypeOption, ...types]"
         label="Type"
         class="key-value-input__type-input"
         :error-messages="typeErrors"
         :disabled="singleTypeMode"
-        clearable
         outlined
         dense
         @change="handleSelectedTypeChange"
@@ -65,6 +64,7 @@ export default {
   data() {
     return {
       selectedType: null,
+      emptyTypeOption: { text: 'Auto', value: null },
       typeIsInferred: true,
       valueComponent: InputTypes.JsonParsingInput,
       keyErrors: [],
@@ -261,7 +261,8 @@ export default {
 }
 
 .key-value-input__type-input {
-  flex-basis: 0;
+  width: 134px;
+  flex-grow: 0;
 }
 
 .key-value-input__value-input {

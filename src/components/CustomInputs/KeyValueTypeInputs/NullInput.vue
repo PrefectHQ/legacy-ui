@@ -47,7 +47,7 @@ export default {
     },
     getErrors(value) {
       if (value !== null) {
-        return ['Value is expected to be null']
+        return ['Value is expected to be None']
       }
 
       return []

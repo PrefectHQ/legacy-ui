@@ -53,7 +53,7 @@ export default {
       }
 
       if (isNaN(value)) {
-        return ['Value is expected to be a number']
+        return ['Value is expected to be an Integer']
       }
 
       return []

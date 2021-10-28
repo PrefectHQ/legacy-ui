@@ -67,7 +67,7 @@ export default {
       }
 
       if (!this.isArrayOrArrayString(value)) {
-        return ['Value is expected to be an Array']
+        return ['Value is expected to be an List']
       }
 
       return []

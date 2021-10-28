@@ -583,36 +583,36 @@ export default {
         </v-row>
 
         <v-row v-if="showAdvanced" class="mt-8" no-gutters>
-          <div class="text-h5">
-            Run Configuration
-            <MenuTooltip>
-              <p>
-                The settings that determine where and how your flow should be
-                executed. Each run config type corresponds to an agent; options
-                displayed depend on the type of config selected.
-              </p>
+          <div class="d-flex flex-grow-1 justify-space-between">
+            <div class="text-h5">
+              Run Configuration
+              <MenuTooltip>
+                <p>
+                  The settings that determine where and how your flow should be
+                  executed. Each run config type corresponds to an agent;
+                  options displayed depend on the type of config selected.
+                </p>
 
-              <p>
-                Refer to the
-                <ExternalLink
-                  href="https://docs.prefect.io/orchestration/flow_config/run_configs.html#labels"
-                  >documentation</ExternalLink
-                >
-                for more details on run configs, including setting them at
-                registration time.
-              </p>
-              <template slot="actions">
-                <v-btn
-                  class="text-none"
-                  color="primary"
-                  small
-                  text
-                  @click="resetRunConfigValues"
-                  >Reset to default values</v-btn
-                >
-              </template>
-            </MenuTooltip>
-            <span class="text-body-2 text--disabled ml-2">(Optional)</span>
+                <p>
+                  Refer to the
+                  <ExternalLink
+                    href="https://docs.prefect.io/orchestration/flow_config/run_configs.html#labels"
+                    >documentation</ExternalLink
+                  >
+                  for more details on run configs, including setting them at
+                  registration time.
+                </p>
+              </MenuTooltip>
+              <span class="text-body-2 text--disabled ml-2">(Optional)</span>
+            </div>
+            <v-btn
+              class="text-none"
+              color="utilGrayLight"
+              x-small
+              depressed
+              @click="resetRunConfigValues"
+              >Reset to default values</v-btn
+            >
           </div>
 
           <RunConfig v-model="runConfig" />
