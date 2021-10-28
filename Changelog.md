@@ -4,6 +4,7 @@
 
 ### Features and Improvements
 
+- Expand space in title bars - [#1098](https://github.com/PrefectHQ/ui/pull/1098)
 - Add warning that users will be locked out if not part of a team - [#1078](https://github.com/PrefectHQ/ui/pull/1078)
 - Update the PagerDuty logo to match new branding - [#1073](https://github.com/PrefectHQ/ui/pull/1073)
 
