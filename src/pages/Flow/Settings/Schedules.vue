@@ -7,8 +7,10 @@ import ExternalLink from '@/components/ExternalLink'
 import IntervalClock from '@/components/Functional/IntervalClock'
 import LogRocket from 'logrocket'
 import ClockForm from '@/pages/Flow/Settings/ClockForm'
-import DictInput from '@/components/CustomInputs/DictInput'
+import ScheduleParameters from '@/pages/Flow/Settings/ScheduleParameters'
 import { parametersMixin } from '@/mixins/parametersMixin.js'
+import { formatJson } from '@/utils/json'
+
 export default {
   components: {
     ConfirmDialog,
@@ -16,7 +18,7 @@ export default {
     ExternalLink,
     IntervalClock,
     ClockForm,
-    DictInput
+    ScheduleParameters
   },
   mixins: [parametersMixin],
   props: {
@@ -38,7 +40,7 @@ export default {
       selectedClock: null,
       scheduleBanner: false,
       selectedTab: '',
-      parameter: {}
+      parameter: null
     }
   },
   computed: {
@@ -63,11 +65,11 @@ export default {
       if (!this.defaultParameters) {
         return {}
       }
-      const paramObj = this.defaultParameters.reduce(
-        (obj, item) => ((obj[item.name] = item.default), obj),
-        {}
-      )
-      return this.paramVal(paramObj)
+
+      return this.defaultParameters.reduce((obj, item) => {
+        obj[item.name] = item.default
+        return obj
+      }, {})
     },
     hasFlowGroupSchedule() {
       return this.flowGroupClocks && this.flowGroupClocks.length > 0
@@ -110,7 +112,7 @@ export default {
       }
 
       await this.modifySchedules({ new: isNew })
-      this.selectedClock = null
+      this.setSelectedClock(null)
       this.loading = false
     },
     async deleteClock() {
@@ -255,32 +257,25 @@ export default {
 
       return this.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
     },
-    paramVal(clock) {
-      if (!clock) {
-        return
-      }
-      let parameters = []
-
-      for (const [key, value] of Object.entries(clock)) {
-        parameters.push({ key: key, value: value, disabled: true })
-      }
-      return parameters
-    },
-    checkDefualtParameters(parameterObj) {
+    checkDefaultParameters(parameterObj) {
       return Object.values(parameterObj).length > 0
     },
-    removeDoubleParam(clock) {
-      if (clock && this.allDefaultParameters.length !== 0) {
-        return Object.values(
-          [...this.allDefaultParameters, ...this.paramVal(clock)]
-            .reverse()
-            .reduce((r, c) => ((r[c.key] = r[c.key] || c), r), {})
-        )
+    formatParams(...params) {
+      const combined = params.reduce(
+        (result, obj) => ({ ...result, ...obj }),
+        {}
+      )
+
+      return formatJson(combined)
+    },
+    setSelectedClock(index) {
+      const params = this.clocks[index]?.parameter_defaults
+
+      if (params) {
+        this.parameter = this.formatParams(params)
       }
 
-      if (this.allDefaultParameters.length !== 0) {
-        return this.allDefaultParameters
-      }
+      this.selectedClock = index
     }
   }
 }
@@ -320,7 +315,7 @@ export default {
           :style="{ 'pointer-events': selectedClock === -1 ? 'none' : 'auto' }"
           tile
           :ripple="false"
-          @click.native="selectedClock = -1"
+          @click.native="setSelectedClock(-1)"
         >
           <v-card-text
             style="
@@ -343,35 +338,27 @@ export default {
                     :flow-group-clocks="flowGroupClocks"
                     :param="parameter"
                     :timezone="
-                      this.timezone ||
+                      timezone ||
                         Intl.DateTimeFormat().resolvedOptions().timeZone
                     "
-                    @cancel="selectedClock = null"
+                    @cancel="setSelectedClock(null)"
                     @confirm="createClock"
                   />
                 </div>
                 <div v-show="selectedTab === 1">
-                  <p
-                    v-if="checkDefualtParameters(allDefaultParameters)"
-                    class="mt-8 text-body-1"
-                  >
-                    Checked parameters will override their corresponding
-                    defaults for runs generated from this schedule.
-                  </p>
+                  <template v-if="checkDefaultParameters(allDefaultParameters)">
+                    <p class="mt-8 text-body-1">
+                      Checked parameters will override their corresponding
+                      defaults for runs generated from this schedule.
+                    </p>
 
-                  <DictInput
-                    v-if="checkDefualtParameters(allDefaultParameters)"
-                    v-model="parameter"
-                    style="padding: 20px;"
-                    include-checkbox
-                    :dict="allDefaultParameters"
-                    disable-edit
-                    allow-reset
-                  />
-                  <div
-                    v-else-if="!checkDefualtParameters(allDefaultParameters)"
-                    class="mt-8 text-body-1"
-                  >
+                    <schedule-parameters
+                      v-model="parameter"
+                      style="margin: 20px;"
+                      :entries="formatParams(allDefaultParameters)"
+                    />
+                  </template>
+                  <div v-else class="mt-8 text-body-1">
                     <span class="font-weight-bold">{{ flow.name }}</span>
                     has no default parameters.
                   </div>
@@ -440,33 +427,25 @@ export default {
                   :param="parameter"
                   :interval="clock.interval"
                   :timezone="timezoneVal(clock)"
-                  @cancel="selectedClock = null"
+                  @cancel="setSelectedClock(null)"
                   @confirm="createClock"
                 />
               </div>
               <div v-show="selectedTab === 1">
                 <div
-                  v-if="!checkDefualtParameters(allDefaultParameters)"
+                  v-if="!checkDefaultParameters(allDefaultParameters)"
                   class="mt-8 text-body-1"
                 >
                   <span class="font-weight-bold">{{ flow.name }}</span>
                   has no default parameters.
                 </div>
-                <DictInput
+                <schedule-parameters
                   v-else
                   v-model="parameter"
-                  style="padding: 20px;"
-                  :dict="removeDoubleParam(clock.parameter_defaults)"
-                  :default-checked-keys="
-                    Object.keys(
-                      clock.parameter_defaults
-                        ? clock.parameter_defaults
-                        : allDefaultParameters
-                    )
+                  style="margin: 20px;"
+                  :entries="
+                    formatParams(allDefaultParameters, clock.parameter_defaults)
                   "
-                  include-checkbox
-                  disable-edit
-                  allow-reset
                 />
               </div>
             </div>
@@ -678,7 +657,7 @@ export default {
                         class="my-1"
                         color="primary lighten-2"
                         x-small
-                        @click.native="selectedClock = i"
+                        @click.native="setSelectedClock(i)"
                         v-on="on"
                       >
                         <v-icon>

@@ -4,6 +4,7 @@
 import CronForm from '@/pages/Flow/Settings/ClockForms/Cron'
 import IntervalForm from '@/pages/Flow/Settings/ClockForms/Interval'
 import SimpleForm from '@/pages/Flow/Settings/ClockForms/Simple'
+import {isValidJson, parseJson} from '@/utils/json'
 import moment from 'moment-timezone'
 
 const timezones = [...moment.tz.names()].map(tz => {
@@ -45,9 +46,9 @@ export default {
       default: () => null
     },
     param: {
-      type: Object,
+      type: String,
       required: false,
-      default: () => null
+      default: null
     },
     flowGroupClocks: {
       type: Array,
@@ -91,17 +92,6 @@ export default {
       this.$emit('cancel')
     },
     confirm() {
-      const parseObject = obj => {
-        if (!obj) return
-        Object.keys(obj).forEach(key => {
-          try {
-            obj[key] = JSON.parse(obj[key])
-          } catch {
-            //
-          }
-        })
-        return obj
-      }
       const clockType =
         typeof this[this.clockToAdd] == 'string' ? 'CronClock' : 'IntervalClock'
       const clock = {
@@ -109,7 +99,7 @@ export default {
         [clockType == 'IntervalClock' ? 'interval' : 'cron']: this[
           this.clockToAdd
         ],
-        parameter_defaults: this.param ? parseObject(this.param) : {},
+        parameter_defaults: this.param != null && isValidJson(this.param) ? parseJson(this.param) : {},
         timezone: this.advanced
           ? this.selectedTimezone
           : this.simpleSelectedTimezone
