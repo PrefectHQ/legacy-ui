@@ -25,7 +25,6 @@
     <component
       :is="valueComponent"
       v-model="internalValue"
-      :disabled="readonlyValue"
       class="key-value-input__value-input"
       v-bind="valueProps"
     />
@@ -93,11 +92,13 @@ export default {
       }
     },
     valueProps() {
+      const props = { disabled: this.readonlyValue }
+
       if (this.valueComponent == InputTypes.JsonParsingInput) {
-        return { types: this.types }
+        props.types = this.types
       }
 
-      return {}
+      return props
     },
     valueCanBeEmpty() {
       return this.isTypeAcceptable('None') || this.isTypeAcceptable('String')

@@ -2,6 +2,7 @@
   <v-radio-group
     v-model="internalValue"
     :error-messages="errors"
+    :disabled="disabled"
     outlined
     dense
     mandatory
@@ -20,6 +21,11 @@ export default {
       type: [String, Number, Boolean, Object, Array],
       required: false,
       default: null
+    },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {

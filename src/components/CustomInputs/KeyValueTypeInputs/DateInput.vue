@@ -1,6 +1,7 @@
 <template>
   <date-time
     v-model="internalValue"
+    :disabled="disabled"
     :text-field-props="{
       label: 'Value',
       outlined: true,
@@ -24,6 +25,11 @@ export default {
       type: [String, Number, Boolean, Object, Array],
       required: false,
       default: null
+    },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {

@@ -2,6 +2,7 @@
   <v-text-field
     v-model="internalValue"
     :error-messages="errors"
+    :disabled="disabled"
     v-bind="{ label: 'Value', outlined: true, dense: true }"
   />
 </template>
@@ -16,6 +17,11 @@ export default {
       type: [String, Number, Boolean, Object, Array],
       required: false,
       default: null
+    },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
