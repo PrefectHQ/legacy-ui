@@ -58,6 +58,9 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
+    taskRunNameLength() {
+      return this.taskRun?.name?.length
+    },
     taskRunId() {
       return this.$route.params.id
     },
@@ -198,13 +201,10 @@ export default {
     <SubPageNav icon="pi-task-run" page-type="Task Run">
       <span
         slot="page-title"
-        style="
-          max-width: 100%;
-          min-width: 300px;
-          width: auto;
-          "
+        style="max-width: 75vw;"
         :style="[
-          { display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block' }
+          { display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block' },
+          { width: taskRunNameLength + 'ch' }
         ]"
       >
         <EditableTextField
