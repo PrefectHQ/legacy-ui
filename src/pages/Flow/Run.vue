@@ -446,7 +446,13 @@ export default {
               v-model="parameters"
               class="resettable-dictionary-json"
             >
-              <code-input v-model="parameters" show-types readonly />
+              <code-input
+                v-model="parameters"
+                show-types
+                readonly-key
+                disable-add
+                disable-remove
+              />
             </resettable-wrapper>
           </v-col>
         </v-row>
