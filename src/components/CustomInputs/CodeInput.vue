@@ -31,6 +31,7 @@ import JsonInput2 from '@/components/CustomInputs/JsonInput2'
 import YamlInput2 from '@/components/CustomInputs/YamlInput2'
 import DictInput2 from '@/components/CustomInputs/DictInput2'
 import CheckboxDictInput from '@/components/CustomInputs/CheckboxDictInput'
+import readonlyProps from '@/components/CustomInputs/readonlyProps'
 import Textarea from 'vuetify/lib/components/VTextarea'
 import { parseJson, formatJson } from '@/utils/json'
 import { parseYaml, formatYaml } from '@/utils/yaml'
@@ -43,11 +44,6 @@ export default {
       type: String,
       required: false,
       default: null
-    },
-    readonly: {
-      type: Boolean,
-      required: false,
-      default: false
     },
     editors: {
       type: Array,
@@ -88,7 +84,8 @@ export default {
       type: String,
       required: false,
       default: null
-    }
+    },
+    ...readonlyProps
   },
   data() {
     return {
@@ -127,18 +124,25 @@ export default {
     editorProps() {
       return {
         json: {
-          placeholder: this.placeholder
+          placeholder: this.placeholder,
+          disabled: this.readonlyValue
         },
         yaml: {
-          placeholder: this.placeholder
+          placeholder: this.placeholder,
+          disabled: this.readonlyValue
         },
         text: {
           placeholder: this.placeholder,
+          disabled: this.readonlyValue,
           outlined: true,
           autoGrow: true
         },
         dict: {
-          readonly: this.readonly,
+          readonlyKey: this.readonlyKey,
+          readonlyType: this.readonlyType,
+          readonlyValue: this.readonlyValue,
+          disableAdd: this.disableAdd,
+          disableRemove: this.disableRemove,
           showTypes: this.showTypes,
           types: this.types,
           entries: this.entries

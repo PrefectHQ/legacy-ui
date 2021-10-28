@@ -1,7 +1,11 @@
 <template>
   <base-dict-input
     :entries="internalEntries"
-    :readonly="readonly"
+    :readonly-key="readonlyKey"
+    :readonly-type="readonlyType"
+    :readonly-value="readonlyValue"
+    :disable-add="disableAdd"
+    :disable-remove="disableRemove"
     :show-types="showTypes"
     :types="types"
     class="checkbox-dict-input"
@@ -28,6 +32,7 @@
 
 <script>
 import BaseDictInput from '@/components/CustomInputs/BaseDictInput'
+import readonlyProps from '@/components/CustomInputs/readonlyProps'
 import { isValidJson, parseJson, formatJson } from '@/utils/json'
 import { types, isValidType } from '@/utils/types'
 
@@ -47,11 +52,6 @@ export default {
       required: false,
       default: null
     },
-    readonly: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
     showTypes: {
       type: Boolean,
       required: false,
@@ -62,7 +62,8 @@ export default {
       required: false,
       default: () => types,
       validator: value => value.every(isValidType)
-    }
+    },
+    ...readonlyProps
   },
   data() {
     return {

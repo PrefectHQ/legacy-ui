@@ -8,14 +8,16 @@
       <slot name="before-existing" :entry="entry" />
       <key-value-input
         :value="entry"
-        :readonly="readonly"
+        :readonly-key="readonlyKey"
+        :readonly-type="readonlyType"
+        :readonly-value="readonlyValue"
         :show-types="showTypes"
         :types="types"
         @input="$emit('update', [$event, entry])"
       />
       <slot name="after-existing" :entry="entry" />
       <v-btn
-        v-if="!readonly"
+        v-if="!disableRemove"
         class="base-dict-input__action"
         icon
         @click="$emit('remove', entry)"
@@ -24,7 +26,7 @@
       </v-btn>
     </div>
     <div
-      v-if="!readonly"
+      v-if="!disableAdd"
       ref="newPropertyContainer"
       class="base-dict-input__row base-dict-input__row-last"
     >
@@ -47,6 +49,7 @@
 
 <script>
 import KeyValueInput from '@/components/CustomInputs/KeyValueInput'
+import readonlyProps from '@/components/CustomInputs/readonlyProps'
 import { types, isValidType } from '@/utils/types'
 
 export default {
@@ -60,11 +63,6 @@ export default {
       required: false,
       default: null
     },
-    readonly: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
     showTypes: {
       type: Boolean,
       required: false,
@@ -75,7 +73,8 @@ export default {
       required: false,
       default: () => types,
       validator: value => value.every(isValidType)
-    }
+    },
+    ...readonlyProps
   },
   data() {
     return {

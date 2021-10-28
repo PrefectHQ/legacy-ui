@@ -5,7 +5,7 @@
       label="Key"
       class="key-value-input__key-input"
       :error-messages="keyErrors"
-      :disabled="readonly"
+      :disabled="readonlyKey"
       outlined
       dense
     />
@@ -16,7 +16,7 @@
         label="Type"
         class="key-value-input__type-input"
         :error-messages="typeErrors"
-        :disabled="singleTypeMode"
+        :disabled="singleTypeMode || readonlyType"
         outlined
         dense
         @change="handleSelectedTypeChange"
@@ -25,6 +25,7 @@
     <component
       :is="valueComponent"
       v-model="internalValue"
+      :disabled="readonlyValue"
       class="key-value-input__value-input"
       v-bind="valueProps"
     />
@@ -33,6 +34,7 @@
 
 <script>
 import InputTypes from '@/components/CustomInputs/KeyValueTypeInputs'
+import readonlyProps from '@/components/CustomInputs/readonlyProps'
 import { isIsoDateString } from '@/utils/dateTime'
 import { types, isValidType } from '@/utils/types'
 
@@ -44,11 +46,6 @@ export default {
       required: false,
       default: null
     },
-    readonly: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
     showTypes: {
       type: Boolean,
       required: false,
@@ -59,7 +56,8 @@ export default {
       required: false,
       default: () => types,
       validator: value => value.every(isValidType)
-    }
+    },
+    ...readonlyProps
   },
   data() {
     return {
