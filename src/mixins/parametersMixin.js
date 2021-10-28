@@ -1,12 +1,6 @@
 import { mapGetters, mapActions } from 'vuex'
-import jsBeautify from 'js-beautify'
+import { formatJson } from '@/utils/json'
 import difference from 'lodash.difference'
-
-const jsonFormatOptions = {
-  indent_size: 2,
-  space_in_empty_paren: true,
-  preserve_newlines: false
-}
 
 export const parametersMixin = {
   props: {
@@ -21,10 +15,7 @@ export const parametersMixin = {
       flowParameters: [],
       newParameterInput: null,
       extraParameters: [],
-      missingRequiredParameters: [],
-      alertMessage: '',
-      alertType: '',
-      updatedParameters: null
+      missingRequiredParameters: []
     }
   },
   computed: {
@@ -32,11 +23,7 @@ export const parametersMixin = {
     ...mapGetters('license', ['hasPermission']),
     parameterInput: {
       get() {
-        const sorted = Object.fromEntries(
-          Object.entries(this.flowGroup.default_parameters).sort()
-        )
-        const paramString = JSON.stringify(sorted)
-        return jsBeautify(paramString, jsonFormatOptions)
+        return this.newParameterInput
       },
       set(val) {
         this.newParameterInput = val
@@ -70,8 +57,7 @@ export const parametersMixin = {
       }, {})
     },
     diffBetweenFlowGroupAndFlow() {
-      const fgParams =
-        JSON.parse(this.updatedParameters) || this.flowGroup?.default_parameters
+      const fgParams = this.flowGroup?.default_parameters
       const selectedFlowParams = this.selectedFlowParameters
       const diff = difference(
         Object.keys(selectedFlowParams),
@@ -104,14 +90,12 @@ export const parametersMixin = {
       return sorted
     }
   },
-  watch: {
-    flowGroup() {
-      this.updatedParameters = null
-    }
-  },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    validParameters() {
+    setParameterInput() {
+      this.parameterInput = formatJson(this.flowGroup.default_parameters)
+    },
+    validateParameters() {
       this.extraParameters = []
       this.missingRequiredParameters = []
       if (!this.$refs.parameterRef) {
@@ -178,55 +162,56 @@ export const parametersMixin = {
       }
       return false
     },
-    formatParameterInput() {
-      this.parameterInput = jsBeautify(this.parameterInput, jsonFormatOptions)
-    },
-    async setDefaultParams(noValidateNeeded) {
-      this.loading = true
+    async saveDefaultParams() {
       try {
-        const valid = noValidateNeeded || this.validParameters()
-        if (!valid) {
-          this.loading = false
-          return
-        }
-        const parametersToSet = this.newParameterInput || this.parameterInput
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/set-default-params.gql'),
           variables: {
             input: {
               flow_group_id: this.flowGroup.id,
               parameters:
-                parametersToSet && parametersToSet.trim() !== ''
-                  ? JSON.parse(parametersToSet)
+                this.parameterInput && this.parameterInput.trim() !== ''
+                  ? JSON.parse(this.parameterInput)
                   : null
             }
           },
           errorPolicy: 'all'
         })
         if (data) {
-          this.updatedParameters = parametersToSet
-          this.alertMessage = 'Your flow group parameters have been updated.'
-          this.alertType = 'success'
-          this.$emit('updated', this.updatedParameters)
+          await this.showAlert(
+            'Your flow group parameters have been updated.',
+            'success'
+          )
+          this.$emit('updated', this.parameterInput)
         }
         if (errors) {
-          this.alertType = 'error'
-          this.alertMessage = errors[0].message
+          await this.showAlert(errors[0].message, 'error')
         }
       } catch (err) {
-        this.alertType = 'error'
-        this.alertMessage =
-          'There was a problem setting your parameters.  Please check the input.'
-      } finally {
-        if (this.alertMessage) {
-          await this.setAlert({
-            alertShow: true,
-            alertMessage: this.alertMessage,
-            alertType: this.alertType
-          })
-          this.loading = false
-        }
+        await this.showAlert(
+          'There was a problem setting your parameters.  Please check the input.',
+          'error'
+        )
       }
+    },
+    async setDefaultParams() {
+      this.loading = true
+
+      if (!this.validateParameters()) {
+        this.loading = false
+        return
+      }
+
+      await this.saveDefaultParams()
+
+      this.loading = false
+    },
+    async showAlert(alertMessage, alertType) {
+      await this.setAlert({
+        alertShow: true,
+        alertMessage,
+        alertType
+      })
     }
   }
 }
