@@ -1,6 +1,4 @@
 <script>
-/* eslint-disable */
-
 import { mapActions, mapGetters } from 'vuex'
 
 import Actions from '@/pages/FlowRun/Actions'
