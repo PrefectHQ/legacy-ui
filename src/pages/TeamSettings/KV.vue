@@ -1,16 +1,16 @@
 <script>
-import JsonInput from '@/components/CustomInputs/JsonInput'
+import CodeInput from '@/components/CustomInputs/CodeInput'
+import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import ConfirmDialog from '@/components/ConfirmDialog'
-// import ExternalLink from '@/components/ExternalLink'
-
-import jsBeautify from 'js-beautify'
+import { isValidJson, formatJson, parseJson } from '@/utils/json'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
-    JsonInput,
+    CodeInput,
+    ResettableWrapper,
     ManagementLayout,
     ConfirmDialog
   },
@@ -38,13 +38,7 @@ export default {
       invalidKV: false,
 
       // Types
-      selectedTypeIndex: 0,
-      kvTypes: [
-        { value: 'auto', text: 'Auto' },
-        { value: 'string', text: 'String' },
-        { value: 'json', text: 'JSON' }
-      ],
-
+      selectedInputMode: 'text',
       // Create/modify kv key & value input
       keyInput: null,
       KvValueInput: '',
@@ -97,46 +91,55 @@ export default {
       if (!this.KvValueInput) return false
       if (this.invalidKV) return false
       return true
+    },
+    hasEditedKvInput() {
+      return this.KvValueInput != formatJson(this.item?.value)
     }
   },
   watch: {
     tenant() {
       this.$apollo.queries.kv.refetch()
-    },
-    selectedTypeIndex() {
-      this.validKVJSON()
     }
   },
   methods: {
     ...mapActions('alert', ['addNotification']),
-    stringifyValue(value) {
-      return typeof value == 'object'
-        ? { type: 'object', value: JSON.stringify(value) }
-        : { type: 'string', value: String(value) }
+    setSelectedInputMode() {
+      this.selectedInputMode = this.getInputMode(this.KvValueInput)
     },
-    formatValue(kv) {
-      if (kv.type == 'object') {
-        return jsBeautify(kv.value, {
-          indent_size: 4,
-          space_in_empty_paren: true,
-          preserve_newlines: false
-        })
-      } else {
-        return kv.value
+    getInputMode(value) {
+      if (!isValidJson(value)) {
+        return 'text'
       }
+
+      const parsed = parseJson(value)
+      if (typeof parsed !== 'object' || parsed == null) {
+        return 'text'
+      }
+
+      return 'json'
     },
-    selectedType(type) {
-      return this.selectedTypeIndex > 0
-        ? this.kvTypes[this.selectedTypeIndex]?.value
-        : this.kvTypes[this.jsonEditorType(type)]?.value
+    getItemValue(item) {
+      return formatJson(item?.value)
     },
-    handleReset(item) {
-      this.KvValueInput = this.formatValue(this.stringifyValue(item?.value))
+    getItemIsExpanded(item) {
+      const expandedId = this.expanded[0]?.id
+
+      return item.id == expandedId
+    },
+    resetKvValueInput() {
+      this.KvValueInput = ''
+
+      this.setSelectedInputMode()
+    },
+    setKvValueInput(value) {
+      this.KvValueInput = formatJson(value)
+
+      this.setSelectedInputMode()
     },
     async copyValue(item) {
       try {
         if (typeof item?.value == 'object') {
-          await navigator.clipboard.writeText(JSON.stringify(item?.value))
+          await navigator.clipboard.writeText(this.getItemValue(item))
         } else {
           await navigator.clipboard.writeText(item?.value)
         }
@@ -148,20 +151,13 @@ export default {
         )
       }
     },
-    jsonEditorType(item) {
-      if (typeof item.value == 'object') {
-        return 2
-      } else {
-        return 1
-      }
-    },
     openKVEdit(item) {
       this.selectedKV = item
       this.isKvUpdate = true
       this.previousKVName = item?.key
       this.keyInput = item?.key
 
-      this.KvValueInput = this.formatValue(this.stringifyValue(item?.value))
+      this.setKvValueInput(item?.value)
       if (this.isEditable) {
         this.expanded = [item]
       } else {
@@ -192,20 +188,13 @@ export default {
     resetSelectedKV() {
       this.selectedKV = null
       this.keyInput = null
-      this.KvValueInput = ''
-      this.selectedTypeIndex = 0
+      this.resetKvValueInput()
       this.invalidKV = false
       this.expanded = []
       this.isEditable = false
     },
     async setKV() {
       this.isSettingKV = true
-
-      if (this.selectedTypeIndex === 2 && !this.validKVJSON()) {
-        this.isSettingKV = false
-        this.invalidKV = true
-        return
-      }
 
       if (this.isKvUpdate) {
         const deleteKVResult = await this.deleteKV(
@@ -218,28 +207,12 @@ export default {
           return
         }
       }
-      let value = this.KvValueInput
-      if (this.selectedTypeIndex === 0) {
-        try {
-          if (value === 'null') {
-            value = JSON.stringify(JSON.parse(this.KvValueInput))
-          } else {
-            value = JSON.parse(this.KvValueInput)
-          }
-        } catch {
-          try {
-            value = String.raw`${this.KvValueInput}`
-          } catch {
-            value = JSON.stringify(this.KvValueInput)
-          }
-        }
-      }
-      if (this.selectedTypeIndex === 2) value = JSON.parse(this.KvValueInput)
+      const value = parseJson(this.KvValueInput) ?? this.KvValueInput
       const kvResult = await this.$apollo.mutate({
         mutation: require('@/graphql/KV/set-key-value.gql'),
         variables: {
           key: this.keyInput,
-          value: value
+          value
         },
         errorPolicy: 'all'
       })
@@ -273,7 +246,7 @@ export default {
 
       this.isSettingKV = false
       this.keyInput = null
-      this.KvValueInput = ''
+      this.resetKvValueInput()
     },
     async deleteKV(kv, opts = {}) {
       this.isDeletingKV = true
@@ -306,30 +279,12 @@ export default {
       this.isDeletingKV = false
       return deleteKVResult
     },
-
-    validKVJSON() {
-      this.invalidKV = false
-      if (this.selectedTypeIndex !== 2) {
-        this.$refs.kvRef.removeJsonErrors()
-        return true
-      }
-      if (!this.$refs.kvRef) {
-        this.$refs.kvRef.removeJsonErrors()
-        return true
-      }
-      // Check JSON using the JsonInput component's validation (need to check for true over truthy here because of the way the jsonInput returns for other components)
-      if (this.$refs.kvRef.validateJson() === true) return true
-      return false
-    },
-    setInvalidKV(event) {
-      this.invalidKV = event
-    },
     handleKVExpand(kv) {
       this.selectedKV = kv?.item
       this.isKvUpdate = true
       this.previousKVName = kv?.item?.key
 
-      this.KvValueInput = this.formatValue(this.stringifyValue(kv?.item?.value))
+      this.setKvValueInput(kv?.item?.value)
 
       this.keyInput = kv?.item?.key
     }
@@ -381,7 +336,7 @@ export default {
             expanded = []
             previousKVName = null
             keyInput = null
-            KvValueInput = ''
+            resetKvValueInput()
             isKvUpdate = false
             keyModifyDialog = true
           "
@@ -478,92 +433,28 @@ export default {
           <!-- ACTIONS -->
           <template #expanded-item="{ headers, item }">
             <td :colspan="headers.length">
-              <div
-                class="d-flex justify-end align-end mt-5"
-                style="width: 100%;"
-              >
-                <v-btn
-                  x-small
-                  class="text-normal mr-2"
-                  depressed
-                  color="utilGrayLight"
-                  title="Reset"
-                  :disabled="
-                    KvValueInput == formatValue(stringifyValue(item.value))
-                  "
-                  @click="handleReset(item)"
-                >
-                  Reset
-                  <v-icon small>refresh</v-icon>
-                </v-btn>
-              </div>
-
-              <JsonInput
-                ref="kvRef"
+              <resettable-wrapper
+                :key="item.id"
                 v-model="KvValueInput"
-                class="text-body-1 mt-2 mb-5"
-                prepend-icon="create"
-                :selected-type="selectedType(item)"
-                @invalid-secret="setInvalidKV"
+                class="resettable-dictionary-json"
+                @input="setSelectedInputMode"
               >
-                <v-menu top offset-y>
-                  <template #activator="{ on }">
-                    <v-btn
-                      v-if="hasPermission('create', 'key-value')"
-                      text
-                      small
-                      class="position-absolute"
-                      :style="{
-                        bottom: '25px',
-                        right: '140px',
-                        'z-index': 3
-                      }"
-                      color="accent"
-                      :loading="isSettingKV"
-                      :disabled="
-                        !KvValueInput ||
-                          KvValueInput ==
-                            formatValue(stringifyValue(item.value)) ||
-                          invalidKV
-                      "
-                      v-on="on"
-                      @click="setKV"
-                    >
-                      Save
-                    </v-btn>
-                  </template>
-                </v-menu>
-                <v-menu top offset-y>
-                  <template #activator="{ on }">
-                    <v-btn
-                      text
-                      small
-                      class="position-absolute"
-                      :style="{
-                        bottom: '25px',
-                        right: '80px',
-                        'z-index': 3
-                      }"
-                      color="accent"
-                      v-on="on"
-                      >Type</v-btn
-                    >
-                  </template>
-                  <v-list>
-                    <v-list-item-group
-                      v-model="selectedTypeIndex"
-                      color="primary"
-                    >
-                      <v-list-item
-                        v-for="(type, index) in kvTypes"
-                        :key="index"
-                      >
-                        <v-list-item-title>{{ type.text }} </v-list-item-title>
-                      </v-list-item>
-                    </v-list-item-group>
-                  </v-list>
-                </v-menu>
-              </JsonInput>
+                <code-input
+                  v-model="KvValueInput"
+                  class="text-body-1 mt-2"
+                  :mode.sync="selectedInputMode"
+                  :editors="['text', 'json']"
+                />
+                <div class="d-flex flex-grow-1 justify-end mb-5">
+                  <v-btn
+                    small
+                    color="primary"
+                    :loading="isSettingKV"
+                    @click="setKV"
+                    >Save</v-btn
+                  >
+                </div>
+              </resettable-wrapper>
             </td>
           </template>
           <template #item.value="{item}">
@@ -593,6 +484,7 @@ export default {
                   fab
                   x-small
                   color="primary"
+                  :disabled="getItemIsExpanded(item)"
                   v-on="on"
                   @click="
                     isEditable = !isEditable
@@ -620,7 +512,6 @@ export default {
               </template>
               Delete key
             </v-tooltip>
-
             <v-tooltip bottom>
               <template #activator="{ on }">
                 <v-btn
@@ -676,40 +567,13 @@ export default {
         validate-on-blur
       />
 
-      <JsonInput
-        ref="kvRef"
+      <code-input
         v-model="KvValueInput"
-        prepend-icon="create"
         class="text-body-1"
-        placeholder-text="Value"
-        :selected-type="kvTypes[selectedTypeIndex].value"
-        @invalid-secret="setInvalidKV"
-      >
-        <v-menu top offset-y>
-          <template #activator="{ on }">
-            <v-btn
-              text
-              small
-              class="position-absolute"
-              :style="{
-                bottom: '25px',
-                right: '80px',
-                'z-index': 3
-              }"
-              color="accent"
-              v-on="on"
-              >Type</v-btn
-            >
-          </template>
-          <v-list>
-            <v-list-item-group v-model="selectedTypeIndex" color="primary">
-              <v-list-item v-for="(type, index) in kvTypes" :key="index">
-                <v-list-item-title>{{ type.text }} </v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-menu>
-      </JsonInput>
+        placeholder="Value"
+        :mode.sync="selectedInputMode"
+        :editors="['text', 'json']"
+      />
     </ConfirmDialog>
 
     <ConfirmDialog
