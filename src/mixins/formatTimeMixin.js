@@ -45,6 +45,15 @@ export const formatTime = {
       let timeObj = moment(timestamp).tz(this.timezone)
       return `${timeObj ? timeObj.format('a') : moment(timestamp).format('a')}`
     },
+    dateParts(timestamp) {
+      if (!timestamp) {
+        return
+      }
+
+      const timeObj = moment(timestamp).tz(this.timezone) ?? moment(timestamp)
+
+      return timeObj.toObject()
+    },
     formatTimeRelative(timestamp) {
       let timeObj = moment(timestamp).tz(this.timezone)
       return timeObj ? timeObj.fromNow() : moment(timestamp).fromNow()

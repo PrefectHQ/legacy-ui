@@ -1,13 +1,14 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import { formatTime } from '@/mixins/formatTimeMixin'
+import CurrentTime from '@/components/Nav/CurrentTime'
 import { logout } from '@/auth/index.js'
 
 export default {
-  mixins: [formatTime],
+  components: {
+    CurrentTime
+  },
   data() {
     return {
-      clockInterval: null,
       loading: false,
       model: false,
       routes: [
@@ -25,19 +26,12 @@ export default {
             name: 'user-tokens'
           }
         }
-      ],
-      time: Date.now()
+      ]
     }
   },
   computed: {
     ...mapGetters('auth', ['isAuthorized']),
     ...mapGetters('user', ['user', 'oktaUser', 'isDark'])
-  },
-  mounted() {
-    clearInterval(this.clockInterval)
-    this.clockInterval = setInterval(() => {
-      this.time = Date.now()
-    }, 1000)
   },
   methods: {
     ...mapMutations('user', ['setUserSettings']),
@@ -100,7 +94,7 @@ export default {
       </v-scale-transition>
     </template>
 
-    <v-sheet width="300" class="pt-6 text-center">
+    <v-sheet v-if="model" width="300" class="pt-6 text-center">
       <div class="text-center">
         <v-avatar size="64" :tile="!oktaUser.picture">
           <img
@@ -149,21 +143,7 @@ export default {
       <v-divider class="grey lighten-3 mx-auto my-2" style="width: 50%;" />
 
       <div class="my-4 text-h4 text-center primary--text">
-        {{ datePartHour(time) }}<span class="utilGrayDark--text">:</span
-        >{{ datePartMinute(time) }}
-        <span class="text-overline utilGrayDark--text">
-          {{ datePartMeridian(time) }}
-        </span>
-
-        <v-tooltip top>
-          <template #activator="{ on }">
-            <v-icon class="material-icons-outlined" x-small v-on="on">
-              info
-            </v-icon>
-          </template>
-          System time according to your set Timezone; you can change this from
-          your Account Settings.
-        </v-tooltip>
+        <current-time />
       </div>
 
       <!-- <v-divider class="grey lighten-3 mx-auto my-2" style="width: 50%;" /> -->
