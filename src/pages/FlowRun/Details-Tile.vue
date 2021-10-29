@@ -1,6 +1,6 @@
 <script>
 import { mapGetters } from 'vuex'
-import jsBeautify from 'js-beautify'
+import { tryFormatJson } from '@/utils/json'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
@@ -70,15 +70,9 @@ export default {
     },
     isCloudOrAutoScheduled() {
       return this.isCloud || this.flowRun?.auto_scheduled
-    }
-  },
-  methods: {
-    formatJson(obj) {
-      return jsBeautify(JSON.stringify(obj), {
-        indent_size: 2,
-        space_in_empty_paren: true,
-        preserve_newlines: false
-      })
+    },
+    methods: {
+      tryFormatJson
     }
   }
 }
@@ -279,17 +273,17 @@ export default {
       </v-tab-item>
       <v-tab-item :value="tabs.parameters">
         <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
-          {{ formatJson(flowRunParams) }}
+          {{ tryFormatJson(flowRunParams) }}
         </div>
       </v-tab-item>
       <v-tab-item :value="tabs.context">
         <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
-          {{ formatJson(flowRun.context) }}
+          {{ tryFormatJson(flowRun.context) }}
         </div>
       </v-tab-item>
       <v-tab-item :value="tabs.run_config">
         <div class="text-body-2 appForeground rounded-sm pa-5 code-block">
-          {{ formatJson(flowRun.run_config) }}
+          {{ tryFormatJson(flowRun.run_config) }}
         </div>
       </v-tab-item>
     </v-tabs-items>

@@ -1,5 +1,5 @@
 <script>
-import jsBeautify from 'js-beautify'
+import { tryFormatJson } from '@/utils/json'
 
 export default {
   props: {
@@ -26,17 +26,14 @@ export default {
     },
     // Generate a JSON string based on the currently-rendered logs
     createJsonFromLogs() {
-      return jsBeautify(
-        JSON.stringify(
-          this.logs.map(log => ({
-            date: log.date,
-            time: log.time,
-            level: log.level,
-            name: log.name,
-            message: log.message
-          }))
-        )
-      )
+      const logs = this.logs.map(log => ({
+        date: log.date,
+        time: log.time,
+        level: log.level,
+        name: log.name,
+        message: log.message
+      }))
+      return tryFormatJson(logs)
     },
     // Generate a plain old string based on the currently-rendered logs
     // Used to create .txt files

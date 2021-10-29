@@ -1,5 +1,5 @@
 <script>
-import jsBeautify from 'js-beautify'
+import { tryFormatJson } from '@/utils/json'
 
 export default {
   props: {
@@ -22,11 +22,7 @@ export default {
   computed: {},
   methods: {
     formatDefaultParamValue(defaultParamValue) {
-      return jsBeautify(JSON.stringify(defaultParamValue), {
-        indent_size: 2,
-        space_in_empty_paren: true,
-        preserve_newlines: false
-      })
+      return tryFormatJson(defaultParamValue)
     },
     paramIsArray(param) {
       return Array.isArray(param)
