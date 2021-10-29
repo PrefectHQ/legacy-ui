@@ -202,10 +202,10 @@ export default {
       <span
         slot="page-title"
         style="max-width: 75vw;"
-        :style="[
-          { display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block' },
-          { width: taskRunNameLength + 'ch' }
-        ]"
+        :style="{
+          display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block',
+          width: taskRunNameLength + 'ch'
+        }"
       >
         <EditableTextField
           :content="
