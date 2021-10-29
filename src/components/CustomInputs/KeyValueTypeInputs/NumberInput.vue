@@ -4,7 +4,9 @@
     :error-messages="errors"
     :disabled="disabled"
     type="number"
-    v-bind="{ label: 'Value', outlined: true, dense: true }"
+    label="Value"
+    outlined
+    dense
   />
 </template>
 

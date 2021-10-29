@@ -12,27 +12,23 @@ export function formatYaml(value) {
   }
 }
 
-export function parseYaml(value) {
+export function tryParseYaml(value) {
   try {
-    return YAML.parse(value)
+    return parseYaml(value)
   } catch {
     return null
   }
 }
 
-export function getYamlErrors(value) {
-  if (value == null || value == '') {
-    return []
-  }
-
-  try {
-    YAML.parse(value)
-    return []
-  } catch (e) {
-    return [e.toString()]
-  }
+export function parseYaml(value) {
+  return YAML.parse(value)
 }
 
 export function isValidYaml(value) {
-  return getYamlErrors(value).length === 0
+  try {
+    parseYaml(value)
+    return true
+  } catch {
+    return false
+  }
 }

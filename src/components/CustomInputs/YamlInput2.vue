@@ -5,14 +5,14 @@
     :placeholder="placeholder"
     :get-errors="getYamlErrors"
     :format="formatYaml"
-    :parse="parseYaml"
+    :parse="tryParseYaml"
     language="yaml"
   />
 </template>
 
 <script>
 import BaseCodeTextarea from '@/components/CustomInputs/BaseCodeTextarea'
-import { parseYaml, formatYaml, getYamlErrors } from '@/utils/yaml'
+import { tryParseYaml, parseYaml, formatYaml } from '@/utils/yaml'
 
 export default {
   name: 'YamlInput',
@@ -47,8 +47,19 @@ export default {
     }
   },
   methods: {
-    getYamlErrors,
-    parseYaml,
+    getYamlErrors(value) {
+      if (value == null || value == '') {
+        return []
+      }
+
+      try {
+        parseYaml(value)
+        return []
+      } catch (e) {
+        return [e.toString()]
+      }
+    },
+    tryParseYaml,
     formatYaml
   }
 }

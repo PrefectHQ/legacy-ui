@@ -12,7 +12,7 @@ import { parametersMixin } from '@/mixins/parametersMixin.js'
 import throttle from 'lodash.throttle'
 import { adjectives } from '@/components/RunConfig/adjectives'
 import { animals } from '@/components/RunConfig/animals'
-import { isValidJson, parseJson, formatJson } from '@/utils/json'
+import { isValidJson, tryParseJson, tryFormatJson } from '@/utils/json'
 import CodeInput from '@/components/CustomInputs/CodeInput'
 import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
 
@@ -110,10 +110,10 @@ export default {
     ...mapGetters('tenant', ['tenant', 'role']),
     contextValue: {
       get() {
-        return parseJson(this.context)
+        return tryParseJson(this.context)
       },
       set(value) {
-        this.context = formatJson(value)
+        this.context = tryFormatJson(value)
       }
     },
     contextModified() {
@@ -122,10 +122,10 @@ export default {
     },
     parametersValue: {
       get() {
-        return parseJson(this.parameters)
+        return tryParseJson(this.parameters)
       },
       set(value) {
-        this.parameters = formatJson(value)
+        this.parameters = tryFormatJson(value)
       }
     },
     parametersModified() {
@@ -230,7 +230,7 @@ export default {
       const value = this.runConfig[prop]
 
       if (value && isValidJson(value)) {
-        return parseJson(value)
+        return tryParseJson(value)
       }
 
       return value
@@ -266,10 +266,10 @@ export default {
     },
     overrideLoggingEnvironmentVariable() {
       if (this.loggingLevel !== 'DEFAULT') {
-        const env = this.getRunConfigValue('env')
+        const env = this.getRunConfigValue('env') ?? {}
         env.PREFECT__LOGGING__LEVEL = this.loggingLevel
 
-        this.runConfig.env = formatJson(env)
+        this.runConfig.env = tryFormatJson(env)
       }
     },
     resetRunConfigValues() {

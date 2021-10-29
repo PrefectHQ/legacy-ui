@@ -4,15 +4,15 @@
     :readonly="readonly"
     :placeholder="placeholder"
     :get-errors="getJsonErrors"
-    :format="formatJson"
-    :parse="parseJson"
+    :format="tryFormatJson"
+    :parse="tryParseJson"
     language="json"
   />
 </template>
 
 <script>
 import BaseCodeTextarea from '@/components/CustomInputs/BaseCodeTextarea'
-import { parseJson, formatJson, getJsonErrors } from '@/utils/json'
+import { tryParseJson, parseJson, tryFormatJson } from '@/utils/json'
 
 export default {
   name: 'JsonInput',
@@ -47,9 +47,20 @@ export default {
     }
   },
   methods: {
-    getJsonErrors,
-    parseJson,
-    formatJson
+    getJsonErrors(value) {
+      if (value == '') {
+        return []
+      }
+
+      try {
+        parseJson(value)
+        return []
+      } catch (e) {
+        return [e.toString()]
+      }
+    },
+    tryParseJson,
+    tryFormatJson
   }
 }
 </script>

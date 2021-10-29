@@ -17,7 +17,7 @@
 <script>
 import BaseDictInput from '@/components/CustomInputs/BaseDictInput'
 import readonlyProps from '@/components/CustomInputs/readonlyProps'
-import { isValidJson, parseJson, formatJson } from '@/utils/json'
+import { isValidJson, tryParseJson, tryFormatJson } from '@/utils/json'
 import { types, isValidType } from '@/utils/types'
 
 export default {
@@ -51,10 +51,10 @@ export default {
       },
       set(value) {
         if (this.isArrayString(this.value)) {
-          this.$emit('input', formatJson(value))
+          this.$emit('input', tryFormatJson(value))
         }
 
-        this.$emit('input', formatJson(this.convertArrayToObject(value)))
+        this.$emit('input', tryFormatJson(this.convertArrayToObject(value)))
       }
     }
   },
@@ -63,7 +63,7 @@ export default {
       return typeof value === 'object' && Array.isArray(value)
     },
     isArrayString(value) {
-      return isValidJson(value) && this.isArray(parseJson(value))
+      return isValidJson(value) && this.isArray(tryParseJson(value))
     },
     convertValueToArray(value) {
       if (value == null || !isValidJson(value)) {
@@ -74,7 +74,7 @@ export default {
         return value
       }
 
-      const objectValue = parseJson(value)
+      const objectValue = tryParseJson(value)
 
       if (this.isArray(objectValue)) {
         return objectValue

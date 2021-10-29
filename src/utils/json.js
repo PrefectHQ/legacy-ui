@@ -1,42 +1,42 @@
 import jsBeautify from 'js-beautify'
 
-export function formatJson(value) {
-  if (value == null) {
-    return null
+export function tryFormatJson(value) {
+  if (value == null || typeof value !== 'object') {
+    return value
   }
 
   try {
-    return jsBeautify(JSON.stringify(value), {
-      indent_size: 2,
-      space_in_empty_paren: true,
-      preserve_newlines: false
-    })
+    return formatJson(value)
+  } catch {
+    return null
+  }
+}
+
+export function formatJson(value) {
+  return jsBeautify(JSON.stringify(value), {
+    indent_size: 2,
+    space_in_empty_paren: true,
+    preserve_newlines: false
+  })
+}
+
+export function tryParseJson(value) {
+  try {
+    return parseJson(value)
   } catch {
     return null
   }
 }
 
 export function parseJson(value) {
-  try {
-    return JSON.parse(value)
-  } catch {
-    return null
-  }
-}
-
-export function getJsonErrors(value) {
-  if (value == null || value == '') {
-    return []
-  }
-
-  try {
-    JSON.parse(value)
-    return []
-  } catch (e) {
-    return [e.toString()]
-  }
+  return JSON.parse(value)
 }
 
 export function isValidJson(value) {
-  return getJsonErrors(value).length === 0
+  try {
+    parseJson(value)
+    return true
+  } catch {
+    return false
+  }
 }

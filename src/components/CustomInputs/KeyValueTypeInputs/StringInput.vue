@@ -3,12 +3,14 @@
     v-model="internalValue"
     :error-messages="errors"
     :disabled="disabled"
-    v-bind="{ label: 'Value', outlined: true, dense: true }"
+    label="Value"
+    outlined
+    dense
   />
 </template>
 
 <script>
-import { formatJson } from '@/utils/json'
+import { tryFormatJson } from '@/utils/json'
 
 export default {
   name: 'StringInput',
@@ -43,7 +45,7 @@ export default {
   },
   mounted() {
     if (typeof this.value == 'object') {
-      this.internalValue = formatJson(this.value) ?? ''
+      this.internalValue = tryFormatJson(this.value) ?? ''
     } else if (typeof this.value != 'string') {
       this.internalValue = this.tryCallingToString(this.value) ?? ''
     }

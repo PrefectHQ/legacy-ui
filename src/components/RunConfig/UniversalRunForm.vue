@@ -16,7 +16,7 @@
 import ArgumentInput from '@/components/RunConfig/ArgumentInput'
 import CodeInput from '@/components/CustomInputs/CodeInput'
 import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
-import { formatJson } from '@/utils/json'
+import { tryFormatJson } from '@/utils/json'
 
 export default {
   components: {
@@ -41,9 +41,7 @@ export default {
     },
     envValue: {
       get() {
-        return typeof this.internalValue.env === 'object'
-          ? formatJson(this.internalValue.env)
-          : this.internalValue.env
+        return tryFormatJson(this.internalValue.env)
       },
       set(value) {
         this.internalValue = { ...this.internalValue, env: value }

@@ -33,7 +33,7 @@
 <script>
 import BaseDictInput from '@/components/CustomInputs/BaseDictInput'
 import readonlyProps from '@/components/CustomInputs/readonlyProps'
-import { isValidJson, parseJson, formatJson } from '@/utils/json'
+import { isValidJson, tryParseJson, tryFormatJson } from '@/utils/json'
 import { types, isValidType } from '@/utils/types'
 
 export default {
@@ -83,19 +83,19 @@ export default {
       return typeof value === 'object' && Array.isArray(value)
     },
     isArrayString(value) {
-      return isValidJson(value) && this.isArray(parseJson(value))
+      return isValidJson(value) && this.isArray(tryParseJson(value))
     },
     emitValue(value) {
       const jsonValue = this.isArrayString(this.value)
-        ? formatJson(value)
-        : formatJson(this.convertArrayToObject(value))
+        ? tryFormatJson(value)
+        : tryFormatJson(this.convertArrayToObject(value))
 
       this.$emit('input', jsonValue)
     },
     emitEntries(value) {
       const jsonValue = this.isArrayString(this.value)
-        ? formatJson(value)
-        : formatJson(this.convertArrayToObject(value))
+        ? tryFormatJson(value)
+        : tryFormatJson(this.convertArrayToObject(value))
 
       this.$emit('update:entries', jsonValue)
     },
@@ -108,7 +108,7 @@ export default {
         return value
       }
 
-      const objectValue = parseJson(value)
+      const objectValue = tryParseJson(value)
 
       if (this.isArray(objectValue)) {
         return objectValue

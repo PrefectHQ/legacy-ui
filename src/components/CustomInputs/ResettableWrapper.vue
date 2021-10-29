@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import { tryParseJson, tryFormatJson } from '@/utils/json'
+
 export default {
   name: 'ResettableWrapper',
   props: {
@@ -36,7 +38,13 @@ export default {
     }
   },
   created() {
-    this.initialValue = this.value
+    if (typeof this.value === 'object') {
+      const json = tryFormatJson(this.value)
+
+      this.initialValue = tryParseJson(json)
+    } else {
+      this.initialValue = this.value
+    }
   },
   methods: {
     reset() {

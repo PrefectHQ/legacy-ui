@@ -3,12 +3,14 @@
     v-model="internalValue"
     :error-messages="errors"
     :disabled="disabled"
-    v-bind="{ label: 'Value', outlined: true, dense: true }"
+    label="Value"
+    outlined
+    dense
   />
 </template>
 
 <script>
-import { isValidJson, parseJson, formatJson } from '@/utils/json'
+import { isValidJson, tryParseJson, tryFormatJson } from '@/utils/json'
 import { types, isValidType } from '@/utils/types'
 
 export default {
@@ -40,7 +42,7 @@ export default {
     internalValue: {
       get() {
         return typeof this.value === 'object'
-          ? formatJson(this.value)
+          ? tryFormatJson(this.value)
           : this.value
       },
       set(value) {
@@ -54,7 +56,7 @@ export default {
   },
   methods: {
     tryParsingFromString(value) {
-      return isValidJson(value) ? parseJson(value) : value
+      return isValidJson(value) ? tryParseJson(value) : value
     },
     validate(value) {
       this.errors = this.getErrors(value)

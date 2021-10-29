@@ -129,7 +129,7 @@ import ArgumentInput from '@/components/RunConfig/ArgumentInput'
 import ArgumentReference from '@/components/RunConfig/ArgumentReference'
 import CodeInput from '@/components/CustomInputs/CodeInput'
 import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
-import { formatJson } from '@/utils/json'
+import { tryFormatJson } from '@/utils/json'
 
 export default {
   components: {
@@ -168,9 +168,7 @@ export default {
     },
     envValue: {
       get() {
-        return typeof this.internalValue.env === 'object'
-          ? formatJson(this.internalValue.env)
-          : this.internalValue.env
+        return tryFormatJson(this.internalValue.env)
       },
       set(value) {
         this.internalValue = { ...this.internalValue, env: value }
@@ -178,9 +176,7 @@ export default {
     },
     taskDefinitionValue: {
       get() {
-        return typeof this.internalValue.task_definition === 'object'
-          ? formatJson(this.internalValue.task_definition)
-          : this.internalValue.task_definition
+        return tryFormatJson(this.internalValue.task_definition)
       },
       set(value) {
         this.internalValue = { ...this.internalValue, task_definition: value }
@@ -188,9 +184,7 @@ export default {
     },
     runTaskKwargsValue: {
       get() {
-        return typeof this.internalValue.run_task_kwargs === 'object'
-          ? formatJson(this.internalValue.run_task_kwargs)
-          : this.internalValue.run_task_kwargs
+        return tryFormatJson(this.internalValue.run_task_kwargs)
       },
       set(value) {
         this.internalValue = { ...this.internalValue, run_task_kwargs: value }

@@ -33,8 +33,8 @@ import DictInput2 from '@/components/CustomInputs/DictInput2'
 import CheckboxDictInput from '@/components/CustomInputs/CheckboxDictInput'
 import readonlyProps from '@/components/CustomInputs/readonlyProps'
 import Textarea from 'vuetify/lib/components/VTextarea'
-import { parseJson, formatJson } from '@/utils/json'
-import { parseYaml, formatYaml } from '@/utils/yaml'
+import { tryParseJson, tryFormatJson } from '@/utils/json'
+import { tryParseYaml, formatYaml } from '@/utils/yaml'
 import { types, isValidType } from '@/utils/types'
 
 export default {
@@ -159,10 +159,10 @@ export default {
     getStringValue(value) {
       return this.internalMode === 'yaml'
         ? formatYaml(value)
-        : formatJson(value)
+        : tryFormatJson(value)
     },
     getObjectValue(value) {
-      return parseYaml(value) ?? parseJson(value)
+      return tryParseYaml(value) ?? tryParseJson(value)
     },
     setMode(mode) {
       if (this.internalValue != null) {
@@ -180,15 +180,15 @@ export default {
         case 'yaml':
           return formatYaml(value)
         case 'json':
-          return formatJson(value)
+          return tryFormatJson(value)
         case 'dict':
-          return formatJson(value)
+          return tryFormatJson(value)
         case 'text':
-          return formatJson(value)
+          return tryFormatJson(value)
       }
     },
     tryGetValueObject(value) {
-      return parseYaml(value) ?? parseJson(value)
+      return tryParseYaml(value) ?? tryParseJson(value)
     }
   }
 }

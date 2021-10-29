@@ -135,7 +135,7 @@ import ArgumentReference from '@/components/RunConfig/ArgumentReference'
 import CodeInput from '@/components/CustomInputs/CodeInput'
 import ListInput from '@/components/CustomInputs/ListInput'
 import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
-import { formatJson } from '@/utils/json'
+import { tryFormatJson } from '@/utils/json'
 
 export default {
   components: {
@@ -174,9 +174,7 @@ export default {
     },
     envValue: {
       get() {
-        return typeof this.internalValue.env === 'object'
-          ? formatJson(this.internalValue.env)
-          : this.internalValue.env
+        return tryFormatJson(this.internalValue.env)
       },
       set(value) {
         this.internalValue = { ...this.internalValue, env: value }
@@ -184,9 +182,7 @@ export default {
     },
     jobTemplateValue: {
       get() {
-        return typeof this.internalValue.job_template === 'object'
-          ? formatJson(this.internalValue.job_template)
-          : this.internalValue.job_template
+        return tryFormatJson(this.internalValue.job_template)
       },
       set(value) {
         this.internalValue = { ...this.internalValue, job_template: value }

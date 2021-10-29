@@ -3,7 +3,9 @@
     value="null"
     :error-messages="errors"
     disabled
-    v-bind="{ label: 'Value', outlined: true, dense: true }"
+    label="Value"
+    outlined
+    dense
   />
 </template>
 
