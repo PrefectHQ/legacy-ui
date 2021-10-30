@@ -91,6 +91,7 @@ export default {
       return color
     },
     title() {
+      console.log('tabs', this.tabs, this.tab)
       let title = this.loading
         ? 'In progress flow runs'
         : `${this.all?.length || 0} runs in progress`
@@ -224,11 +225,11 @@ export default {
       <v-tab :key="tabs.all" data-cy="in-progress-tile-all">
         All
       </v-tab>
-      <v-tab :key="tabs.running" data-cy="in-progress-tile-running">
-        Running
-      </v-tab>
       <v-tab :key="tabs.submitted" data-cy="in-progress-tile-submitted">
         Submitted
+      </v-tab>
+      <v-tab :key="tabs.running" data-cy="in-progress-tile-running">
+        Running
       </v-tab>
     </v-tabs>
 
