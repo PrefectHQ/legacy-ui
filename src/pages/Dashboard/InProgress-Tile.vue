@@ -91,7 +91,6 @@ export default {
       return color
     },
     title() {
-      console.log('tabs', this.tabs, this.tab)
       let title = this.loading
         ? 'In progress flow runs'
         : `${this.all?.length || 0} runs in progress`
