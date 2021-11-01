@@ -12,12 +12,15 @@
 ### Bugfixes
 
 - Rebuilt Run-Config editor to preserve original run_config values, allows resetting fields - [#1095](https://github.com/PrefectHQ/ui/pull/1095)
+- Adds a try/catch block when deleting a membership in the removeUser method - [#1094](https://github.com/PrefectHQ/ui/pull/1094)
+
 - Internal: update CircleCI config slack orb (add `@` to mentions) - [#1053](https://github.com/PrefectHQ/ui/pull/1053)
 - Disable start run button for late flow runs -[#1087](https://github.com/PrefectHQ/ui/pull/1087)
 - Filter by scheduled runs in the Flow runs table - [#1079](https://github.com/PrefectHQ/ui/pull/1079)
 - When editing a schedule, update the action button to "Save" - [#1083](https://github.com/PrefectHQ/ui/pull/1083)
 - Fixed issue discovered on 1066 where missing tabs caused wrong tab content to display - [#1081](https://github.com/PrefectHQ/ui/pull/1081)
 - Update command on getting start agent section - [#1076](https://github.com/PrefectHQ/ui/pull/1076)
+- Fix issue where tokens are sent to LogRocket when switching tenants - [#1091](https://github.com/PrefectHQ/ui/pull/1091)
 
 ## 2021-10-06
 
