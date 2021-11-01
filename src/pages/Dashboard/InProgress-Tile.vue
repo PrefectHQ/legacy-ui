@@ -34,8 +34,8 @@ export default {
   data() {
     const tabs = {
       all: 0,
-      submitted: 1,
-      running: 2
+      running: 1,
+      submitted: 2
     }
 
     return {
@@ -224,11 +224,11 @@ export default {
       <v-tab :key="tabs.all" data-cy="in-progress-tile-all">
         All
       </v-tab>
-      <v-tab :key="tabs.submitted" data-cy="in-progress-tile-submitted">
-        Submitted
-      </v-tab>
       <v-tab :key="tabs.running" data-cy="in-progress-tile-running">
         Running
+      </v-tab>
+      <v-tab :key="tabs.submitted" data-cy="in-progress-tile-submitted">
+        Submitted
       </v-tab>
     </v-tabs>
 
