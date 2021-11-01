@@ -4,6 +4,12 @@
 
 ### Features and Improvements
 
+### Bugfixes
+
+## 2021-11-01
+
+### Features and Improvements
+
 - Add warning that users will be locked out if not part of a team - [#1078](https://github.com/PrefectHQ/ui/pull/1078)
 - Update the PagerDuty logo to match new branding - [#1073](https://github.com/PrefectHQ/ui/pull/1073)
 
