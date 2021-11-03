@@ -103,6 +103,14 @@ export default {
           cardLinkText: 'Artifacts API Docs'
         }
       ]
+    },
+    titleBarMaxWidth() {
+      if (this.$vuetify.breakpoint.lgAndUp) {
+        return '70vw'
+      } else if (this.$vuetify.breakpoint.mdAndDown) {
+        return '40vw'
+      }
+      return '30vw'
     }
   },
   watch: {
@@ -201,10 +209,10 @@ export default {
     <SubPageNav icon="pi-task-run" page-type="Task Run">
       <span
         slot="page-title"
-        style="max-width: 75vw;"
         :style="{
           display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block',
-          width: taskRunNameLength + 'ch'
+          width: taskRunNameLength + 'ch',
+          maxWidth: titleBarMaxWidth
         }"
       >
         <EditableTextField

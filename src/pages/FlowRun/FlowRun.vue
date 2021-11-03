@@ -102,6 +102,14 @@ export default {
     },
     flowRunNameLength() {
       return this.flowRun?.name?.length
+    },
+    titleBarMaxWidth() {
+      if (this.$vuetify.breakpoint.lgAndUp) {
+        return '70vw'
+      } else if (this.$vuetify.breakpoint.mdAndDown) {
+        return '40vw'
+      }
+      return '30vw'
     }
   },
   watch: {
@@ -236,10 +244,10 @@ export default {
     <SubPageNav icon="pi-flow-run" page-type="Flow Run">
       <span
         slot="page-title"
-        style="max-width: 75vw;"
         :style="{
           display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block',
-          width: flowRunNameLength + 'ch'
+          width: flowRunNameLength + 'ch',
+          maxWidth: titleBarMaxWidth
         }"
       >
         <EditableTextField
