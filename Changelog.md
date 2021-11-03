@@ -6,6 +6,8 @@
 
 ### Bugfixes
 
+- Allow users to search for flows by both flow id and flow group id - [#1089](https://github.com/PrefectHQ/ui/pull/1089)
+
 ## 2021-11-01
 
 ### Features and Improvements

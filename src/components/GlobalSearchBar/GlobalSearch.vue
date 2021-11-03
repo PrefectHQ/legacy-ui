@@ -45,7 +45,11 @@ export default {
       return `%${this.input.trim()}%`
     },
     entries() {
-      return this.results
+      const resultsWithNames = this.results.map(result => {
+        result.name = result.name || result.id
+        return result
+      })
+      return resultsWithNames
     }
   },
   watch: {
@@ -209,8 +213,9 @@ export default {
       // method is showing. We transform all queries to lowercase
       // for comparison for a better UX
       return (
-        item['id'].toLowerCase().includes(queryText.toLowerCase()) ||
-        item['name'].toLowerCase().includes(queryText.toLowerCase())
+        item['id']?.toLowerCase().includes(queryText.toLowerCase()) ||
+        item['name']?.toLowerCase().includes(queryText.toLowerCase()) ||
+        item['flow_id']?.toLowerCase().includes(queryText.toLowerCase())
       )
     }
   },
@@ -346,7 +351,7 @@ export default {
             v-if="data"
             ref="result"
             :search-result="data.item"
-            :parent="data.parent"
+            :parent-prop="data.parent"
           />
         </template>
       </v-autocomplete>
