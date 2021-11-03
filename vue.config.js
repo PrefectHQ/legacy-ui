@@ -1,4 +1,5 @@
 const WorkerPlugin = require('worker-plugin')
+const webpack = require('webpack')
 
 module.exports = {
   chainWebpack: config => {
@@ -82,7 +83,13 @@ module.exports = {
         }
       }
     },
-    plugins: [new WorkerPlugin({ sharedWorker: true })]
+    plugins: [
+      new WorkerPlugin({ sharedWorker: true }),
+      new webpack.ContextReplacementPlugin(
+        /moment[/\\]locale$/,
+        /en-au|en-ca|en-us|en-mx/
+      )
+    ]
   },
 
   pluginOptions: {
@@ -93,6 +100,7 @@ module.exports = {
     },
     webpackBundleAnalyzer: {
       analyzerMode: 'disabled'
+      //generateStatsFile: true
     }
   },
 
