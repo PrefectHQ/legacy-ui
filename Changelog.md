@@ -4,6 +4,8 @@
 
 ### Features and Improvements
 
+- When creating/editing schedule, make action button available across tabs - [#1096](https://github.com/PrefectHQ/ui/pull/1096)
+
 ### Bugfixes
 
 - Allow users to search for flows by both flow id and flow group id - [#1089](https://github.com/PrefectHQ/ui/pull/1089)
