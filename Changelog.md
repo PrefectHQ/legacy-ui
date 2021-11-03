@@ -4,6 +4,8 @@
 
 ### Features and Improvements
 
+- When creating/editing schedule, make action button available across tabs - [#1096](https://github.com/PrefectHQ/ui/pull/1096)
+
 ### Bugfixes
 
 ## 2021-11-01
