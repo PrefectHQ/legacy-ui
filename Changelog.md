@@ -9,6 +9,7 @@
 
 ### Bugfixes
 
+- Moved away from discouraged per-method-packaging of lodash - [#1107](https://github.com/PrefectHQ/ui/pull/1107)
 - Adds a try/catch block when deleting a membership in the removeUser method - [#1094](https://github.com/PrefectHQ/ui/pull/1094)
 
 - Internal: update CircleCI config slack orb (add `@` to mentions) - [#1053](https://github.com/PrefectHQ/ui/pull/1053)
