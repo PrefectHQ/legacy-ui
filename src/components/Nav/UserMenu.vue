@@ -142,10 +142,7 @@ export default {
 
       <v-divider class="grey lighten-3 mx-auto my-2" style="width: 50%;" />
 
-      <div class="my-4 text-h4 text-center primary--text">
-        <current-time />
-      </div>
-
+      <current-time class="my-4 text-h4 text-center primary--text" />
       <!-- <v-divider class="grey lighten-3 mx-auto my-2" style="width: 50%;" /> -->
 
       <div>

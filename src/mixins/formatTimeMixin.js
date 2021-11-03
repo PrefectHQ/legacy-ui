@@ -52,7 +52,11 @@ export const formatTime = {
 
       const timeObj = moment(timestamp).tz(this.timezone) ?? moment(timestamp)
 
-      return timeObj.toObject()
+      return {
+        hour: timeObj.format('h'),
+        minute: timeObj.format('mm'),
+        meridian: timeObj.format('a')
+      }
     },
     formatTimeRelative(timestamp) {
       let timeObj = moment(timestamp).tz(this.timezone)

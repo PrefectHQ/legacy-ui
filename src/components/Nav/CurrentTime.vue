@@ -1,11 +1,9 @@
 <template>
-  <div>
-    {{ hours }}
-    <span class="utilGrayDark--text">:</span>
-    {{ minutes }}
-    <span class="text-overline utilGrayDark--text">
-      {{ meridian }}
-    </span>
+  <div class="current-time">
+    <span class="current-time__hour">{{ time.hour }}</span>
+    <span class="current-time__separator">:</span>
+    <span class="current-time__minute">{{ time.minute }}</span>
+    <span class="current-time__meridian">{{ time.meridian }}</span>
     <v-tooltip top>
       <template #activator="{ on }">
         <v-icon class="material-icons-outlined" x-small v-on="on">
@@ -28,17 +26,6 @@ export default {
       clockTimeout: null,
       clockInterval: null,
       time: null
-    }
-  },
-  computed: {
-    hours() {
-      return this.time?.hours > 12 ? this.time.hours % 12 : this.time.hours
-    },
-    minutes() {
-      return this.time?.minutes
-    },
-    meridian() {
-      return this.time?.hours > 12 ? 'PM' : 'AM'
     }
   },
   created() {
@@ -70,3 +57,20 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.current-time__separator {
+  color: var(--v-utilGrayDark-base);
+}
+
+.current-time__meridian {
+  color: var(--v-utilGrayDark-base);
+  font-size: 0.75rem;
+  line-height: 2rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding-left: 8px;
+  padding-right: 4px;
+}
+</style>
