@@ -57,7 +57,7 @@ export default {
 <style lang="scss" scoped>
 .resettable-wrapper__button-container {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   margin-bottom: 8px;
 }
 

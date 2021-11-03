@@ -37,10 +37,6 @@ import TransitionHeight from '@/components/Functional/Transition-Height'
 import TruncatedSpan from '@/components/Functional/TruncatedSpan'
 import GetCloud from '@/components/GetCloud'
 
-// Code syntax highlighting
-import VueHighlightJS from 'vue-highlight.js'
-import json from 'highlight.js/lib/languages/json'
-import yaml from 'highlight.js/lib/languages/yaml'
 import '@/styles/atelier-sulphurpool-light.scss'
 
 // Prefect icon font
@@ -72,13 +68,6 @@ Vue.use(Router)
 Vue.use(VueMeta, {
   refreshOnceOnNavigation: true,
   debounceWait: 500
-})
-
-Vue.use(VueHighlightJS, {
-  languages: {
-    json,
-    yaml
-  }
 })
 
 Vue.prototype.$globalApolloQueries = {}

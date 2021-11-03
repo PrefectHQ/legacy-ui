@@ -78,7 +78,7 @@ export default {
 
 .run-config-type-select__option {
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
   padding: 8px 16px;
   margin: 8px 0;

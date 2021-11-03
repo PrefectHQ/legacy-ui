@@ -12,9 +12,11 @@
       @blur="handleBlur"
     >
       <template #append>
-        <highlight-code :lang="language" class="base-code-textarea__preview">
-          {{ internalValue }}
-        </highlight-code>
+        <highlight
+          :language="language"
+          :code="internalValue"
+          class="base-code-textarea__preview"
+        />
         <span
           class="base-code-textarea__language"
           :class="`base-code-textarea__language-${language}`"
@@ -31,8 +33,13 @@
 </template>
 
 <script>
+import Highlight from '@/components/CustomInputs/Highlight'
+
 export default {
   name: 'BaseCodeTextarea',
+  components: {
+    Highlight
+  },
   props: {
     value: {
       type: String,
@@ -131,7 +138,11 @@ export default {
     white-space: pre-wrap;
 
     code {
-      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       padding-top: 10px;
       padding-bottom: 8px;
       font-family: monospace, monospace;
