@@ -1,10 +1,10 @@
 <script>
-import uniq from 'lodash.uniq'
+import uniq from 'lodash/uniq'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import LogRocket from 'logrocket'
 import SubPageNav from '@/layouts/SubPageNav'
 import { formatTime } from '@/mixins/formatTimeMixin.js'
-import difference from 'lodash.difference'
+import difference from 'lodash/difference'
 
 import AgentTile from '@/pages/Agents/AgentTile'
 

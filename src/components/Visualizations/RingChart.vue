@@ -1,6 +1,6 @@
 <script>
 import * as d3 from 'd3'
-import uniqueId from 'lodash.uniqueid'
+import uniqueId from 'lodash/uniqueId'
 
 export default {
   props: {
