@@ -40,6 +40,10 @@ export default {
   computed: {
     internalValue: {
       get() {
+        if (typeof this.value != 'string' || !isIsoDateString(this.value)) {
+          return null
+        }
+
         return this.value
       },
       set(value) {
