@@ -113,6 +113,19 @@ export default {
       return this.types?.length === 1
     }
   },
+  watch: {
+    value: {
+      deep: true,
+      handler({ value }) {
+        if (this.hasFocus()) {
+          return
+        }
+
+        this.trySettingType(value)
+        this.trySettingValueComponent(this.selectedType)
+      }
+    }
+  },
   created() {
     this.checkSingleTypeMode()
 
@@ -120,9 +133,7 @@ export default {
       this.trySettingType(this.internalValue)
     }
 
-    if (this.selectedType != null) {
-      this.handleSelectedTypeChange(this.selectedType)
-    }
+    this.trySettingValueComponent(this.selectedType)
   },
   methods: {
     checkSingleTypeMode() {
@@ -138,6 +149,11 @@ export default {
     handleSelectedTypeChange(type) {
       this.typeIsInferred = type === null
       this.valueComponent = this.getValueComponentForType(type)
+    },
+    trySettingValueComponent(type) {
+      if (type != null) {
+        this.valueComponent = this.getValueComponentForType(type)
+      }
     },
     getValueComponentForType(type) {
       switch (type) {
@@ -205,6 +221,9 @@ export default {
       }
 
       return 'Dictionary'
+    },
+    hasFocus() {
+      return this.$el.contains(document.activeElement)
     },
     getKeyErrors(value) {
       if (value == null || value.length == 0) {
