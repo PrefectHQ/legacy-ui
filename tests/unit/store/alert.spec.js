@@ -6,8 +6,8 @@ jest.mock('@/main', () => {
   }
 })
 
-import uniqueId from 'lodash.uniqueid'
-jest.mock('lodash.uniqueid')
+import uniqueId from 'lodash/uniqueId'
+jest.mock('lodash/uniqueId')
 
 import Vuex from 'vuex'
 import alert from '@/store/alert'
