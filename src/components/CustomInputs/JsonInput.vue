@@ -1,7 +1,7 @@
 <script>
 import jsBeautify from 'js-beautify'
 import { codemirror } from 'vue-codemirror'
-import debounce from 'lodash.debounce'
+import debounce from 'lodash/debounce'
 
 import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/addon/edit/closebrackets'

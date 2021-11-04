@@ -1,7 +1,7 @@
 <script>
 import IntervalClock from '@/components/Functional/IntervalClock'
 import ExternalLink from '@/components/ExternalLink'
-import debounce from 'lodash.debounce'
+import debounce from 'lodash/debounce'
 
 export default {
   components: {

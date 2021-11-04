@@ -1,9 +1,9 @@
 <script>
 import * as d3 from 'd3'
 import { mapGetters } from 'vuex'
-import uniqueId from 'lodash.uniqueid'
-import throttle from 'lodash.throttle'
-import debounce from 'lodash.debounce'
+import uniqueId from 'lodash/uniqueId'
+import throttle from 'lodash/throttle'
+import debounce from 'lodash/debounce'
 
 export default {
   props: {
