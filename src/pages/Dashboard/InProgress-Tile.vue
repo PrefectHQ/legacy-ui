@@ -34,8 +34,8 @@ export default {
   data() {
     const tabs = {
       all: 0,
-      submitted: 1,
-      running: 2
+      running: 1,
+      submitted: 2
     }
 
     return {
