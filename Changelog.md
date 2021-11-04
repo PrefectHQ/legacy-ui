@@ -6,14 +6,22 @@
 
 - Rebuilt various inputs responsible for code input (Dict, Json, Yaml) - [#1095](https://github.com/PrefectHQ/ui/pull/1095)
 - Allow users to specify type explicitly for env variables - [#1095](https://github.com/PrefectHQ/ui/pull/1095)
+- When creating/editing schedule, make action button available across tabs - [#1096](https://github.com/PrefectHQ/ui/pull/1096)
+
+### Bugfixes
+
+## 2021-11-01
+
+### Features and Improvements
+
 - Add warning that users will be locked out if not part of a team - [#1078](https://github.com/PrefectHQ/ui/pull/1078)
 - Update the PagerDuty logo to match new branding - [#1073](https://github.com/PrefectHQ/ui/pull/1073)
 
 ### Bugfixes
 
 - Rebuilt Run-Config editor to preserve original run_config values, allows resetting fields - [#1095](https://github.com/PrefectHQ/ui/pull/1095)
+- Fix ordering of running and submitted runs tabs - [#1105](https://github.com/PrefectHQ/ui/pull/1105)
 - Adds a try/catch block when deleting a membership in the removeUser method - [#1094](https://github.com/PrefectHQ/ui/pull/1094)
-
 - Internal: update CircleCI config slack orb (add `@` to mentions) - [#1053](https://github.com/PrefectHQ/ui/pull/1053)
 - Disable start run button for late flow runs -[#1087](https://github.com/PrefectHQ/ui/pull/1087)
 - Filter by scheduled runs in the Flow runs table - [#1079](https://github.com/PrefectHQ/ui/pull/1079)
