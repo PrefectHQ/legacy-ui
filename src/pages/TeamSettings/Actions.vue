@@ -275,6 +275,7 @@ export default {
             >
               <dict-input
                 v-if="Object.keys(item.action_config).length"
+                class="mt-3"
                 readonly-key
                 readonly-value
                 disable-add

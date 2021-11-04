@@ -164,7 +164,6 @@ export default {
       }
       const value =
         parseJson(this.secretValueInput) ?? this.secretValueInput ?? []
-      console.log(value)
       const secretResult = await this.$apollo.mutate({
         mutation: require('@/graphql/Secrets/set-secret.gql'),
         variables: {
