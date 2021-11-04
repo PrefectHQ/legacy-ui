@@ -2,9 +2,9 @@
 import * as d3_base from 'd3'
 import * as d3_regression from 'd3-regression'
 
-import uniqueId from 'lodash.uniqueid'
-import debounce from 'lodash.debounce'
-import throttle from 'lodash.throttle'
+import uniqueId from 'lodash/uniqueId'
+import debounce from 'lodash/debounce'
+import throttle from 'lodash/throttle'
 import { mapGetters } from 'vuex'
 
 const d3 = Object.assign({}, d3_base, d3_regression)

@@ -1,6 +1,6 @@
 <script>
 import { mapActions } from 'vuex'
-import _ from 'lodash'
+import isEqual from 'lodash/isEqual'
 
 export default {
   components: {},
@@ -166,7 +166,7 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     hasChanges() {
-      const equal = _.isEqual(this.permissions, this.templatePermissions)
+      const equal = isEqual(this.permissions, this.templatePermissions)
       this.isChanged = !equal
     },
     permissionList(item) {
