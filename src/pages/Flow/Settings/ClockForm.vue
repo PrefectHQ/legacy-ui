@@ -4,7 +4,8 @@
 import CronForm from '@/pages/Flow/Settings/ClockForms/Cron'
 import IntervalForm from '@/pages/Flow/Settings/ClockForms/Interval'
 import SimpleForm from '@/pages/Flow/Settings/ClockForms/Simple'
-import DictInput from '@/components/CustomInputs/DictInput'
+import ScheduleParameters from '@/pages/Flow/Settings/ScheduleParameters'
+import { formatJson, isValidJson, parseJson } from '@/utils/json'
 
 import moment from 'moment-timezone'
 
@@ -17,7 +18,7 @@ export default {
     CronForm,
     IntervalForm,
     SimpleForm,
-    DictInput
+    ScheduleParameters
   },
   props: {
     defaultParameters: {
@@ -87,18 +88,24 @@ export default {
       intervalModel: this.interval,
       simpleModel: this.clock.cron || this.clock.interval || '0 * * * *',
       valid: true,
-      parameter: {}
+      parameter: null
+    }
+  },
+  created(){
+    const params = this.clock?.parameter_defaults
+
+    if (params) {
+      this.parameter = this.formatParams(params)
     }
   },
   computed: {
     allDefaultParameters() {
       if (!this.defaultParameters) return {}
 
-      const paramObj = this.defaultParameters.reduce(
-        (obj, item) => ((obj[item.name] = item.default), obj),
-        {}
-      )
-      return this.paramVal(paramObj)
+      return this.defaultParameters.reduce((obj, item) => {
+        obj[item.name] = item.default
+        return obj
+      }, {})
     },
     clockToAdd() {
       return this.advanced ? `${this.advancedType}Model` : 'simpleModel'
@@ -110,48 +117,20 @@ export default {
     }
   },
   methods: {
-    paramVal(clock) {
-      if (!clock) {
-        return
-      }
-      let parameters = []
-
-      for (const [key, value] of Object.entries(clock)) {
-        parameters.push({ key: key, value: value, disabled: true })
-      }
-      return parameters
-    },
     checkDefaultParameters(parameterObj) {
       return Object.values(parameterObj).length > 0
     },
-    removeDoubleParam(clock) {
-      if (clock && this.allDefaultParameters.length !== 0) {
-        return Object.values(
-          [...this.allDefaultParameters, ...this.paramVal(clock)]
-            .reverse()
-            .reduce((r, c) => ((r[c.key] = r[c.key] || c), r), {})
-        )
-      }
-
-      if (this.allDefaultParameters.length !== 0) {
-        return this.allDefaultParameters
-      }
+    formatParams(...params) {
+      const combined = params.reduce(
+        (result, obj) => ({ ...result, ...obj }),
+        {}
+      )
+      return formatJson(combined)
     },
     cancel() {
       this.$emit('cancel')
     },
     confirm() {
-      const parseObject = obj => {
-        if (!obj) return
-        Object.keys(obj).forEach(key => {
-          try {
-            obj[key] = JSON.parse(obj[key])
-          } catch {
-            //
-          }
-        })
-        return obj
-      }
       const clockType =
         typeof this[this.clockToAdd] == 'string' ? 'CronClock' : 'IntervalClock'
       const clock = {
@@ -159,7 +138,7 @@ export default {
         [clockType == 'IntervalClock' ? 'interval' : 'cron']: this[
           this.clockToAdd
         ],
-        parameter_defaults: this.parameter ? parseObject(this.parameter) : {},
+        parameter_defaults: this.parameter != null && isValidJson(this.parameter) ? parseJson(this.parameter) : {},
         timezone: this.advanced
           ? this.selectedTimezone
           : this.simpleSelectedTimezone
@@ -291,16 +270,10 @@ export default {
           generated from this schedule.
         </p>
 
-        <DictInput
+        <schedule-parameters
           v-model="parameter"
-          style="padding: 20px;"
-          :dict="removeDoubleParam(param)"
-          :default-checked-keys="
-            Object.keys(param ? param : allDefaultParameters)
-          "
-          include-checkbox
-          disable-edit
-          allow-reset
+          style="margin: 20px;"
+          :entries="formatParams(allDefaultParameters, clock.parameter_defaults)"
         />
       </div>
     </div>
