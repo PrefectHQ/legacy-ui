@@ -2,7 +2,6 @@ import remark from 'remark'
 import html from 'remark-html'
 import breaks from 'remark-breaks'
 import slug from 'remark-slug'
-import highlight from 'remark-highlight.js'
 import headings from 'remark-autolink-headings'
 import gfm from 'remark-gfm'
 import all from 'mdast-util-to-hast/lib/all'
@@ -16,7 +15,6 @@ export function parser(md) {
     remark()
       .use(breaks)
       .use(slug)
-      .use(highlight)
       .use(headings, {
         content: {
           type: 'text',
@@ -39,7 +37,6 @@ export function artifact_parser(md) {
     remark()
       .use(breaks)
       .use(slug)
-      .use(highlight)
       .use(gfm)
       .use(html, {
         handlers: {
