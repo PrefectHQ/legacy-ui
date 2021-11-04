@@ -39,7 +39,6 @@
     "remark-autolink-headings": "^6.0.1",
     "remark-breaks": "^2.0.2",
     "remark-gfm": "^1.0.0",
-    "remark-highlight.js": "^6.0.0",
     "remark-html": "^13.0.1",
     "remark-slug": "^6.0.0",
     "velocity-animate": ">=1.5.2",
