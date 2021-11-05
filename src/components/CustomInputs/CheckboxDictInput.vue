@@ -1,6 +1,6 @@
 <template>
   <base-dict-input
-    :entries="internalEntries"
+    :entries="internalValue"
     :readonly-key="readonlyKey"
     :readonly-type="readonlyType"
     :readonly-value="readonlyValue"
@@ -15,7 +15,7 @@
   >
     <template #before-existing="{entry, index}">
       <v-checkbox
-        :input-value="internalValue.some(x => x.key == entry.key)"
+        :input-value="checked.includes(entry.key)"
         class="checkbox-dict-input__checkbox"
         @change="handleCheck($event, entry, index)"
       />
@@ -47,10 +47,10 @@ export default {
       required: false,
       default: null
     },
-    entries: {
-      type: String,
+    checked: {
+      type: Array,
       required: false,
-      default: null
+      default: () => []
     },
     showTypes: {
       type: Boolean,
@@ -73,9 +73,6 @@ export default {
   computed: {
     internalValue() {
       return this.convertValueToArray(this.value)
-    },
-    internalEntries() {
-      return this.convertValueToArray(this.entries)
     }
   },
   methods: {
@@ -92,12 +89,11 @@ export default {
 
       this.$emit('input', jsonValue)
     },
-    emitEntries(value) {
-      const jsonValue = this.isArrayString(this.value)
-        ? tryFormatJson(value)
-        : tryFormatJson(this.convertArrayToObject(value))
-
-      this.$emit('update:entries', jsonValue)
+    check(key) {
+      this.$emit('update:checked', [...this.checked.filter(x => x != key), key])
+    },
+    uncheck(key) {
+      this.$emit('update:checked', [...this.checked.filter(x => x != key)])
     },
     convertValueToArray(value) {
       if (value == null || !isValidJson(value)) {
@@ -130,19 +126,17 @@ export default {
     },
     addEntry(entry) {
       this.emitValue([...this.internalValue, entry])
-      this.emitEntries([...this.internalEntries, entry])
+      this.check(entry.key)
     },
     updateEntry(key, entry) {
       this.emitValue([
         ...this.internalValue.map(x => (x.key == key ? entry : x))
       ])
-      this.emitEntries([
-        ...this.internalEntries.map(x => (x.key == key ? entry : x))
-      ])
+      this.check(entry.key)
     },
     removeEntry({ key }) {
       this.emitValue([...this.internalValue.filter(x => x.key != key)])
-      this.emitEntries([...this.internalEntries.filter(x => x.key != key)])
+      this.uncheck(key)
     },
     addToValue(entry) {
       this.emitValue([...this.internalValue, entry])
@@ -150,11 +144,11 @@ export default {
     removeFromValue({ key }) {
       this.emitValue([...this.internalValue.filter(x => x.key != key)])
     },
-    handleCheck(checked, entry) {
+    handleCheck(checked, { key }) {
       if (checked) {
-        this.addToValue(entry)
+        this.check(key)
       } else {
-        this.removeFromValue(entry)
+        this.uncheck(key)
       }
     },
     handleAdd(entry) {

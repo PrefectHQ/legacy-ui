@@ -21,7 +21,7 @@
       :is="editorComponents[internalMode]"
       v-model="internalValue"
       v-bind="editorProps[internalMode]"
-      @update:entries="$emit('update:entries', $event)"
+      @update:checked="$emit('update:checked', $event)"
     />
   </div>
 </template>
@@ -80,10 +80,10 @@ export default {
       default: () => types,
       validator: value => value.every(isValidType)
     },
-    entries: {
-      type: String,
+    checked: {
+      type: Array,
       required: false,
-      default: null
+      default: () => []
     },
     ...readonlyProps
   },
@@ -145,7 +145,7 @@ export default {
           disableRemove: this.disableRemove,
           showTypes: this.showTypes,
           types: this.types,
-          entries: this.entries
+          checked: this.checked
         }
       }
     }
