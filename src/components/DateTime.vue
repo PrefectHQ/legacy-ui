@@ -1,7 +1,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import moment from 'moment-timezone'
-import range from 'lodash.range'
+import range from 'lodash/range'
 
 export default {
   props: {
