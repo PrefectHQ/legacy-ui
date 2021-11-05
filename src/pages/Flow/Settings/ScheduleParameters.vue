@@ -7,7 +7,7 @@
     <code-input
       v-model="internalValue"
       :editors="['dict', 'json']"
-      :entries.sync="internalEntries"
+      :checked.sync="internalChecked"
       show-checkboxes
       show-types
       readonly-key
@@ -33,15 +33,10 @@ export default {
       required: false,
       default: null
     },
-    entries: {
-      type: String,
+    checked: {
+      type: Array,
       required: false,
-      default: null
-    }
-  },
-  data() {
-    return {
-      internalEntries: null
+      default: () => []
     }
   },
   computed: {
@@ -52,15 +47,20 @@ export default {
       set(value) {
         this.$emit('input', value)
       }
+    },
+    internalChecked: {
+      get() {
+        return this.checked
+      },
+      set(value) {
+        this.$emit('update:checked', value)
+      }
     }
-  },
-  created() {
-    this.internalEntries = this.entries
   },
   methods: {
     reset(value) {
       this.internalValue = value
-      this.internalEntries = this.entries
+      this.internalChecked = []
     }
   }
 }

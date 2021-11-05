@@ -88,15 +88,15 @@ export default {
       intervalModel: this.interval,
       simpleModel: this.clock.cron || this.clock.interval || '0 * * * *',
       valid: true,
-      parameter: null
+      parameter: null,
+      checked: []
     }
   },
   created(){
-    const params = this.clock?.parameter_defaults
+    const params = this.clock?.parameter_defaults ?? {}
 
-    if (params) {
-      this.parameter = this.formatParams(params)
-    }
+    this.parameter = this.formatParams(this.allDefaultParameters, params)
+    this.checked = Object.keys(params)
   },
   computed: {
     allDefaultParameters() {
@@ -133,12 +133,20 @@ export default {
     confirm() {
       const clockType =
         typeof this[this.clockToAdd] == 'string' ? 'CronClock' : 'IntervalClock'
+      const parameters = this.parameter != null && isValidJson(this.parameter) ? parseJson(this.parameter) : {}
+      const checked = Object.entries(parameters).reduce((result, [key, value]) => {
+        if(this.checked.includes(key)){
+          result[key] = value
+        }
+
+        return result
+      }, {})
       const clock = {
         type: clockType,
         [clockType == 'IntervalClock' ? 'interval' : 'cron']: this[
           this.clockToAdd
         ],
-        parameter_defaults: this.parameter != null && isValidJson(this.parameter) ? parseJson(this.parameter) : {},
+        parameter_defaults: checked,
         timezone: this.advanced
           ? this.selectedTimezone
           : this.simpleSelectedTimezone
@@ -273,7 +281,7 @@ export default {
         <schedule-parameters
           v-model="parameter"
           style="margin: 20px;"
-          :entries="formatParams(allDefaultParameters, clock.parameter_defaults)"
+          :checked.sync="checked"
         />
       </div>
     </div>
