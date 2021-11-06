@@ -6,6 +6,7 @@
     label="Value"
     outlined
     dense
+    @input="validate"
   />
 </template>
 
@@ -37,9 +38,7 @@ export default {
         return this.value
       },
       set(value) {
-        if (this.validate(value)) {
-          this.$emit('input', value)
-        }
+        this.$emit('input', value)
       }
     }
   },
@@ -60,8 +59,9 @@ export default {
     },
     validate(value) {
       this.errors = this.getErrors(value)
+      this.$emit('error', this.errors.length > 0)
 
-      return this.errors.length === 0
+      return this.errors.length == 0
     },
     getErrors(value) {
       if (value === null) {

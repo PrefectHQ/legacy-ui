@@ -14,6 +14,7 @@
         :show-types="showTypes"
         :types="types"
         @input="$emit('update', [$event, entry])"
+        @error="$emit('error', $event)"
       />
       <slot name="after-existing" :entry="entry" />
       <v-btn
@@ -37,6 +38,7 @@
         :show-types="showTypes"
         :types="types"
         @focusout.native="handleFocusout"
+        @error="$emit('error', $event)"
       />
       <slot name="after-new" :entry="newProperty">
         <v-btn class="base-dict-input__action" icon @click="tryAddNewProperty">
@@ -85,7 +87,10 @@ export default {
     handleFocusout(event) {
       const target = event.relatedTarget
 
-      if (!this.$refs.newPropertyContainer.contains(target)) {
+      if (
+        !this.$refs.newPropertyContainer.contains(target) &&
+        this.newProperty.key != null
+      ) {
         this.tryAddNewProperty()
       }
     },

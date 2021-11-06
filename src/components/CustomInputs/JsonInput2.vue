@@ -7,6 +7,7 @@
     :format="tryFormatJson"
     :parse="tryParseJson"
     language="json"
+    @error="$emit('error', $event)"
   />
 </template>
 

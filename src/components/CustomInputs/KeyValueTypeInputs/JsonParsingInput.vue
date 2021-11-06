@@ -6,11 +6,12 @@
     label="Value"
     outlined
     dense
+    @input="validate"
   />
 </template>
 
 <script>
-import { isValidJson, tryParseJson, tryFormatJson } from '@/utils/json'
+import { isValidJson, tryParseJson, formatSingleLineJson } from '@/utils/json'
 import { types, isValidType } from '@/utils/types'
 
 export default {
@@ -42,15 +43,13 @@ export default {
     internalValue: {
       get() {
         return typeof this.value === 'object'
-          ? tryFormatJson(this.value)
+          ? formatSingleLineJson(this.value)
           : this.value
       },
       set(value) {
-        if (this.validate(value)) {
-          const converted = this.tryParsingFromString(value)
+        const converted = this.tryParsingFromString(value)
 
-          this.$emit('input', converted)
-        }
+        this.$emit('input', converted)
       }
     }
   },
@@ -60,8 +59,9 @@ export default {
     },
     validate(value) {
       this.errors = this.getErrors(value)
+      this.$emit('error', this.errors.length > 0)
 
-      return this.errors.length === 0
+      return this.errors.length == 0
     },
     getErrors(value) {
       if (value === null) {

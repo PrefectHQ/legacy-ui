@@ -11,6 +11,7 @@
         v-for="editor in editors"
         :key="editor"
         :value="editor"
+        :disabled="hasErrors"
         class="code-input__language-btn"
         x-small
       >
@@ -21,6 +22,7 @@
       :is="editorComponents[internalMode]"
       v-model="internalValue"
       v-bind="editorProps[internalMode]"
+      @error="handleError"
       @update:checked="$emit('update:checked', $event)"
     />
   </div>
@@ -89,7 +91,8 @@ export default {
   },
   data() {
     return {
-      localMode: null
+      localMode: null,
+      hasErrors: false
     }
   },
   computed: {
@@ -106,11 +109,8 @@ export default {
         return this.mode ?? this.localMode
       },
       set(value) {
-        if (this.mode) {
-          this.$emit('update:mode', value)
-        } else {
-          this.localMode = value
-        }
+        this.$emit('update:mode', value)
+        this.localMode = value
       }
     },
     editorComponents() {
@@ -156,13 +156,10 @@ export default {
     }
   },
   methods: {
-    getStringValue(value) {
-      return this.internalMode === 'yaml'
-        ? formatYaml(value)
-        : tryFormatJson(value)
-    },
-    getObjectValue(value) {
-      return tryParseYaml(value) ?? tryParseJson(value)
+    handleError(hasErrors) {
+      this.hasErrors = hasErrors
+
+      this.$emit('error', hasErrors)
     },
     setMode(mode) {
       if (this.internalValue != null) {

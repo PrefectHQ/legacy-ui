@@ -9,6 +9,7 @@
       :placeholder="placeholder"
       auto-grow
       outlined
+      @input="validate"
       @blur="handleBlur"
     >
       <template #append>
@@ -85,15 +86,13 @@ export default {
         return this.value
       },
       set(value) {
-        this.errors = this.getErrors(value)
-
         this.$emit('input', value)
       }
     }
   },
   created() {
     if (this.internalValue) {
-      this.errors = this.getErrors(this.internalValue)
+      this.validate(this.internalValue)
     }
   },
   methods: {
@@ -104,6 +103,11 @@ export default {
       if (formatted != null) {
         this.internalValue = formatted
       }
+    },
+    validate(value) {
+      this.errors = this.getErrors(value)
+
+      this.$emit('error', this.errors.length > 0)
     }
   }
 }

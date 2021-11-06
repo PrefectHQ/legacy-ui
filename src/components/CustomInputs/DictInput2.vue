@@ -11,6 +11,7 @@
     @add="handleAdd"
     @update="handleUpdate"
     @remove="handleRemove"
+    @error="$emit('error', $event)"
   />
 </template>
 

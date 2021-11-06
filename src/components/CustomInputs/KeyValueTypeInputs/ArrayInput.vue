@@ -6,11 +6,16 @@
     label="Value"
     outlined
     dense
+    @input="validate"
   />
 </template>
 
 <script>
-import { isValidJson, tryParseJson, tryFormatJson } from '@/utils/json'
+import {
+  isValidJson,
+  tryParseJson,
+  tryFormatSingleLineJson
+} from '@/utils/json'
 
 export default {
   name: 'ArrayInput',
@@ -34,18 +39,16 @@ export default {
   computed: {
     internalValue: {
       get() {
-        return tryFormatJson(this.value)
+        return tryFormatSingleLineJson(this.value)
       },
       set(value) {
-        if (this.validate(value)) {
-          this.$emit('input', tryParseJson(value))
-        }
+        this.$emit('input', tryParseJson(value) ?? value)
       }
     }
   },
   mounted() {
     if (this.isArray(this.value)) {
-      return true
+      return
     }
 
     if (this.isArrayString(this.value)) {
@@ -66,8 +69,9 @@ export default {
     },
     validate(value) {
       this.errors = this.getErrors(value)
+      this.$emit('error', this.errors.length > 0)
 
-      return this.errors.length === 0
+      return this.errors.length == 0
     },
     getErrors(value) {
       if (value == null) {

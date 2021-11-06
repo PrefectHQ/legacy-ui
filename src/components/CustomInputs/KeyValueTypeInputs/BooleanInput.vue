@@ -7,6 +7,7 @@
     dense
     mandatory
     row
+    @input="validate"
   >
     <v-radio label="true" :value="1" />
     <v-radio label="false" :value="0" />
@@ -39,9 +40,7 @@ export default {
         return this.value ? 1 : 0
       },
       set(value) {
-        if (this.validate(value)) {
-          this.$emit('input', !!value)
-        }
+        this.$emit('input', !!value)
       }
     }
   },
@@ -54,8 +53,9 @@ export default {
   methods: {
     validate(value) {
       this.errors = this.getErrors(value)
+      this.$emit('error', this.errors.length > 0)
 
-      return this.errors.length === 0
+      return this.errors.length == 0
     },
     getErrors(value) {
       if (value == null) {

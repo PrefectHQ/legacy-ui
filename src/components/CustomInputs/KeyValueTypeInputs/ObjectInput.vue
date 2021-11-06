@@ -6,11 +6,16 @@
     label="Value"
     outlined
     dense
+    @input="validate"
   />
 </template>
 
 <script>
-import { isValidJson, tryParseJson, tryFormatJson } from '@/utils/json'
+import {
+  isValidJson,
+  tryParseJson,
+  tryFormatSingleLineJson
+} from '@/utils/json'
 
 export default {
   name: 'ObjectInput',
@@ -34,21 +39,22 @@ export default {
   computed: {
     internalValue: {
       get() {
-        return tryFormatJson(this.value)
+        return tryFormatSingleLineJson(this.value)
       },
       set(value) {
-        if (this.validate(value)) {
-          this.$emit('input', tryParseJson(value))
-        }
+        this.$emit('input', tryParseJson(value) ?? value)
       }
     }
   },
   mounted() {
     if (this.isObject(this.value)) {
-      return true
+      return
     }
 
-    if (this.isObjectString(this.value)) {
+    if (
+      this.isObjectString(this.value) &&
+      !this.isArrayOrArrayString(this.value)
+    ) {
       this.internalValue = this.value
     } else {
       this.internalValue = '{}'
@@ -64,18 +70,25 @@ export default {
     isObjectOrObjectString(value) {
       return this.isObject(value) || this.isObjectString(value)
     },
+    isArrayOrArrayString(value) {
+      return Array.isArray(value) || Array.isArray(tryParseJson(value))
+    },
     validate(value) {
       this.errors = this.getErrors(value)
+      this.$emit('error', this.errors.length > 0)
 
-      return this.errors.length === 0
+      return this.errors.length == 0
     },
     getErrors(value) {
       if (value === null) {
         return ['Value is required']
       }
 
-      if (!this.isObjectOrObjectString(value)) {
-        return ['Value is not valid JSON']
+      if (
+        !this.isObjectOrObjectString(value) ||
+        this.isArrayOrArrayString(value)
+      ) {
+        return ['Value is not valid Dictionary']
       }
 
       return []

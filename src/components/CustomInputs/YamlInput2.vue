@@ -7,6 +7,7 @@
     :format="formatYaml"
     :parse="tryParseYaml"
     language="yaml"
+    @error="$emit('error', $event)"
   />
 </template>
 

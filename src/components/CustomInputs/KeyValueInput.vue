@@ -8,6 +8,7 @@
       :disabled="readonlyKey"
       outlined
       dense
+      @input="validateKey"
     />
     <template v-if="showTypes && hasTypes">
       <v-select
@@ -15,11 +16,10 @@
         :items="[emptyTypeOption, ...types]"
         label="Type"
         class="key-value-input__type-input"
-        :error-messages="typeErrors"
         :disabled="singleTypeMode || readonlyType"
         outlined
         dense
-        @change="handleSelectedTypeChange"
+        @input="handleTypeInput"
       />
     </template>
     <component
@@ -27,6 +27,8 @@
       v-model="internalValue"
       class="key-value-input__value-input"
       v-bind="valueProps"
+      @error="$emit('error', $event)"
+      @input="handleValueInput"
     />
   </fieldset>
 </template>
@@ -64,8 +66,7 @@ export default {
       emptyTypeOption: { text: 'Auto', value: null },
       typeIsInferred: true,
       valueComponent: InputTypes.JsonParsingInput,
-      keyErrors: [],
-      typeErrors: []
+      keyErrors: []
     }
   },
   computed: {
@@ -74,9 +75,7 @@ export default {
         return this.value?.key
       },
       set(value) {
-        if (this.validateKey(value)) {
-          this.$emit('input', { ...this.value, key: value })
-        }
+        this.$emit('input', { ...this.value, key: value })
       }
     },
     internalValue: {
@@ -84,10 +83,6 @@ export default {
         return this.value?.value
       },
       set(value) {
-        if (this.shouldTrySettingType) {
-          this.trySettingType(value)
-        }
-
         this.$emit('input', { ...this.value, value: value })
       }
     },
@@ -103,8 +98,8 @@ export default {
     valueCanBeEmpty() {
       return this.isTypeAcceptable('None') || this.isTypeAcceptable('String')
     },
-    shouldTrySettingType() {
-      return this.showTypes && this.typeIsInferred && !this.singleTypeMode
+    showingTypes() {
+      return this.showTypes && !this.singleTypeMode
     },
     hasTypes() {
       return this.types?.length > 0
@@ -121,24 +116,30 @@ export default {
           return
         }
 
-        this.trySettingType(value)
-        this.trySettingValueComponent(this.selectedType)
+        if (this.showingTypes) {
+          this.trySettingType(value)
+          this.trySettingValueComponent(this.selectedType)
+        }
       }
     }
   },
   created() {
     this.checkSingleTypeMode()
 
-    if (this.shouldTrySettingType) {
+    if (this.showingTypes) {
       this.trySettingType(this.internalValue)
+      this.trySettingValueComponent(this.selectedType)
     }
 
-    this.trySettingValueComponent(this.selectedType)
+    if (this.selectedType != null) {
+      this.typeIsInferred = false
+    }
   },
   methods: {
     checkSingleTypeMode() {
       if (this.singleTypeMode) {
         this.selectedType = this.types[0]
+        this.valueComponent = this.getValueComponentForType(this.types[0])
       }
     },
     trySettingType(value) {
@@ -146,9 +147,14 @@ export default {
 
       this.selectedType = this.isTypeAcceptable(type) ? type : null
     },
-    handleSelectedTypeChange(type) {
+    handleTypeInput(type) {
       this.typeIsInferred = type === null
       this.valueComponent = this.getValueComponentForType(type)
+    },
+    handleValueInput(value) {
+      if (this.showingTypes && this.typeIsInferred) {
+        this.trySettingType(value)
+      }
     },
     trySettingValueComponent(type) {
       if (type != null) {
@@ -232,34 +238,18 @@ export default {
 
       return []
     },
-    getTypeErrors(value) {
-      if (value == null) {
-        return ['Type is required']
-      }
-
-      return []
-    },
     validateKey(value) {
       this.keyErrors = this.getKeyErrors(value)
+      this.$emit('error', this.keyErrors.length > 0)
 
       return this.keyErrors.length == 0
     },
-    validateType(value) {
-      if (this.showTypes && this.hasTypes) {
-        this.typeErrors = this.getTypeErrors(value)
-      }
-
-      return this.typeErrors.length == 0
-    },
     validate() {
-      const keyIsValid = this.validateKey(this.internalKey)
-      const typeIsValid = this.validateType(this.selectedType)
-
-      return keyIsValid && typeIsValid
+      return this.validateKey(this.internalKey)
     },
     reset() {
       this.selectedType = null
-      this.handleSelectedTypeChange(null)
+      this.handleTypeInput(null)
       this.checkSingleTypeMode()
       this.$emit('input', { value: null, key: null })
     }

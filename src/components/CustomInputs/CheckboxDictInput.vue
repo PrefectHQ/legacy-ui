@@ -12,6 +12,7 @@
     @add="handleAdd"
     @update="handleUpdate"
     @remove="handleRemove"
+    @error="$emit('error', $event)"
   >
     <template #before-existing="{entry, index}">
       <v-checkbox
@@ -64,11 +65,6 @@ export default {
       validator: value => value.every(isValidType)
     },
     ...readonlyProps
-  },
-  data() {
-    return {
-      newProperty: null
-    }
   },
   computed: {
     internalValue() {
