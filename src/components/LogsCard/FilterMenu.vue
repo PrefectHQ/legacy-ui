@@ -1,6 +1,6 @@
 <script>
 import moment from 'moment-timezone'
-import range from 'lodash.range'
+import range from 'lodash/range'
 
 // A RegEx for checking 12-hour time formats
 // e.g. 1:14:18am, 11:23:34 PM

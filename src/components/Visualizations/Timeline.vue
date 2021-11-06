@@ -1,8 +1,8 @@
 <script>
 import * as d3 from 'd3'
-import uniqueId from 'lodash.uniqueid'
-import throttle from 'lodash.throttle'
-import debounce from 'lodash.debounce'
+import uniqueId from 'lodash/uniqueId'
+import throttle from 'lodash/throttle'
+import debounce from 'lodash/debounce'
 import moment from '@/utils/moment'
 
 // TODO: Remove the workerize-loader package and adjust this worker to
