@@ -20,9 +20,9 @@
     </v-btn-toggle>
     <component
       :is="editorComponents[internalMode]"
+      ref="editor"
       v-model="internalValue"
       v-bind="editorProps[internalMode]"
-      @error="handleError"
       @update:checked="$emit('update:checked', $event)"
     />
   </div>
@@ -156,11 +156,6 @@ export default {
     }
   },
   methods: {
-    handleError(hasErrors) {
-      this.hasErrors = hasErrors
-
-      this.$emit('error', hasErrors)
-    },
     setMode(mode) {
       if (this.internalValue != null) {
         const value = this.tryGetValueObject(this.internalValue)
@@ -186,6 +181,13 @@ export default {
     },
     tryGetValueObject(value) {
       return tryParseYaml(value) ?? tryParseJson(value)
+    },
+    validate() {
+      if (this.internalMode == 'text') {
+        return true
+      }
+
+      return this.$refs.editor.validate()
     }
   }
 }

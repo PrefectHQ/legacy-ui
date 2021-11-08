@@ -1,5 +1,6 @@
 <template>
   <base-dict-input
+    ref="editor"
     :entries="internalValue"
     :readonly-key="readonlyKey"
     :readonly-type="readonlyType"
@@ -12,7 +13,6 @@
     @add="handleAdd"
     @update="handleUpdate"
     @remove="handleRemove"
-    @error="$emit('error', $event)"
   >
     <template #before-existing="{entry, index}">
       <v-checkbox
@@ -155,6 +155,9 @@ export default {
     },
     handleRemove(entry) {
       this.removeEntry(entry)
+    },
+    validate() {
+      return this.$refs.editor.validate()
     }
   }
 }

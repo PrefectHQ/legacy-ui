@@ -34,6 +34,7 @@
           class="resettable-dictionary-json"
         >
           <code-input
+            ref="taskDefinitionInput"
             v-model="taskDefinitionValue"
             :editors="['json', 'yaml']"
           />
@@ -65,7 +66,7 @@
       description="Additional environment variables to set on the task."
     >
       <resettable-wrapper v-model="envValue" class="resettable-dictionary-json">
-        <code-input v-model="envValue" show-types />
+        <code-input ref="envInput" v-model="envValue" show-types />
       </resettable-wrapper>
     </argument-input>
     <argument-input v-model="internalValue.cpu" argument="cpu" title="CPU">
@@ -118,7 +119,11 @@
         v-model="runTaskKwargsValue"
         class="resettable-dictionary-json"
       >
-        <code-input v-model="runTaskKwargsValue" show-types />
+        <code-input
+          ref="runTaskKwargsInput"
+          v-model="runTaskKwargsValue"
+          show-types
+        />
       </resettable-wrapper>
     </argument-input>
   </div>
@@ -189,6 +194,15 @@ export default {
       set(value) {
         this.internalValue = { ...this.internalValue, run_task_kwargs: value }
       }
+    }
+  },
+  methods: {
+    validate() {
+      return (
+        this.$refs.taskDefinitionInput.validate() &&
+        this.$refs.envInput.validate() &&
+        this.$refs.runTaskKwargsInput.validate()
+      )
     }
   }
 }

@@ -24,10 +24,10 @@
     </template>
     <component
       :is="valueComponent"
+      ref="valueInput"
       v-model="internalValue"
       class="key-value-input__value-input"
       v-bind="valueProps"
-      @error="$emit('error', $event)"
       @input="handleValueInput"
     />
   </fieldset>
@@ -240,12 +240,17 @@ export default {
     },
     validateKey(value) {
       this.keyErrors = this.getKeyErrors(value)
-      this.$emit('error', this.keyErrors.length > 0)
 
       return this.keyErrors.length == 0
     },
+    validateValue(value) {
+      return this.$refs.valueInput.validate(value)
+    },
     validate() {
-      return this.validateKey(this.internalKey)
+      return (
+        this.validateKey(this.internalKey) &&
+        this.validateValue(this.internalValue)
+      )
     },
     reset() {
       this.selectedType = null

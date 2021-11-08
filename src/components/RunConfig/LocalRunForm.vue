@@ -6,7 +6,7 @@
       description="Additional environment variables to set for the process."
     >
       <resettable-wrapper v-model="envValue" class="resettable-dictionary-json">
-        <code-input v-model="envValue" show-types />
+        <code-input ref="envInput" v-model="envValue" show-types />
       </resettable-wrapper>
     </argument-input>
     <argument-input
@@ -52,6 +52,11 @@ export default {
       set(value) {
         this.internalValue = { ...this.internalValue, env: value }
       }
+    }
+  },
+  methods: {
+    validate() {
+      return this.$refs.envInput.validate()
     }
   }
 }

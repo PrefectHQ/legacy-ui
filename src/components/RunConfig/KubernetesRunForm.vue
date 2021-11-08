@@ -27,7 +27,11 @@
         v-model="jobTemplateValue"
         class="resettable-dictionary-json"
       >
-        <code-input v-model="jobTemplateValue" :editors="['json', 'yaml']" />
+        <code-input
+          ref="jobTemplateInput"
+          v-model="jobTemplateValue"
+          :editors="['json', 'yaml']"
+        />
       </resettable-wrapper>
     </argument-input>
     <argument-input
@@ -42,7 +46,7 @@
       description="Additional environment variables to set on the job."
     >
       <resettable-wrapper v-model="envValue" class="resettable-dictionary-json">
-        <code-input v-model="envValue" show-types />
+        <code-input ref="envInput" v-model="envValue" show-types />
       </resettable-wrapper>
     </argument-input>
     <argument-input
@@ -187,6 +191,13 @@ export default {
       set(value) {
         this.internalValue = { ...this.internalValue, job_template: value }
       }
+    }
+  },
+  methods: {
+    validate() {
+      return (
+        this.$refs.envInput.validate() && this.$refs.jobTemplateInput.validate()
+      )
     }
   }
 }

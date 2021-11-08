@@ -7,6 +7,7 @@
     >
       <slot name="before-existing" :entry="entry" />
       <key-value-input
+        ref="existingPropertyForms"
         :value="entry"
         :readonly-key="readonlyKey"
         :readonly-type="readonlyType"
@@ -14,7 +15,6 @@
         :show-types="showTypes"
         :types="types"
         @input="$emit('update', [$event, entry])"
-        @error="$emit('error', $event)"
       />
       <slot name="after-existing" :entry="entry" />
       <v-btn
@@ -38,7 +38,6 @@
         :show-types="showTypes"
         :types="types"
         @focusout.native="handleFocusout"
-        @error="$emit('error', $event)"
       />
       <slot name="after-new" :entry="newProperty">
         <v-btn class="base-dict-input__action" icon @click="tryAddNewProperty">
@@ -102,6 +101,13 @@ export default {
       this.$emit('add', this.newProperty)
       this.$refs.newPropertyForm.reset()
       return true
+    },
+    validate() {
+      if (!this.$refs.existingPropertyForms) {
+        return true
+      }
+
+      return this.$refs.existingPropertyForms.every(form => form.validate())
     }
   }
 }

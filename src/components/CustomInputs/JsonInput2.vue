@@ -1,5 +1,6 @@
 <template>
   <base-code-textarea
+    ref="editor"
     v-model="internalValue"
     :readonly="readonly"
     :placeholder="placeholder"
@@ -7,7 +8,6 @@
     :format="tryFormatJson"
     :parse="tryParseJson"
     language="json"
-    @error="$emit('error', $event)"
   />
 </template>
 
@@ -48,6 +48,9 @@ export default {
     }
   },
   methods: {
+    validate() {
+      return this.$refs.editor.validate(this.internalValue)
+    },
     getJsonErrors(value) {
       if (value == '') {
         return []

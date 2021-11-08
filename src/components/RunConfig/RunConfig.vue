@@ -40,6 +40,11 @@ export default {
         this.$emit('input', value)
       }
     }
+  },
+  methods: {
+    validate() {
+      return this.$refs.runConfigForm.validate()
+    }
   }
 }
 </script>
@@ -47,7 +52,11 @@ export default {
 <template>
   <div style="min-width: 100%">
     <run-config-type-select v-model="internalValue.type" class="pb-8" />
-    <component :is="formComponent" v-model="internalValue" />
+    <component
+      :is="formComponent"
+      ref="runConfigForm"
+      v-model="internalValue"
+    />
   </div>
 </template>
 

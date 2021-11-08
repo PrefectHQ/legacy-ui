@@ -1,5 +1,6 @@
 <template>
   <base-dict-input
+    ref="editor"
     :entries="internalValue"
     :readonly-key="readonlyKey"
     :readonly-type="readonlyType"
@@ -11,7 +12,6 @@
     @add="handleAdd"
     @update="handleUpdate"
     @remove="handleRemove"
-    @error="$emit('error', $event)"
   />
 </template>
 
@@ -102,6 +102,9 @@ export default {
     },
     handleRemove({ key }) {
       this.internalValue = [...this.internalValue.filter(x => x.key != key)]
+    },
+    validate() {
+      return this.$refs.editor.validate()
     }
   }
 }

@@ -176,6 +176,16 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     async run() {
+      if (!this.validate()) {
+        this.setAlert({
+          alertShow: true,
+          alertMessage: 'Your run configuration has errors.',
+          alertType: 'error'
+        })
+
+        return
+      }
+
       try {
         this.loading = true
         // if the user has specified a logging level, pass it
@@ -206,6 +216,12 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    validate() {
+      if (!this.$refs.runConfig) {
+        return true
+      }
+      return this.$refs.runConfig.validate()
     },
     getRunConfigValues() {
       if (!this.runConfig?.type) {
@@ -621,7 +637,7 @@ export default {
             >
           </div>
 
-          <RunConfig v-model="runConfig" />
+          <RunConfig ref="runConfig" v-model="runConfig" />
         </v-row>
 
         <div class="text-center">
