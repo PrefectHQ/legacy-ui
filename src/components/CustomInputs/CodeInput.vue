@@ -11,7 +11,6 @@
         v-for="editor in editors"
         :key="editor"
         :value="editor"
-        :disabled="hasErrors"
         class="code-input__language-btn"
         x-small
       >
@@ -91,8 +90,7 @@ export default {
   },
   data() {
     return {
-      localMode: null,
-      hasErrors: false
+      localMode: null
     }
   },
   computed: {
