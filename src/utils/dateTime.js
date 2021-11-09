@@ -122,3 +122,7 @@ export const roundedOneAgo = unitOftime => {
     .startOf(roundedTo)
     .format()
 }
+
+export function getMillisecondsUntilNextMinute() {
+  return 60000 - new Date().getSeconds() * 1000 + new Date().getMilliseconds()
+}
