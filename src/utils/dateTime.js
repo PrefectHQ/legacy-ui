@@ -1,6 +1,11 @@
 import { duration } from '@/utils/moment'
 import moment from '@/utils/moment'
 
+const MS_PER_SECOND = 1000
+const MS_PER_MINUTE = MS_PER_SECOND * 60
+const MS_PER_HOUR = MS_PER_MINUTE * 60
+const MS_PER_DAY = MS_PER_HOUR * 24
+
 export const runTimeToEnglish = (startDate, endDate) => {
   if (
     !startDate ||
@@ -125,4 +130,21 @@ export const roundedOneAgo = unitOftime => {
 
 export function getMillisecondsUntilNextMinute() {
   return 60000 - new Date().getSeconds() * 1000 + new Date().getMilliseconds()
+}
+
+export function durationDifference(start, end) {
+  const difference = end - start
+  const days = Math.floor(difference / MS_PER_DAY)
+  const hours = Math.floor((difference % MS_PER_DAY) / MS_PER_HOUR)
+  const minutes = Math.floor((difference % MS_PER_HOUR) / MS_PER_MINUTE)
+  const seconds = Math.floor((difference % MS_PER_MINUTE) / MS_PER_SECOND)
+  const milliseconds = Math.floor(difference % MS_PER_SECOND)
+
+  return {
+    milliseconds,
+    seconds,
+    minutes,
+    hours,
+    days
+  }
 }
