@@ -1,0 +1,5 @@
+mutation TestAction ($actionId: UUID!) {
+  test_action (input: {action_id: $actionId}) {
+    success
+  }
+}

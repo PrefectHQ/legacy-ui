@@ -10,7 +10,7 @@ import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import TeamSideNav from '@/components/Nav/TeamSideNav'
 import WorkQueueBanner from '@/components/WorkQueueBanner'
 import { eventsMixin } from '@/mixins/eventsMixin'
-import debounce from 'lodash.debounce'
+import debounce from 'lodash/debounce'
 import VSnackbars from '@/components/Snackbars/Snackbars'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`

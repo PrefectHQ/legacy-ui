@@ -83,6 +83,14 @@ export const routes = [
           )
       },
       {
+        name: 'actions',
+        path: 'actions',
+        component: () =>
+          import(
+            /* webpackChunkName: "team-settings--actions" */ '@/pages/TeamSettings/Actions.vue'
+          )
+      },
+      {
         name: 'flow-groups',
         path: 'flow-groups',
         component: () =>
@@ -241,6 +249,24 @@ export const routes = [
     path: '/:tenant?/agent/:id',
     component: () =>
       import(/* webpackChunkName: "agent" */ '@/pages/Agents/AgentPage.vue')
+  },
+  // ---------------------------//
+  //
+  // Integrations
+  //
+  // ----------------------------//
+  {
+    name: 'pagerduty',
+    path: '/:tenant?/pagerduty/:config?',
+    props: route => ({ pdData: route.query.config }),
+    beforeEnter(to, from, next) {
+      if (to?.query?.config) next()
+      else next('/')
+    },
+    component: () =>
+      import(
+        /* webpackChunkName: "pagerduty" */ '@/pages/Integrations/PagerDuty.vue'
+      )
   },
   // --------------------------- //
   //

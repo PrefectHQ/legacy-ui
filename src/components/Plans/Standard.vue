@@ -21,7 +21,7 @@ export default {
   data() {
     return {
       volumeDiscounts: [
-        { runs: '10,000', price: 'Free' },
+        { runs: '20,000', price: 'Free' },
         { runs: '100,000', price: '$0.0050' },
         { runs: '1,000,000', price: '$0.0025' },
         { runs: '10,000,000', price: '$0.00125' },
@@ -148,7 +148,7 @@ export default {
               </v-icon>
             </span>
             <span class="ml-2">
-              10,000 free runs every month
+              20,000 free runs every month
             </span>
           </div>
 
@@ -159,7 +159,7 @@ export default {
               </v-icon>
             </span>
             <span class="ml-2">
-              Up to 10 users
+              Up to 3 users
             </span>
           </div>
 

@@ -227,7 +227,7 @@ export default {
                 border-top: unset !important;"
             >
               <v-tabs-items v-model="sdkTab">
-                <v-tab-item key="pip">
+                <v-tab-item>
                   <div class="">
                     <span class="utilGrayMid--text user-select-none">$ </span
                     >pip
@@ -238,7 +238,7 @@ export default {
                   </div>
                 </v-tab-item>
 
-                <v-tab-item key="conda">
+                <v-tab-item>
                   <div class="">
                     <span class="utilGrayMid--text user-select-none">$ </span
                     >conda
@@ -249,7 +249,7 @@ export default {
                   </div>
                 </v-tab-item>
 
-                <v-tab-item key="pipenv">
+                <v-tab-item>
                   <div class="">
                     <span class="utilGrayMid--text user-select-none">$ </span
                     >pipenv
