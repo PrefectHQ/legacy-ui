@@ -275,13 +275,13 @@ export default {
             </div>
             <div>
               <div class="text-h6 font-weight-regular utilGrayMid--text">
-                10,000 free runs / month
+                20,000 free runs / month
               </div>
               <div v-if="!planType('FREE')" class="text-body-1">
-                Your first 10,000 successful runs per month are on us!
+                Your first 20,000 successful runs per month are on us!
               </div>
               <div v-else class="text-body-1">
-                10,000 successful runs each month!
+                20,000 successful runs each month!
               </div>
             </div>
           </div>
@@ -393,7 +393,7 @@ export default {
           tile
           class="mt-4"
         >
-          You have more users than the Free plan allows (3). You'll need to
+          You have more users than the Free plan allows (1). You'll need to
           <router-link :to="'/team/members'"
             >remove users and pending invitations</router-link
           >

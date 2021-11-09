@@ -1,4 +1,4 @@
-import round from 'lodash.round'
+import round from 'lodash/round'
 
 export function roundWhole(x) {
   if (!x || typeof x !== 'number') {

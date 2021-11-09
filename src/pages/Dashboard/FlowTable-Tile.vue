@@ -5,7 +5,7 @@ import ScheduleToggle from '@/components/ScheduleToggle'
 
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { mapGetters } from 'vuex'
-import debounce from 'lodash.debounce'
+import debounce from 'lodash/debounce'
 
 const serverHeaders = [
   {

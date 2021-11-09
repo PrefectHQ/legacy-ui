@@ -143,6 +143,10 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
+    handleInviteDialog() {
+      this.roleInput = this.roles?.find(r => r.name == 'TENANT_ADMIN').id
+      this.dialogInviteUser = true
+    },
     handleAlert(type, message) {
       this.setAlert({
         alertShow: true,
@@ -222,9 +226,6 @@ export default {
       })
     }
   },
-  created() {
-    this.roleInput = this.roles?.find(r => r.name == 'TENANT_ADMIN').id
-  },
   apollo: {
     roles: {
       query: require('@/graphql/TeamSettings/roles.gql'),
@@ -262,7 +263,7 @@ export default {
         class="white--text"
         large
         data-cy="invite-member"
-        @click="dialogInviteUser = true"
+        @click="handleInviteDialog"
       >
         <v-icon left>
           person_add

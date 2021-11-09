@@ -50,6 +50,9 @@ export default {
         this.failedTaskRuns?.length > 0 ||
         this.eligibleStates.includes(this.flowRun.state)
       )
+    },
+    isLateRun() {
+      return new Date() - new Date(this.flowRun.scheduled_start_time) > 20000
     }
   },
   watch: {
@@ -144,7 +147,8 @@ export default {
             depressed
             :loading="runFlowNowLoading"
             :disabled="
-              runFlowNowLoading ||
+              isLateRun ||
+                runFlowNowLoading ||
                 runFlowNowClicked ||
                 !hasPermission('create', 'run')
             "
@@ -161,6 +165,9 @@ export default {
       </span>
       <span v-else-if="runFlowNowClicked">
         This flow run has been scheduled to start as soon as possible.
+      </span>
+      <span v-else-if="isLateRun">
+        Flow run already scheduled to start.
       </span>
       <span v-else>
         Start this flow run immediately

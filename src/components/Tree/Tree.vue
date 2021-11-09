@@ -1,5 +1,5 @@
 <script>
-import isFunction from 'lodash.isfunction'
+import isFunction from 'lodash/isFunction'
 
 export default {
   name: 'Tree',
