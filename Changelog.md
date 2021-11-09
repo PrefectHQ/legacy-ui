@@ -3,7 +3,7 @@
 ## Unreleased
 
 ### Features and Improvements
-
+- Adjust column width in v-data-table - [#1121](https://github.com/PrefectHQ/ui/pull/1121)
 - When creating/editing schedule, make action button available across tabs - [#1096](https://github.com/PrefectHQ/ui/pull/1096)
 
 ### Bugfixes
