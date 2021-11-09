@@ -22,7 +22,7 @@ export default {
           mobile: true,
           text: 'Name',
           value: 'name',
-          width: '20%'
+          width: '30%'
         },
         {
           mobile: true,
@@ -41,13 +41,13 @@ export default {
           mobile: false,
           text: 'Created By',
           value: 'created_by.username',
-          width: '15%'
+          width: '10%'
         },
         {
           mobile: true,
           text: 'Project',
           value: 'project.name',
-          width: '15%'
+          width: '10%'
         },
         {
           mobile: true,
