@@ -7,6 +7,8 @@
 - When creating/editing schedule, make action button available across tabs - [#1096](https://github.com/PrefectHQ/ui/pull/1096)
 
 ### Bugfixes
+- Removed unused locale files from moment dependency - [#1109](https://github.com/PrefectHQ/ui/pull/1109)
+- Moved away from discouraged per-method-packaging of lodash - [#1107](https://github.com/PrefectHQ/ui/pull/1107)
 - Removed unnecessary dependency preventing us from tree shaking highlightjs - [#1108](https://github.com/PrefectHQ/ui/pull/1108) 
 
 ## 2021-11-01

@@ -1,4 +1,4 @@
-import uniqueId from 'lodash.uniqueid'
+import uniqueId from 'lodash/uniqueId'
 
 const state = {
   alert: {
