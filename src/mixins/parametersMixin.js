@@ -1,6 +1,6 @@
 import { mapGetters, mapActions } from 'vuex'
 import jsBeautify from 'js-beautify'
-import difference from 'lodash.difference'
+import difference from 'lodash/difference'
 
 const jsonFormatOptions = {
   indent_size: 2,

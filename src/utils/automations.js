@@ -78,7 +78,7 @@ export const actionTypes = [
     requiresCloud: false
   },
   {
-    title: 'Pager Duty',
+    title: 'PagerDuty',
     sendText: 'Send a',
     type: 'PAGERDUTY',
     actionType: 'PagerDutyNotificationAction',

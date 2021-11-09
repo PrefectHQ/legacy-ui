@@ -1,5 +1,5 @@
 <script>
-import debounce from 'lodash.throttle'
+import debounce from 'lodash/throttle'
 import moment from 'moment-timezone'
 import { mapGetters, mapMutations } from 'vuex'
 import NewProjectDialog from '@/pages/Dashboard/NewProject-Dialog'
