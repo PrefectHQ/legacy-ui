@@ -4,6 +4,8 @@
 
 ### Features and Improvements
 
+- using v-virtual-scroll in place of v-list on several dashboard tiles to improve performance - [#1120](https://github.com/PrefectHQ/ui/pull/1120)
+- improved performance of duration-span component - [#1120](https://github.com/PrefectHQ/ui/pull/1120)
 - When creating/editing schedule, make action button available across tabs - [#1096](https://github.com/PrefectHQ/ui/pull/1096)
 
 ### Bugfixes
