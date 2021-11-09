@@ -198,11 +198,15 @@ export default {
   },
   methods: {
     validate() {
-      return (
-        this.$refs.taskDefinitionInput.validate() &&
-        this.$refs.envInput.validate() &&
+      const envValid = this.$refs.envInput.validate()
+      const taskDefinitionValid =
+        !this.$refs.taskDefinitionInput ||
+        this.$refs.taskDefinitionInput.validate()
+      const runTaskKwargsValid =
+        !this.$refs.runTaskKwargsInput ||
         this.$refs.runTaskKwargsInput.validate()
-      )
+
+      return envValid && taskDefinitionValid && runTaskKwargsValid
     }
   }
 }

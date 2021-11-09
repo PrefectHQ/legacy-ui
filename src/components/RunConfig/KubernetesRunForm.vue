@@ -195,9 +195,11 @@ export default {
   },
   methods: {
     validate() {
-      return (
-        this.$refs.envInput.validate() && this.$refs.jobTemplateInput.validate()
-      )
+      const envValid = this.$refs.envInput.validate()
+      const jobTemplateValid =
+        !this.$refs.jobTemplateInput || this.$refs.jobTemplateInput.validate()
+
+      return envValid && jobTemplateValid
     }
   }
 }
