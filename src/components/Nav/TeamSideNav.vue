@@ -89,6 +89,8 @@ export default {
 
         this.flowsUnWatch = this.$watch('flows', this.updateItems)
         this.projectsUnWatch = this.$watch('projects', this.updateItems)
+
+        this.updateItems()
       } else {
         this.flowsUnWatch()
         this.projectsUnWatch()
