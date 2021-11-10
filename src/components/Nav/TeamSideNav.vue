@@ -24,7 +24,9 @@ export default {
         projectActive: 'pi-project',
         flow: 'pi-flow',
         task: 'pi-task'
-      }
+      },
+      flowsUnWatch: null,
+      projectsUnWatch: null
     }
   },
 
@@ -78,19 +80,19 @@ export default {
     }
   },
   watch: {
-    flows() {
-      this.updateItems()
-    },
     isOpen(val) {
       if (val) {
         clearTimeout(this.activateTimeout)
         this.activateTimeout = setTimeout(() => {
           this.$refs['drawer'].focus()
         }, 250)
+
+        this.flowsUnWatch = this.$watch('flows', this.updateItems)
+        this.projectsUnWatch = this.$watch('projects', this.updateItems)
+      } else {
+        this.flowsUnWatch()
+        this.projectsUnWatch()
       }
-    },
-    projects() {
-      this.updateItems()
     }
   },
   mounted() {
@@ -239,6 +241,7 @@ export default {
       class="drawer pb-1"
     >
       <div
+        v-if="model"
         class="d-flex flex-column"
         style="
         height: 100%;
