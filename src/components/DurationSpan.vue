@@ -74,13 +74,13 @@ export default {
 <template>
   <span class="duration-span">
     <span class="duration-span__days">
-      {{ days }} {{ plural('day', days.length) }}
+      {{ days }} {{ plural('day', days) }}
     </span>
     <span class="duration-span__hours">
-      {{ hours }} {{ plural('hour', hours.length) }}
+      {{ hours }} {{ plural('hour', hours) }}
     </span>
     <span class="duration-span__minutes">
-      {{ minutes }} {{ plural('minute', minutes.length) }}
+      {{ minutes }} {{ plural('minute', minutes) }}
     </span>
   </span>
 </template>
