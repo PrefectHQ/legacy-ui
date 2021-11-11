@@ -121,7 +121,7 @@ export default {
 </script>
 
 <template>
-  <div class="position-relative">
+  <div class="multiline-input position-relative">
     <div class="d-flex justify-end align-center mb-1" style="width: 100%;">
       <span
         class="d-flex justify-end align-center cursor-pointer"
