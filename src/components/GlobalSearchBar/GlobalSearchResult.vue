@@ -9,8 +9,6 @@ export default {
       required: true,
       type: Object,
       validator: result => {
-        //this handles task runs that don't have names
-        if (!result.name) result.name = result.id
         return (
           result.id &&
           result.name &&
@@ -25,12 +23,17 @@ export default {
     // but we don't use it for much else. It's typed as an Object
     // and we're making sure the .genFilteredText() method exists on the
     // passed prop.
-    parent: {
+    parentProp: {
       type: Object,
       required: true,
       validator: parent => {
         return parent.genFilteredText
       }
+    }
+  },
+  data() {
+    return {
+      parent: { ...this.parentProp }
     }
   },
   computed: {
