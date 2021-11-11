@@ -87,8 +87,7 @@ describe('data Vuex Module', () => {
       activeFlow: null,
       activeProject: null,
       activeTask: null,
-      flows: {},
-      flowGroups: {},
+      flows: null,
       projects: null,
       tasks: null
     }
@@ -107,14 +106,7 @@ describe('data Vuex Module', () => {
       activeFlow: activeFlow,
       activeProject: activeProject,
       activeTask: activeTask,
-      flows: flows.reduce(
-        (result, flow) => ({ ...result, [flow.id]: flow }),
-        {}
-      ),
-      flowGroups: flows.reduce(
-        (result, flow) => ({ ...result, [flow.flow_group_id]: flow }),
-        {}
-      ),
+      flows: flows,
       projects: projects,
       tasks: tasks
     }
@@ -127,8 +119,7 @@ describe('data Vuex Module', () => {
       expect(state.activeProject).toBe(null)
       expect(state.activeTask).toBe(null)
 
-      expect(state.flows).toStrictEqual({})
-      expect(state.flowGroups).toStrictEqual({})
+      expect(state.flows).toBe(null)
       expect(state.projects).toBe(null)
       expect(state.tasks).toBe(null)
     })
@@ -398,13 +389,11 @@ describe('data Vuex Module', () => {
         )
         expect(store.getters['activeTask'].id).toEqual(state['activeTask'].id)
 
-        expect(Object.keys(store.getters['flows']).length).toEqual(5)
+        expect(store.getters['flows'].length).toEqual(5)
         expect(store.getters['projects'].length).toEqual(5)
         expect(store.getters['tasks'].length).toEqual(5)
 
-        expect(Object.keys(store.getters['flows'])[0]).toEqual(
-          Object.keys(state['flows'])[0]
-        )
+        expect(store.getters['flows'][0].id).toEqual(state['flows'][0].id)
         expect(store.getters['projects'][0].id).toEqual(state['projects'][0].id)
         expect(store.getters['tasks'][0].id).toEqual(state['tasks'][0].id)
 
@@ -413,7 +402,7 @@ describe('data Vuex Module', () => {
         expect(store.getters['activeFlow']).toEqual(null)
         expect(store.getters['activeProject']).toEqual(null)
         expect(store.getters['activeTask']).toEqual(null)
-        expect(store.getters['flows']).toStrictEqual({})
+        expect(store.getters['flows']).toEqual(null)
         expect(store.getters['projects']).toEqual(null)
         expect(store.getters['tasks']).toEqual(null)
       })
@@ -445,9 +434,9 @@ describe('data Vuex Module', () => {
         it('sets the activeFlow from the store when the flow exists in the store', async () => {
           expect(store.getters['activeFlow'].id).toEqual(state['activeFlow'].id)
 
-          const id = Object.keys(store.getters['flows']).find(
-            id => id !== state['activeFlow'].id
-          ) // Find the first flow in the store that isn't the activeFlow
+          const id = store.getters['flows'].find(
+            f => f.id !== state['activeFlow'].id
+          ).id // Find the first flow in the store that isn't the activeFlow
 
           expect(store.getters['activeFlow'].id).not.toEqual(id)
 
@@ -469,7 +458,7 @@ describe('data Vuex Module', () => {
           const flows = generators['flow'](5)
 
           store.commit('setFlows', flows)
-          expect(Object.values(store.getters['flows'])).toEqual(flows)
+          expect(store.getters['flows']).toEqual(flows)
 
           expect(store.getters['activeFlow']).toEqual(null)
           expect(store.getters['activeProject']).toEqual(null)
@@ -506,7 +495,7 @@ describe('data Vuex Module', () => {
 
           expect(state['activeFlow'].id).not.toEqual(id)
 
-          expect(store.getters['flows'][id]).toBeFalsy()
+          expect(store.getters['flows'].find(p => p.id == id)).toBeFalsy()
 
           await store.dispatch('activateFlow', id)
 
@@ -514,11 +503,11 @@ describe('data Vuex Module', () => {
         })
 
         it("throws an error if the flow doesn't exist in the store and can't be fetched", async () => {
-          expect(Object.values(store.getters['flows'])).toEqual(state['flows'])
+          expect(store.getters['flows']).toEqual(state['flows'])
 
           const id = 'f-222' // Unknown flow id
 
-          expect(store.getters['flows'][id]).toBeFalsy()
+          expect(store.getters['flows'].find(f => f.id == id)).toBeFalsy()
 
           expect(store.dispatch('activateFlow', id)).rejects.toThrow(
             "Couldn't retrieve flow."

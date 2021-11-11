@@ -310,7 +310,10 @@ export default {
       pollInterval: 10000,
       update(data) {
         if (!data?.flow || this.isLoadingTenant) return []
-        this.updateFlows(data.flow)
+        // Dedupes incoming flows
+        const flows =
+          this.flows?.filter(f => !data.flow.find(_f => _f.id == f.id)) || []
+        this.setFlows([...flows, ...data.flow])
         return data.flow
       }
     })
@@ -421,7 +424,6 @@ export default {
     ...mapActions('api', ['getApi', 'monitorConnection', 'setServerUrl']),
     ...mapActions('auth', ['authenticate', 'authorize']),
     ...mapActions('data', ['resetData']),
-    ...mapActions('data', ['updateFlows']),
     ...mapMutations('data', ['setFlows', 'setProjects']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapMutations('sideNav', { closeSideNav: 'close' }),

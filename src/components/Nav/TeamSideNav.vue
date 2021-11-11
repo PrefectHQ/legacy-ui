@@ -194,7 +194,7 @@ export default {
               name: project.name,
               type: 'project',
               children: [
-                ...Object.values(this.flows)
+                ...(this.flows ?? [])
                   ?.filter(f => f.project_id == project.id)
                   .map(f => {
                     return {

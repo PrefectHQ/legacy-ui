@@ -4,8 +4,7 @@ const state = {
   activeFlow: null,
   activeProject: null,
   activeTask: null,
-  flows: {},
-  flowGroups: {},
+  flows: null,
   projects: null,
   tasks: null
 }
@@ -31,9 +30,6 @@ const getters = {
   },
   flows(state) {
     return state.flows
-  },
-  flowGroups(state) {
-    return state.flowGroups
   },
   projects(state) {
     return state.projects
@@ -124,19 +120,10 @@ const mutations = {
     if (!flows || !Array.isArray(flows)) {
       throw new Error('passed invalid Flows; Expected Array, got: ' + flows)
     }
-    state.flows = flows.reduce(
-      (result, flow) => ({ ...result, [flow.id]: flow }),
-      {}
-    )
-
-    state.flowGroups = flows.reduce(
-      (result, flow) => ({ ...result, [flow.flow_group_id]: flow }),
-      {}
-    )
+    state.flows = flows
   },
   unsetFlows(state) {
-    state.flows = {}
-    state.flowGroups = {}
+    state.flows = null
   },
   setProjects(state, projects) {
     if (!projects || !Array.isArray(projects)) {
@@ -153,7 +140,7 @@ const mutations = {
 
 const actions = {
   async activateFlow({ commit, getters, dispatch }, id) {
-    let flow = getters['flows'][id] ?? getters['flowGroups'][id]
+    let flow = getters['flows']?.find(f => f.id == id || f.flow_group_id == id)
 
     if (!flow || flow.id !== id) {
       id = flow?.id || id
@@ -165,9 +152,13 @@ const actions = {
         }
       })
 
-      dispatch('updateFlows', data.flow)
+      // Dedupes incoming flows
+      const flows =
+        getters['flows']?.filter(f => !data.flow.find(_f => _f.id == f.id)) ||
+        []
+      commit('setFlows', [...flows, ...data.flow])
 
-      flow = getters['flows'][id] ?? getters['flowGroups'][id]
+      flow = getters['flows']?.find(f => f.id == id || f.flow_group_id == id)
     }
 
     if (!flow) throw new Error("Couldn't retrieve flow.")
@@ -212,9 +203,6 @@ const actions = {
 
     commit('setActiveTask', task)
     await dispatch('activateFlow', task.flow_id)
-  },
-  updateFlows({ getters, commit }, flows) {
-    commit('setFlows', [...Object.values(getters['flows']), ...flows])
   },
   resetActiveData({ commit }) {
     commit('unsetActiveFlow')
