@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Fixed link to artifacts docs
 
 ### Bugfixes
 
