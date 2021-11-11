@@ -52,12 +52,12 @@ export default {
         </v-icon>
       </v-list-item-avatar>
       <v-list-item-content class="position: relative;">
-        <v-list-item-title class="text-h6 pb-1">
-          <div v-if="$slots['title']">
+        <v-list-item-title class="text-h6 pb-1 " style="max-width: 23vw;">
+          <div v-if="$slots['title']" class="text-truncate">
             <slot name="title" />
           </div>
           <div v-else>
-            <div v-if="!loading">
+            <div v-if="!loading" class="text-truncate">
               {{ title }}
             </div>
             <v-skeleton-loader v-else type="heading" tile></v-skeleton-loader>
