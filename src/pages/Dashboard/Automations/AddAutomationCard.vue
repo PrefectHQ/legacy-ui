@@ -87,7 +87,10 @@ export default {
     //   )
     // },
     allFlows() {
-      return this.selectedFlows?.length === this.flows?.length
+      return (
+        this.selectedFlows?.length === this.flows?.length &&
+        this.flows.length > 1
+      )
     },
     formHeight() {
       return this.$vuetuify?.breakpoint?.smAndUp ? '35vh' : '25vh'
