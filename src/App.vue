@@ -93,6 +93,14 @@ export default {
       'user',
       'plan'
     ]),
+    ...mapGetters('polling', [
+      'shouldPollTenants',
+      'shouldPollAgents',
+      'shouldPollProjects',
+      'shouldPollFlows',
+      'shouldPollMemberships',
+      'shouldPollMembershipInvitations'
+    ]),
     notFoundPage() {
       return this.$route.name === 'not-found'
     },
@@ -254,7 +262,11 @@ export default {
         return require('@/graphql/Agent/agents.js').default(this.isCloud)
       },
       skip() {
-        return (this.isCloud && !this.isAuthorized) || !this.connected
+        return (
+          (this.isCloud && !this.isAuthorized) ||
+          !this.connected ||
+          !this.shouldPollAgents
+        )
       },
       pollInterval: 1000,
       // Without this, server UI with no actual server shows results
@@ -289,15 +301,16 @@ export default {
         return require('@/graphql/Nav/flows.gql')
       },
       skip() {
-        return (this.isCloud && !this.isAuthorized) || !this.connected
+        return (
+          (this.isCloud && !this.isAuthorized) ||
+          !this.connected ||
+          !this.shouldPollFlows
+        )
       },
       pollInterval: 10000,
       update(data) {
         if (!data?.flow || this.isLoadingTenant) return []
-        // Dedupes incoming flows
-        const flows =
-          this.flows?.filter(f => !data.flow.find(_f => _f.id == f.id)) || []
-        this.setFlows([...flows, ...data.flow])
+        this.updateFlows(data.flow)
         return data.flow
       }
     })
@@ -408,6 +421,7 @@ export default {
     ...mapActions('api', ['getApi', 'monitorConnection', 'setServerUrl']),
     ...mapActions('auth', ['authenticate', 'authorize']),
     ...mapActions('data', ['resetData']),
+    ...mapActions('data', ['updateFlows']),
     ...mapMutations('data', ['setFlows', 'setProjects']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
     ...mapMutations('sideNav', { closeSideNav: 'close' }),

@@ -3,9 +3,9 @@ import store from '@/store/index'
 
 const flowNavGuard = async (to, from, next) => {
   const id = to.params?.id
-  const flows = store.getters['data/flows']
+  const flowGroups = store.getters['data/flowGroups']
 
-  const group = flows?.find(flow => flow.flow_group_id == id)
+  const group = flowGroups[id]
 
   if (group) return next()
 
@@ -36,8 +36,8 @@ const flowNavGuard = async (to, from, next) => {
 
   try {
     await store.dispatch('data/activateFlow', id)
-    const renewedFlows = store.getters['data/flows']
-    const renewedGroup = renewedFlows?.find(flow => flow.flow_group_id == id)
+    const renewedFlowGroups = store.getters['data/flowGroups']
+    const renewedGroup = renewedFlowGroups[id]
     if (renewedGroup) return next()
   } catch {
     return next({

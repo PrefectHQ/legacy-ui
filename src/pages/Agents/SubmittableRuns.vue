@@ -47,7 +47,6 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
-    ...mapGetters('data', ['flows']),
     agent() {
       const agent = { ...this.rawAgent }
       const getTimeOverdue = time => new Date() - new Date(time)
@@ -175,8 +174,7 @@ export default {
   methods: {
     ...mapMutations('agent', ['setRefetch']),
     flowName(flowRun) {
-      const flow = this.flows?.filter(flow => flow?.id === flowRun.flow_id)[0]
-      return flow?.name
+      return flowRun?.flow?.name
     },
     flowRunName(flowRun) {
       return flowRun?.name

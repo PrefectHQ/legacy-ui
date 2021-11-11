@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex'
 import TutorialBanner from '@/components/TutorialBanner'
 
 export default {
@@ -22,12 +23,43 @@ export default {
   },
   data() {
     return {
-      pageScrolled: false
+      pageScrolled: false,
+      hasAnyFlows: false,
+      unsubscribeFlows: null,
+      unwatchFlows: null
     }
+  },
+  computed: {
+    ...mapGetters('data', ['flows']),
+    shouldShowTutorialBanner() {
+      return (
+        !this.hideBanners &&
+        !this.$vuetify.breakpoint.smAndDown &&
+        !this.pageScrolled &&
+        !this.hasAnyFlows
+      )
+    }
+  },
+  async beforeMount() {
+    this.unsubscribeFlows = await this.$store.dispatch(
+      'polling/subscribe',
+      'flows'
+    )
+    this.unwatchFlows = this.$watch('flows', this.flowsChanged)
+  },
+  beforeDestroy() {
+    this.unsubscribeFlows()
   },
   methods: {
     scrolled() {
       this.pageScrolled = window.scrollY > 30
+    },
+    flowsChanged(flows) {
+      if (Object.keys(flows).length > 0) {
+        this.unsubscribeFlows()
+        this.hasAnyFlows = true
+        this.unwatchFlows()
+      }
     }
   }
 }
@@ -35,7 +67,7 @@ export default {
 
 <template>
   <div>
-    <TutorialBanner v-if="!hideBanners" :page-scroll="pageScrolled" />
+    <TutorialBanner v-if="shouldShowTutorialBanner" />
     <v-toolbar
       v-scroll="scrolled"
       :elevation="

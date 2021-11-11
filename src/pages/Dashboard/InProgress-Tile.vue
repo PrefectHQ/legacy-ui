@@ -139,6 +139,10 @@ export default {
     },
     toggleOverlay() {
       this.overlay = !this.overlay
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.flowRuns.skip = !entry.isIntersecting
+      this.$apollo.queries.agentFlowRuns.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -176,6 +180,7 @@ export default {
 
 <template>
   <v-card
+    v-intersect="{ handler: onIntersect }"
     tile
     class="pb-2 position-relative d-flex flex-column"
     style="height: 100%;"

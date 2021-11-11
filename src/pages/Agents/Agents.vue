@@ -27,7 +27,8 @@ export default {
       statusInput: STATUSES,
       clearingAgents: false,
       clearingError: false,
-      tab: 'overview'
+      tab: 'overview',
+      unsubscribeAgents: null
     }
   },
   computed: {
@@ -82,6 +83,15 @@ export default {
         this.loading = 0
       }, 5000)
     }
+  },
+  async beforeMount() {
+    this.unsubscribeAgents = await this.$store.dispatch(
+      'polling/subscribe',
+      'agents'
+    )
+  },
+  beforeDestroy() {
+    this.unsubscribeAgents()
   },
   methods: {
     ...mapActions('alert', ['setAlert']),

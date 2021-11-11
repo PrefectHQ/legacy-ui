@@ -11,7 +11,9 @@ export default {
     ExternalLink
   },
   data() {
-    return {}
+    return {
+      unsubscribeAgents: () => {}
+    }
   },
   computed: {
     ...mapGetters('agent', ['staleThreshold', 'unhealthyThreshold', 'agents']),
@@ -65,12 +67,30 @@ export default {
 
       return 'success'
     }
+  },
+  destroyed() {
+    this.unsubscribeAgents()
+  },
+  methods: {
+    async onIntersect([entry]) {
+      this.polling = entry.isIntersecting
+
+      if (this.polling) {
+        this.unsubscribeAgents = await this.$store.dispatch(
+          'polling/subscribe',
+          'agents'
+        )
+      } else {
+        this.unsubscribeAgents()
+      }
+    }
   }
 }
 </script>
 
 <template>
   <v-card
+    v-intersect="{ handler: onIntersect }"
     class="py-2 position-relative d-flex flex-column"
     style="height: 100%;"
     tile

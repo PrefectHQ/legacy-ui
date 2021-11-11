@@ -1,11 +1,15 @@
 query AgentSubmittableRuns {
     flow_run (where: {state: {_eq: "Scheduled"}}) {
-    id
-    name
-    state
-    labels
-    scheduled_start_time
-    version
-    flow_id
+        id
+        name
+        state
+        labels
+        scheduled_start_time
+        version
+        flow_id
+        flow {
+            id
+            name
+        }
     }
 }

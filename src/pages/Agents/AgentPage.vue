@@ -26,7 +26,8 @@ export default {
       tab: 'overview',
       tabs: [{ name: 'overview', target: 'overview' }],
       loading: false,
-      showConfirmDialog: false
+      showConfirmDialog: false,
+      unsubscribeAgents: null
     }
   },
   computed: {
@@ -58,6 +59,15 @@ export default {
     if (!this.agentDetails) {
       this.$router.push({ name: 'agents' })
     }
+  },
+  async beforeMount() {
+    this.unsubscribeAgents = await this.$store.dispatch(
+      'polling/subscribe',
+      'agents'
+    )
+  },
+  beforeDestroy() {
+    this.unsubscribeAgents()
   },
   methods: {
     ...mapMutations('agent', ['setAgents']),
