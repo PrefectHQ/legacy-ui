@@ -113,6 +113,10 @@ export default {
       this.$refs['tree'].close()
     },
     handleKeyboardShortcut(e) {
+      if (e?.key === 'Escape' && this.isOpen) {
+        this.close()
+      }
+
       if (
         e?.key === 't' &&
         e?.srcElement?.tagName !== 'INPUT' &&
