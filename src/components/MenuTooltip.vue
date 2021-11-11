@@ -114,8 +114,10 @@ export default {
           {{ content }}
         </slot>
       </v-card-text>
-      <v-card-actions v-if="!hideClose" class="pa-2">
-        <v-spacer></v-spacer>
+      <v-card-actions
+        v-if="!hideClose"
+        class="pa-2 flex-row-reverse justify-space-between"
+      >
         <v-btn
           class="text-none"
           color="primary"
@@ -124,6 +126,7 @@ export default {
           @click="open = false"
           >Close</v-btn
         >
+        <slot name="actions" />
       </v-card-actions>
     </v-card>
   </v-menu>
