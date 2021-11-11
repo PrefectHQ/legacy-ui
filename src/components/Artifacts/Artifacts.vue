@@ -38,6 +38,9 @@ export default {
     },
     increment() {
       this.artifact++
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.artifacts.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -80,7 +83,7 @@ export default {
 </script>
 
 <template>
-  <v-row no-gutters>
+  <v-row v-intersect="{ handler: onIntersect }" no-gutters>
     <v-col>
       <div
         v-if="artifacts && artifacts.length > 0"

@@ -72,6 +72,9 @@ export default {
     },
     agentIcon(type) {
       return AGENT_TYPES.find(a => a.type == type)?.icon
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.agents.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -93,7 +96,7 @@ export default {
 </script>
 
 <template>
-  <div class="appForeground">
+  <div v-intersect="{ handler: onIntersect }" class="appForeground">
     <div class="text-body-1">
       The Prefect Agent is a small entity created to orchestrate flow runs. The
       Agent works by querying the Prefect API for new or incomplete Flow Runs

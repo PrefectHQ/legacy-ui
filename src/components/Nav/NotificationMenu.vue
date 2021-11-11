@@ -10,6 +10,11 @@ export default {
       return this.notificationsCount
     }
   },
+  methods: {
+    onIntersect([entry]) {
+      this.$apollo.queries.notificationsCount.skip = !entry.isIntersecting
+    }
+  },
   apollo: {
     notificationsCount: {
       query: require('@/graphql/Notifications/notifications-count-unread.gql'),
@@ -27,6 +32,7 @@ export default {
 
 <template>
   <v-btn
+    v-intersect="{ handler: onIntersect }"
     :to="'/notifications'"
     class="navbar-icon mx-1"
     icon

@@ -174,7 +174,11 @@ export default {
     debounceSearch: debounce(function(e) {
       this.loading--
       this.search = e
-    }, 500)
+    }, 500),
+    onIntersect([entry]) {
+      this.$apollo.queries.flows.skip = !entry.isIntersecting
+      this.$apollo.queries.flowCount.skip = !entry.isIntersecting
+    }
   },
   apollo: {
     flows: {
@@ -269,7 +273,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2" tile>
+  <v-card v-intersect="{ handler: onIntersect }" class="pa-2" tile>
     <CardTitle title="Flows" icon="pi-flow">
       <div slot="action" class="flex align-center justify-end">
         <v-text-field

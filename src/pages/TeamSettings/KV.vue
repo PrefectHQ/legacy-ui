@@ -332,9 +332,11 @@ export default {
       this.KvValueInput = this.formatValue(this.stringifyValue(kv?.item?.value))
 
       this.keyInput = kv?.item?.key
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.kv.skip = !entry.isIntersecting
     }
   },
-
   apollo: {
     kv: {
       query: require('@/graphql/KV/get-key-value.gql'),
@@ -361,7 +363,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div v-intersect="{ handler: onIntersect }">
     <ManagementLayout :show="!isFetchingKV">
       <template #title>KV Store</template>
 

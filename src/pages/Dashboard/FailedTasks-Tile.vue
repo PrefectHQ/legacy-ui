@@ -81,6 +81,9 @@ export default {
           return 1
         }
       })
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.failures.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -106,7 +109,12 @@ export default {
 </script>
 
 <template>
-  <v-card class="py-2" tile style="height: 100%;">
+  <v-card
+    v-intersect="{ handler: onIntersect }"
+    class="py-2"
+    tile
+    style="height: 100%;"
+  >
     <v-system-bar :color="stateColor" :height="5" absolute>
       <!-- We should include a state icon here when we've got those -->
       <!-- <v-icon>{{ flow.flow_runs[0].state }}</v-icon> -->

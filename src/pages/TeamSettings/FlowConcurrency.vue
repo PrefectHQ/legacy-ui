@@ -244,6 +244,10 @@ export default {
     },
     checkValid() {
       this.addValid = this.newLimit ? true : false
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.labels.skip = !entry.isIntersecting
+      this.$apollo.queries.usage.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -278,7 +282,7 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout>
+  <ManagementLayout v-intersect="{ handler: onIntersect }">
     <template #title>Flow Concurrency</template>
 
     <template #subtitle>

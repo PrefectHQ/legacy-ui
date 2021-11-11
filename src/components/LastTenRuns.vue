@@ -151,6 +151,9 @@ export default {
         height: '1rem',
         width: '1rem'
       }
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.flowRuns.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -174,6 +177,7 @@ export default {
 <template>
   <div>
     <BarChart
+      v-intersect="{ handler: onIntersect }"
       :items="preppedFlowRuns"
       :loading="loadingKey > 0"
       :height="50"

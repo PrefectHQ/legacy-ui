@@ -31,6 +31,11 @@ export default {
       }
     }
   },
+  methods: {
+    onIntersect([entry]) {
+      this.$apollo.queries.usage.skip = !entry.isIntersecting
+    }
+  },
   apollo: {
     usage: {
       query: require('@/graphql/Dashboard/committed-usage.gql'),
@@ -52,6 +57,7 @@ export default {
 
 <template>
   <v-card
+    v-intersect="{ handler: onIntersect }"
     class="position-relative d-flex flex-column justify-space-between"
     style="height: 100%;"
     tile

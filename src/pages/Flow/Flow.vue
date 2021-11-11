@@ -211,6 +211,10 @@ export default {
         if (this.tabs?.find(tab => tab.target == target)) return target
       }
       return 'overview'
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.flowGroup.skip = !entry.isIntersecting
+      this.$apollo.queries.lastFlowRun.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -246,7 +250,7 @@ export default {
 </script>
 
 <template>
-  <v-sheet color="appBackground">
+  <v-sheet v-intersect="{ handler: onIntersect }" color="appBackground">
     <SubPageNav icon="pi-flow" page-type="Flow">
       <span
         slot="page-title"

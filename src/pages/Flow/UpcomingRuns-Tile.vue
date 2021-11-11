@@ -173,6 +173,9 @@ export default {
     },
     getFriendlyCount(count) {
       return count > 999 ? '1,000+' : count
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.upcomingFlowRunsData.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -207,6 +210,7 @@ export default {
 
 <template>
   <v-card
+    v-intersect="{ handler: onIntersect }"
     class="py-2 position-relative d-flex flex-column"
     style="height: 100%;"
     tile

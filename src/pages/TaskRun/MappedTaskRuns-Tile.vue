@@ -75,7 +75,12 @@ export default {
       return `%${this.searchTerm}%`
     }
   },
-  methods: {},
+  methods: {
+    onIntersect([entry]) {
+      this.$apollo.queries.taskRuns.skip = !entry.isIntersecting
+      this.$apollo.queries.taskRunsCount.skip = !entry.isIntersecting
+    }
+  },
   apollo: {
     taskRuns: {
       query: require('@/graphql/TaskRun/table-mapped-task-runs.gql'),
@@ -171,7 +176,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2 mt-2" tile>
+  <v-card v-intersect="{ handler: onIntersect }" class="pa-2 mt-2" tile>
     <CardTitle :title="tableTitle" icon="pi-task-run">
       <v-text-field
         slot="action"

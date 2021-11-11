@@ -171,6 +171,9 @@ export default {
       } finally {
         this.taskRunNameLoading = false
       }
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.taskRun.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -194,7 +197,11 @@ export default {
 </script>
 
 <template>
-  <v-sheet v-if="taskRun" color="appBackground">
+  <v-sheet
+    v-if="taskRun"
+    v-intersect="{ handler: onIntersect }"
+    color="appBackground"
+  >
     <SubPageNav icon="pi-task-run" page-type="Task Run">
       <span
         slot="page-title"
