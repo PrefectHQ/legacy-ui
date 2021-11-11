@@ -56,8 +56,8 @@ export default {
     },
     flowsChanged(flows) {
       if (Object.keys(flows).length > 0) {
-        this.unsubscribeFlows()
         this.hasAnyFlows = true
+        this.unsubscribeFlows()
         this.unwatchFlows()
       }
     }

@@ -68,14 +68,12 @@ export default {
       return 'success'
     }
   },
-  destroyed() {
+  beforeDestroy() {
     this.unsubscribeAgents()
   },
   methods: {
     async onIntersect([entry]) {
-      this.polling = entry.isIntersecting
-
-      if (this.polling) {
+      if (entry.isIntersecting) {
         this.unsubscribeAgents = await this.$store.dispatch(
           'polling/subscribe',
           'agents'
