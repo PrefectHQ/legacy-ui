@@ -29,23 +29,23 @@ export default {
           text: 'Flow Run',
           value: 'flow_run',
           sortable: false,
-          width: '20%'
+          width: '30%'
         },
         {
           text: 'Start Time',
           value: 'start_time',
           align: 'start',
-          width: '20%'
+          width: '15%'
         },
-        { text: 'End Time', value: 'end_time', align: 'start', width: '20%' },
+        { text: 'End Time', value: 'end_time', align: 'start', width: '15%' },
         {
           text: 'Duration',
           value: 'duration',
           align: 'end',
-          width: '15%',
+          width: '10%',
           sortable: false
         },
-        { text: 'State', value: 'state', align: 'end', width: '15%' }
+        { text: 'State', value: 'state', align: 'end', width: '10%' }
       ],
       itemsPerPage: 15,
       page: 1,
