@@ -9,7 +9,7 @@ export default {
     label: {
       type: String,
       required: false,
-      default: () => null
+      default: null
     },
     items: {
       type: Array,
@@ -19,22 +19,22 @@ export default {
     showClear: {
       type: Boolean,
       required: false,
-      default: () => true
+      default: true
     },
     showClose: {
       type: Boolean,
       required: false,
-      default: () => false
+      default: false
     },
     showReset: {
       type: Boolean,
       required: false,
-      default: () => true
+      default: true
     },
     outline: {
       type: Boolean,
       required: false,
-      default: () => true
+      default: true
     },
     rules: {
       type: Array,
@@ -44,14 +44,12 @@ export default {
     hide: {
       type: Boolean,
       required: false,
-      default: () => true
+      default: true
     }
   },
   data() {
     return {
-      internalValue: this.value ?? [],
-      // Used to reset the list
-      initialValue: this.value ?? []
+      initialValue: []
     }
   },
   computed: {
@@ -63,15 +61,18 @@ export default {
         this.initialValue.every(val => this.internalValue.includes(val)) &&
         this.initialValue.length === this.internalValue.length
       )
+    },
+    internalValue: {
+      get() {
+        return this.value ?? []
+      },
+      set(value) {
+        this.$emit('input', value)
+      }
     }
   },
-  watch: {
-    internalValue(val) {
-      this.$emit('input', val)
-    },
-    value(val) {
-      this.internalValue = val
-    }
+  created() {
+    this.initialValue = [...this.internalValue]
   },
   methods: {
     clear() {
@@ -88,7 +89,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="list-input">
     <div
       v-if="showClear || showReset || showClose"
       class="d-flex align-center justify-end mb-2"
