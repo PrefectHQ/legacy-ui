@@ -20,6 +20,17 @@ export default {
       interval: null
     }
   },
+  computed: {
+    days() {
+      return this.duration?.days
+    },
+    hours() {
+      return this.duration?.hours
+    },
+    minutes() {
+      return this.duration?.minutes
+    }
+  },
   watch: {
     endTime() {
       this.updateDuration()
@@ -62,16 +73,15 @@ export default {
 
 <template>
   <span class="duration-span">
-    <span class="duration-span__days"
-      >{{ duration.days }} {{ plural('day', duration.days.length) }}</span
-    >
-    <span class="duration-span__hours"
-      >{{ duration.hours }} {{ plural('hour', duration.hours.length) }}</span
-    >
-    <span class="duration-span__minutes"
-      >{{ duration.minutes }}
-      {{ plural('minute', duration.minutes.length) }}</span
-    >
+    <span class="duration-span__days">
+      {{ days }} {{ plural('day', days.length) }}
+    </span>
+    <span class="duration-span__hours">
+      {{ hours }} {{ plural('hour', hours.length) }}
+    </span>
+    <span class="duration-span__minutes">
+      {{ minutes }} {{ plural('minute', minutes.length) }}
+    </span>
   </span>
 </template>
 
