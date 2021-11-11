@@ -206,7 +206,7 @@ export default {
 }
 
 .code-input__toggle {
-  align-self: end;
+  align-self: flex-end;
   margin-bottom: 8px;
 }
 </style>
