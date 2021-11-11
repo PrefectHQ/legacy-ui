@@ -89,7 +89,7 @@ export default {
     allFlows() {
       return (
         this.selectedFlows?.length === this.flows?.length &&
-        this.flows.length > 1
+        this.flows?.length > 1
       )
     },
     formHeight() {
