@@ -4,8 +4,6 @@
 
 ### Features and Improvements
 
-- Adjust column width in v-data-table - [#1121](https://github.com/PrefectHQ/ui/pull/1121)
-
 - None
 
 ### Bugfixes
