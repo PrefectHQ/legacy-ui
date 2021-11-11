@@ -41,7 +41,8 @@ export default {
   data() {
     return {
       loading: false,
-      model: false
+      model: false,
+      unsubscribeTenants: null
     }
   },
   computed: {
@@ -75,6 +76,15 @@ export default {
           })
         : this.tenants
     }
+  },
+  async beforeMount() {
+    this.unsubscribeTenants = await this.$store.dispatch(
+      'polling/subscribe',
+      'tenants'
+    )
+  },
+  beforeDestroy() {
+    this.unsubscribeTenants()
   },
   methods: {
     ...mapActions('alert', ['addNotification', 'updateNotification']),

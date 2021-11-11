@@ -73,7 +73,8 @@ export default {
         notNull: val => val > 0 || 'Duration must be greater than 0 seconds'
       },
       animated: false,
-      agentConfigId: ''
+      agentConfigId: '',
+      unsubscribeProjects: null
     }
   },
   computed: {
@@ -330,6 +331,15 @@ export default {
       : {
           name: 'does this'
         }
+  },
+  async beforeMount() {
+    this.unsubscribeProjects = await this.$store.dispatch(
+      'polling/subscribe',
+      'projects'
+    )
+  },
+  beforeDestroy() {
+    this.unsubscribeProjects()
   },
   methods: {
     ...mapActions('alert', ['setAlert']),

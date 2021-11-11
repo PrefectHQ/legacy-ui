@@ -97,9 +97,7 @@ export default {
       'shouldPollTenants',
       'shouldPollAgents',
       'shouldPollProjects',
-      'shouldPollFlows',
-      'shouldPollMemberships',
-      'shouldPollMembershipInvitations'
+      'shouldPollFlows'
     ]),
     notFoundPage() {
       return this.$route.name === 'not-found'
@@ -245,7 +243,11 @@ export default {
       {
         query: require('@/graphql/Tenant/tenants.js').default(this.isCloud),
         skip() {
-          return (this.isCloud && !this.isAuthorized) || !this.connected
+          return (
+            (this.isCloud && !this.isAuthorized) ||
+            !this.connected ||
+            !this.shouldPollTenants
+          )
         },
         fetchPolicy: 'no-cache',
         pollInterval: 60000,
@@ -285,7 +287,11 @@ export default {
           return require('@/graphql/Nav/projects.gql')
         },
         skip() {
-          return (this.isCloud && !this.isAuthorized) || !this.connected
+          return (
+            (this.isCloud && !this.isAuthorized) ||
+            !this.connected ||
+            !this.shouldPollProjects
+          )
         },
         pollInterval: 10000,
         update(data) {

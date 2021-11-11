@@ -3,9 +3,7 @@ const state = {
   tenants: [],
   agents: [],
   projects: [],
-  flows: [],
-  memberships: [],
-  membershipInvitations: []
+  flows: []
 }
 
 const getters = {
@@ -20,12 +18,6 @@ const getters = {
   },
   shouldPollFlows(state) {
     return state.flows.length > 0
-  },
-  shouldPollMemberships(state) {
-    return state.memberships.length > 0
-  },
-  shouldPollMembershipInvitations(state) {
-    return state.membershipInvitations.length > 0
   }
 }
 

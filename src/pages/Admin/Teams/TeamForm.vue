@@ -20,7 +20,8 @@ export default {
 
       // Regexes to check if a slug is invalid
       slugCharRegex: /^[a-z0-9|-]*$/,
-      dashPositionRegex: /^(-)|-{2,}|(-)$/
+      dashPositionRegex: /^(-)|-{2,}|(-)$/,
+      unsubscribeTenants: null
     }
   },
   computed: {
@@ -38,6 +39,15 @@ export default {
   mounted() {
     this.teamSlug = this.slugifyString(this.teamName)
     this.currentTeam = this.tenant.slug
+  },
+  async beforeMount() {
+    this.unsubscribeTenants = await this.$store.dispatch(
+      'polling/subscribe',
+      'tenants'
+    )
+  },
+  beforeDestroy() {
+    this.unsubscribeTenants()
   },
   methods: {
     ...mapActions('alert', ['addNotification', 'updateNotification']),

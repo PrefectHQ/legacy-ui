@@ -15,7 +15,8 @@ export default {
       confirmDeleteDialog: false,
       loading: false,
       loadingKey: 0,
-      teamToDelete: null
+      teamToDelete: null,
+      unsubscribeTenants: null
     }
   },
   computed: {
@@ -43,6 +44,15 @@ export default {
           : new Date(a.created) - new Date(b.created)
       )
     }
+  },
+  async beforeMount() {
+    this.unsubscribeTenants = await this.$store.dispatch(
+      'polling/subscribe',
+      'tenants'
+    )
+  },
+  beforeDestroy() {
+    this.unsubscribeTenants()
   },
   methods: {
     ...mapActions('alert', ['addNotification', 'updateNotification']),

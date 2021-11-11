@@ -30,7 +30,8 @@ export default {
       rules: {
         confirm: value => value == this.tenant.slug || 'Input is incorrect.',
         required: value => !!value || 'This field is is required.'
-      }
+      },
+      unsubscribeTenants: null
     }
   },
   computed: {
@@ -50,6 +51,15 @@ export default {
     isLastTenant() {
       return this.tenants?.length === 1
     }
+  },
+  async beforeMount() {
+    this.unsubscribeTenants = await this.$store.dispatch(
+      'polling/subscribe',
+      'tenants'
+    )
+  },
+  beforeDestroy() {
+    this.unsubscribeTenants()
   },
   methods: {
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),

@@ -57,7 +57,8 @@ export default {
       label: 'Expiry Date',
       hint: 'Leave blank for an expiry of 2100-01-01 UTC',
       warning:
-        'You have selected a time in the past.  Your API key will have an expiry of 2100-01-01 UTC'
+        'You have selected a time in the past.  Your API key will have an expiry of 2100-01-01 UTC',
+      unsubscribeTenants: null
     }
   },
   computed: {
@@ -80,6 +81,15 @@ export default {
   },
   mounted() {
     return (this.newKeyTenant = this.tenant)
+  },
+  async beforeMount() {
+    this.unsubscribeTenants = await this.$store.dispatch(
+      'polling/subscribe',
+      'tenants'
+    )
+  },
+  beforeDestroy() {
+    this.unsubscribeTenants()
   },
   methods: {
     clearAlert() {

@@ -16,6 +16,11 @@ export default {
     NavTabBar,
     SubPageNav
   },
+  data() {
+    return {
+      unsubscribeTenants: null
+    }
+  },
   computed: {
     ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('license', ['planType', 'license']),
@@ -73,6 +78,15 @@ export default {
     multitenancy() {
       return this.license?.terms.tenants > 1
     }
+  },
+  async beforeMount() {
+    this.unsubscribeTenants = await this.$store.dispatch(
+      'polling/subscribe',
+      'tenants'
+    )
+  },
+  beforeDestroy() {
+    this.unsubscribeTenants()
   }
 }
 </script>

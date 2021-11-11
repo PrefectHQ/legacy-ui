@@ -7,12 +7,22 @@ export default {
       serverUrlInput: this.serverUrl,
       error: false,
       loading: false,
-      success: this.tenants?.length > 0
+      success: this.tenants?.length > 0,
+      unsubscribeTenants: null
     }
   },
   computed: {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'tenants'])
+  },
+  async beforeMount() {
+    this.unsubscribeTenants = await this.$store.dispatch(
+      'polling/subscribe',
+      'tenants'
+    )
+  },
+  beforeDestroy() {
+    this.unsubscribeTenants()
   },
   methods: {
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),

@@ -66,7 +66,8 @@ export default {
       previousX: null,
       previousY: null,
       x: null,
-      y: null
+      y: null,
+      unsubscribeTenants: null
     }
   },
   computed: {
@@ -289,10 +290,18 @@ export default {
   updated() {
     if (!this.chart) this.createChart()
   },
+  async beforeMount() {
+    this.unsubscribeTenants = await this.$store.dispatch(
+      'polling/subscribe',
+      'tenants'
+    )
+  },
   beforeDestroy() {
     window.removeEventListener('resize', this.resizeChart)
 
     this.interactionGroup.on('mouseout', null)
+
+    this.unsubscribeTenants()
   },
   methods: {
     barMouseover(e) {

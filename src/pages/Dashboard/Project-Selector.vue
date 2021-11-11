@@ -17,7 +17,8 @@ export default {
         : {
             name: 'All Projects',
             id: null
-          }
+          },
+      unsubscribeProjects: null
     }
   },
   computed: {
@@ -85,6 +86,15 @@ export default {
         this.projectSelect = val.params.id
       }
     }
+  },
+  async beforeMount() {
+    this.unsubscribeProjects = await this.$store.dispatch(
+      'polling/subscribe',
+      'projects'
+    )
+  },
+  beforeDestroy() {
+    this.unsubscribeProjects()
   },
   methods: {
     projectSelectTitleClass(item) {

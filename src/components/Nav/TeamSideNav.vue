@@ -25,8 +25,9 @@ export default {
         flow: 'pi-flow',
         task: 'pi-task'
       },
-      flowsUnWatch: null,
-      projectsUnWatch: null
+      unwatchFlows: null,
+      unwatchProjects: null,
+      unsubscribeData: null
     }
   },
 
@@ -80,20 +81,21 @@ export default {
     }
   },
   watch: {
-    isOpen(val) {
+    async isOpen(val) {
       if (val) {
-        clearTimeout(this.activateTimeout)
-        this.activateTimeout = setTimeout(() => {
-          this.$refs['drawer'].focus()
-        }, 250)
-
-        this.flowsUnWatch = this.$watch('flows', this.updateItems)
-        this.projectsUnWatch = this.$watch('projects', this.updateItems)
-
+        this.focusDrawer()
         this.updateItems()
+
+        this.unwatchFlows = this.$watch('flows', this.updateItems)
+        this.unwatchProjects = this.$watch('projects', this.updateItems)
+        this.unsubscribeData = await this.$store.dispatch('polling/subscribe', [
+          'flows',
+          'projects'
+        ])
       } else {
-        this.flowsUnWatch()
-        this.projectsUnWatch()
+        this.unwatchFlows()
+        this.unwatchProjects()
+        this.unsubscribeData()
       }
     }
   },
@@ -113,6 +115,12 @@ export default {
   methods: {
     ...mapMutations('sideNav', ['close', 'open']),
     ...mapMutations('data', ['addTasks']),
+    focusDrawer() {
+      clearTimeout(this.activateTimeout)
+      this.activateTimeout = setTimeout(() => {
+        this.$refs['drawer'].focus()
+      }, 250)
+    },
     closeAll() {
       this.$refs['tree'].close()
     },

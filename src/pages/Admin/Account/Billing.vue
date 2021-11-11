@@ -14,7 +14,8 @@ export default {
   data() {
     return {
       editCardDetails: false,
-      loading: false
+      loading: false,
+      unsubscribeTenants: null
     }
   },
   computed: {
@@ -47,6 +48,15 @@ export default {
           d.id == this.tenant?.stripe_customer?.default_source
       )
     }
+  },
+  async beforeMount() {
+    this.unsubscribeTenants = await this.$store.dispatch(
+      'polling/subscribe',
+      'tenants'
+    )
+  },
+  beforeDestroy() {
+    this.unsubscribeTenants()
   },
   methods: {
     ...mapActions('tenant', ['getTenants']),
