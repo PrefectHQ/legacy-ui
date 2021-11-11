@@ -19,7 +19,7 @@ const CRON_DAY_MONTH_REGEX = /^(\*{1})$|(^(\*\/)?(3[01]|[12][0-9]|[1-9])(?:[,-/]
 
 // 1[0-2]|[1-9]
 // Tests: https://regex101.com/r/dPw34Y/1
-const CRON_MONTH_REGEX = /^(\*{1})$|(^(\*\/)?(1[0-2]|[1-9])(?:[,-/](1[0-2]|[1-9]|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec))*$)|(^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(?:[,-/](jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec))*$)/i
+const CRON_MONTH_REGEX = /^(\*{1})$|(^(\*\/)?(1[0-2]|[1-9])(?:[,-/](1[0-2]|[1-9]))*$)|(^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(?:[,-/](jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec))*$)/i
 
 // [0-6]
 // Tests: https://regex101.com/r/G4cbea/1
