@@ -4,12 +4,27 @@
 
 ### Features and Improvements
 
+- None
+
+### Bugfixes
+
+- None
+
+## 2021-11-09
+
+### Features and Improvements
+
 - When creating/editing schedule, make action button available across tabs - [#1096](https://github.com/PrefectHQ/ui/pull/1096)
 
 ### Bugfixes
+
 - Removed unused locale files from moment dependency - [#1109](https://github.com/PrefectHQ/ui/pull/1109)
 - Moved away from discouraged per-method-packaging of lodash - [#1107](https://github.com/PrefectHQ/ui/pull/1107)
-- Removed unnecessary dependency preventing us from tree shaking highlightjs - [#1108](https://github.com/PrefectHQ/ui/pull/1108) 
+- Removed unnecessary dependency preventing us from tree shaking highlightjs - [#1108](https://github.com/PrefectHQ/ui/pull/1108)
+
+### Security
+
+- Bump GraphiQL version to address security vulnerability - [#1117](https://github.com/PrefectHQ/ui/pull/1117)
 
 - Allow users to search for flows by both flow id and flow group id - [#1089](https://github.com/PrefectHQ/ui/pull/1089)
 
