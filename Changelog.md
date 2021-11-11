@@ -4,7 +4,7 @@
 
 ### Features and Improvements
 
-- None
+- Fixed link to artifacts docs
 
 ### Bugfixes
 
@@ -25,6 +25,8 @@
 ### Security
 
 - Bump GraphiQL version to address security vulnerability - [#1117](https://github.com/PrefectHQ/ui/pull/1117)
+
+- Allow users to search for flows by both flow id and flow group id - [#1089](https://github.com/PrefectHQ/ui/pull/1089)
 
 ## 2021-11-01
 
