@@ -16,11 +16,11 @@ export default {
   data() {
     return {
       headers: [
-        { text: 'Name', value: 'name', width: '20%' },
-        { text: 'Max Retries', value: 'max_retries', width: '15%' },
-        { text: 'Retry Delay', value: 'retry_delay', width: '15%' },
-        { text: 'Class', value: 'type', width: '20%' },
-        { text: 'Trigger', value: 'trigger', width: '20%' }
+        { text: 'Name', value: 'name', width: '30%' },
+        { text: 'Max Retries', value: 'max_retries', width: '10%' },
+        { text: 'Retry Delay', value: 'retry_delay', width: '10%' },
+        { text: 'Class', value: 'type', width: '15%' },
+        { text: 'Trigger', value: 'trigger', width: '15%' }
       ],
       itemsPerPage: 15,
       loadingKey: 0,
