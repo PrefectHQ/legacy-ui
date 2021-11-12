@@ -1,6 +1,14 @@
 <script>
 import { durationDifference } from '@/utils/dateTime'
-import { getMillisecondsUntilNextMinute } from '@/utils/dateTime'
+import { toPlural } from '@/utils/string'
+import {
+  MS_PER_SECOND,
+  MS_PER_MINUTE,
+  MS_PER_HOUR,
+  getMillisecondsUntilNextSecond,
+  getMillisecondsUntilNextMinute,
+  getMillisecondsUntilNextHour
+} from '@/utils/dateTime'
 
 export default {
   props: {
@@ -17,29 +25,42 @@ export default {
   data() {
     return {
       duration: null,
-      interval: null
+      interval: null,
+      intervalBlocks: {
+        second: {
+          msInBlock: MS_PER_SECOND,
+          msUntilNextBlock: getMillisecondsUntilNextSecond
+        },
+        minute: {
+          msInBlock: MS_PER_MINUTE,
+          msUntilNextBlock: getMillisecondsUntilNextMinute
+        },
+        hour: {
+          msInBlock: MS_PER_HOUR,
+          msUntilNextBlock: getMillisecondsUntilNextHour
+        }
+      }
     }
   },
   computed: {
-    days() {
-      return this.duration?.days
+    blocks() {
+      return Object.entries(this.duration ?? {})
     },
-    hours() {
-      return this.duration?.hours
-    },
-    minutes() {
-      return this.duration?.minutes
+    smallestBlock() {
+      const blocks = Object.keys(this.duration ?? {})
+        .map(key => this.intervalBlocks[key])
+        .sort((a, b) => a.msInBlock - b.msInBlock)
+
+      return blocks.length ? blocks[0] : null
     }
   },
   watch: {
     endTime() {
-      this.updateDuration()
-      this.triggerUpdateDurationIntervalAtNextMinute()
+      this.startIntervalAtNextBlock()
     }
   },
   mounted() {
-    this.updateDuration()
-    this.triggerUpdateDurationIntervalAtNextMinute()
+    this.startIntervalAtNextBlock()
   },
   beforeDestroy() {
     clearInterval(this.interval)
@@ -51,47 +72,47 @@ export default {
         this.endTime ? new Date(this.endTime) : new Date()
       )
     },
-    triggerUpdateDurationIntervalAtNextMinute() {
+    startIntervalAtNextBlock() {
       clearInterval(this.interval)
-      const millisecondsUntilNextMinute = getMillisecondsUntilNextMinute()
+      this.updateDuration()
+
+      if (this.endTime) {
+        return
+      }
 
       this.interval = setTimeout(
-        this.updateDurationOnMinuteInterval,
-        millisecondsUntilNextMinute
+        this.startInterval,
+        this.smallestBlock.msUntilNextBlock()
       )
     },
-    updateDurationOnMinuteInterval() {
+    startInterval() {
       this.updateDuration()
-      this.interval = setInterval(this.updateDuration, 60000)
+
+      this.interval = setInterval(
+        this.updateDuration,
+        this.smallestBlock.msInBlock
+      )
     },
-    plural(word, count) {
-      return count == 1 ? word : `${word}s`
-    }
+    toPlural
   }
 }
 </script>
 
 <template>
   <span class="duration-span">
-    <span class="duration-span__days">
-      {{ days }} {{ plural('day', days) }}
-    </span>
-    <span class="duration-span__hours">
-      {{ hours }} {{ plural('hour', hours) }}
-    </span>
-    <span class="duration-span__minutes">
-      {{ minutes }} {{ plural('minute', minutes) }}
+    <span
+      v-for="[key, value] in blocks"
+      :key="key"
+      class="duration-span__block"
+    >
+      {{ value }} {{ toPlural(key, value) }}
     </span>
   </span>
 </template>
 
 <style lang="scss" scoped>
-.duration-span__days,
-.duration-span__hours {
+.duration-span__block:first-child {
   margin-right: 2px;
-
-  &::after {
-    content: ',';
-  }
+  content: ',';
 }
 </style>

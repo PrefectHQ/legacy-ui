@@ -1,10 +1,10 @@
 import { duration } from '@/utils/moment'
 import moment from '@/utils/moment'
 
-const MS_PER_SECOND = 1000
-const MS_PER_MINUTE = MS_PER_SECOND * 60
-const MS_PER_HOUR = MS_PER_MINUTE * 60
-const MS_PER_DAY = MS_PER_HOUR * 24
+export const MS_PER_SECOND = 1000
+export const MS_PER_MINUTE = MS_PER_SECOND * 60
+export const MS_PER_HOUR = MS_PER_MINUTE * 60
+export const MS_PER_DAY = MS_PER_HOUR * 24
 
 export const runTimeToEnglish = (startDate, endDate) => {
   if (
@@ -132,23 +132,34 @@ export function isIsoDateString(value) {
   return /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d/.test(value)
 }
 
+export function getMillisecondsUntilNextSecond() {
+  const now = new Date()
+  return MS_PER_SECOND - now.getMilliseconds()
+}
+
 export function getMillisecondsUntilNextMinute() {
-  return 60000 - new Date().getSeconds() * 1000 + new Date().getMilliseconds()
+  const now = new Date()
+  return MS_PER_MINUTE - now.getSeconds() * getMillisecondsUntilNextSecond()
+}
+
+export function getMillisecondsUntilNextHour() {
+  const now = new Date()
+  return MS_PER_HOUR - now.getMinutes() * getMillisecondsUntilNextMinute()
 }
 
 export function durationDifference(start, end) {
   const difference = end - start
-  const days = Math.floor(difference / MS_PER_DAY)
-  const hours = Math.floor((difference % MS_PER_DAY) / MS_PER_HOUR)
-  const minutes = Math.floor((difference % MS_PER_HOUR) / MS_PER_MINUTE)
-  const seconds = Math.floor((difference % MS_PER_MINUTE) / MS_PER_SECOND)
-  const milliseconds = Math.floor(difference % MS_PER_SECOND)
 
-  return {
-    milliseconds,
-    seconds,
-    minutes,
-    hours,
-    days
-  }
+  return Object.entries({
+    day: Math.floor(difference / MS_PER_DAY),
+    hour: Math.floor((difference % MS_PER_DAY) / MS_PER_HOUR),
+    minute: Math.floor((difference % MS_PER_HOUR) / MS_PER_MINUTE),
+    second: Math.floor((difference % MS_PER_MINUTE) / MS_PER_SECOND)
+  }).reduce((duration, [key, value]) => {
+    if (Object.keys(duration).length < 2 && value > 0) {
+      duration[key] = value
+    }
+
+    return duration
+  }, {})
 }
