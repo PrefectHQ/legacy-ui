@@ -3,7 +3,6 @@
 import { mapGetters, mapActions } from 'vuex'
 
 import DateTimeSelector from '@/components/RunConfig/DateTimeSelector'
-import DictInput from '@/components/CustomInputs/DictInput'
 import ExternalLink from '@/components/ExternalLink'
 import ListInput from '@/components/CustomInputs/ListInput'
 import MenuTooltip from '@/components/MenuTooltip'
@@ -13,7 +12,9 @@ import { parametersMixin } from '@/mixins/parametersMixin.js'
 import throttle from 'lodash/throttle'
 import { adjectives } from '@/components/RunConfig/adjectives'
 import { animals } from '@/components/RunConfig/animals'
-import { runConfigs } from '@/utils/runConfigs'
+import { isValidJson, tryParseJson, tryFormatJson } from '@/utils/json'
+import CodeInput from '@/components/CustomInputs/CodeInput'
+import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
 
 const adjectivesLength = adjectives.length
 const animalsLength = animals.length
@@ -21,11 +22,12 @@ const animalsLength = animals.length
 export default {
   components: {
     DateTimeSelector,
-    DictInput,
     ExternalLink,
     ListInput,
     MenuTooltip,
-    RunConfig
+    RunConfig,
+    CodeInput,
+    ResettableWrapper
   },
   mixins: [formatTime, parametersMixin],
   props: {
@@ -57,7 +59,7 @@ export default {
       parameters: null,
 
       // Context
-      context: {},
+      context: null,
       labels: null,
 
       // Schedule
@@ -78,31 +80,58 @@ export default {
       showAdvanced: false,
       showParameters: this.flow.parameters?.length > 0,
       parameterDefaults: this.flow.parameters,
-      parameterJsonMode: false,
 
-      when: 'now'
+      when: 'now',
+      runConfigs: {
+        LocalRun: {
+          label: 'Local',
+          icon: 'fad fa-laptop-house'
+        },
+        UniversalRun: {
+          label: 'Universal',
+          icon: 'fad fa-globe'
+        },
+        DockerRun: {
+          label: 'Docker',
+          icon: 'fab fa-docker'
+        },
+        KubernetesRun: {
+          label: 'Kubernetes',
+          icon: 'pi-kubernetes'
+        },
+        ECSRun: {
+          label: 'ECS',
+          icon: 'fab fa-aws'
+        }
+      }
     }
   },
   computed: {
     ...mapGetters('tenant', ['tenant', 'role']),
-    parameterItems() {
-      return this.defaultParameters?.map(parameter => {
-        return {
-          disabled: true,
-          key: parameter.name,
-          value: parameter.default,
-          required: parameter.required
-        }
-      })
+    contextValue: {
+      get() {
+        return tryParseJson(this.context)
+      },
+      set(value) {
+        this.context = tryFormatJson(value)
+      }
     },
     contextModified() {
-      if (!this.context) return false
-      return Object.keys(this.context).filter(c => c !== '').length > 0
+      if (!this.contextValue) return false
+      return Object.keys(this.contextValue).filter(c => c !== '').length > 0
+    },
+    parametersValue: {
+      get() {
+        return tryParseJson(this.parameters)
+      },
+      set(value) {
+        this.parameters = tryFormatJson(value)
+      }
     },
     parametersModified() {
-      if (!this.parameters) return false
+      if (!this.parametersValue) return false
 
-      const entries = Object.entries(this.parameters)
+      const entries = Object.entries(this.parametersValue)
       const defaults = Object.fromEntries(
         this.parameterDefaults?.map(entry => [entry.name, entry.default]) ?? []
       )
@@ -115,19 +144,19 @@ export default {
       return keysModified || valuesModified
     },
     runConfigTemplate() {
-      if (!this.runConfig) return
-      return runConfigs[this.runConfig.type]
+      return this.runConfig && this.runConfigs[this.runConfig.type]
     }
   },
   destroyed() {
     window.removeEventListener('scroll', this.handleScroll)
   },
-  mounted() {
-    this.parameters = this.defaultParameters.reduce((acc, param) => {
+  created() {
+    this.parametersValue = this.defaultParameters.reduce((acc, param) => {
       acc[param.name] = param.default
       return acc
     }, {})
-    this.runConfig = { ...this.flow.run_config }
+
+    this.resetRunConfigValues()
 
     // run config > flow group > flow group run config > flow run config > flow > flow environment ?
     if (this.flowGroup.labels?.length > 0) {
@@ -147,18 +176,14 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     async run() {
-      const parseObject = obj => {
-        if (!obj) return
-        Object.keys(obj).forEach(key => {
-          try {
-            if (typeof obj[key] == 'string') {
-              obj[key] = JSON.parse(obj[key])
-            }
-          } catch {
-            //
-          }
+      if (!this.validate()) {
+        this.setAlert({
+          alertShow: true,
+          alertMessage: 'Your run configuration has errors.',
+          alertType: 'error'
         })
-        return obj
+
+        return
       }
 
       try {
@@ -169,16 +194,12 @@ export default {
         const { data, errors } = await this.$apollo.mutate({
           mutation: require('@/graphql/Mutations/create-flow-run.gql'),
           variables: {
-            context: parseObject(this.context),
+            context: this.contextValue,
             id: this.flow.id,
             flowRunName: this.flowRunName,
-            parameters: this.parameterJsonMode
-              ? this.parameters
-              : parseObject(this.parameters),
+            parameters: this.parametersValue,
             scheduledStartTime: this.scheduledStartDateTime,
-            runConfig: this.runConfig?.type
-              ? { ...this.runConfig, labels: [] }
-              : null,
+            runConfig: this.getRunConfigValues(),
             labels: this.labels
           },
           errorPolicy: 'all'
@@ -196,11 +217,39 @@ export default {
         this.loading = false
       }
     },
-    handleToggleJsonEditor(val) {
-      this.parameterJsonMode = val
+    validate() {
+      if (!this.$refs.runConfig) {
+        return true
+      }
+      return this.$refs.runConfig.validate()
     },
-    handleLabelInput(val) {
-      this.labels = val
+    getRunConfigValues() {
+      if (!this.runConfig?.type) {
+        return null
+      }
+
+      const runConfig = { ...this.runConfig }
+      const jsonProperties = [
+        'env',
+        'host_config',
+        'job_template',
+        'run_task_kwargs',
+        'task_definition'
+      ]
+      jsonProperties.forEach(
+        prop => (runConfig[prop] = this.getRunConfigValue(prop))
+      )
+
+      return runConfig
+    },
+    getRunConfigValue(prop) {
+      const value = this.runConfig[prop]
+
+      if (value && isValidJson(value)) {
+        return tryParseJson(value)
+      }
+
+      return value
     },
     generateRandomName() {
       const adjective = adjectives[Math.floor(Math.random() * adjectivesLength)]
@@ -233,36 +282,14 @@ export default {
     },
     overrideLoggingEnvironmentVariable() {
       if (this.loggingLevel !== 'DEFAULT') {
-        this.runConfig.env = {
-          ...this.runConfig.env,
-          PREFECT__LOGGING__LEVEL: this.loggingLevel
-        }
+        const env = this.getRunConfigValue('env') ?? {}
+        env.PREFECT__LOGGING__LEVEL = this.loggingLevel
+
+        this.runConfig.env = tryFormatJson(env)
       }
     },
-    validContext() {
-      if (!this.$refs.contextRef) {
-        return true
-      }
-
-      // Check JSON using the JsonInput component's validation
-      const jsonValidationResult = this.$refs.contextRef.validateJson()
-
-      if (jsonValidationResult === 'SyntaxError') {
-        this.errorInContextInput = true
-        this.showErrorAlert(`
-          There is a syntax error in your flow context JSON.
-          Please correct the error and try again.
-        `)
-        return false
-      }
-
-      if (jsonValidationResult === 'MissingError') {
-        this.errorInContextInput = true
-        this.showErrorAlert('Please enter your flow context as a JSON object.')
-        return false
-      }
-
-      return true
+    resetRunConfigValues() {
+      this.runConfig = { type: 'UniversalRun', ...this.flow.run_config }
     },
     handleScroll: throttle(
       function() {
@@ -322,27 +349,29 @@ export default {
           </v-col>
 
           <v-col cols="12" md="9">
-            <div class=" mt-4 mt-md-0 d-flex align-center">
-              <v-btn
-                color="primary"
-                fab
-                depressed
-                x-small
-                title="Randomize run name"
-                @click="flowRunName = generateRandomName()"
-              >
-                <v-icon>fad fa-random</v-icon>
-              </v-btn>
+            <resettable-wrapper v-model="flowRunName">
+              <div class=" mt-4 mt-md-0 d-flex align-center">
+                <v-btn
+                  color="primary"
+                  fab
+                  depressed
+                  x-small
+                  title="Randomize run name"
+                  @click="flowRunName = generateRandomName()"
+                >
+                  <v-icon>fad fa-random</v-icon>
+                </v-btn>
 
-              <v-text-field
-                v-model="flowRunName"
-                placeholder="name"
-                class="ml-2 text-h5"
-                hide-details
-                outlined
-                dense
-              />
-            </div>
+                <v-text-field
+                  v-model="flowRunName"
+                  placeholder="name"
+                  class="ml-2 text-h5"
+                  hide-details
+                  outlined
+                  dense
+                />
+              </div>
+            </resettable-wrapper>
           </v-col>
         </v-row>
 
@@ -429,13 +458,18 @@ export default {
           </v-col>
 
           <v-col cols="12" md="9" class="mt-n4 mt-md-0 ">
-            <DictInput
+            <resettable-wrapper
               v-model="parameters"
-              :dict="parameterItems"
-              disable-edit
-              allow-reset
-              @toggle-json-editor="handleToggleJsonEditor"
-            />
+              class="resettable-dictionary-json"
+            >
+              <code-input
+                v-model="parameters"
+                show-types
+                readonly-key
+                disable-add
+                disable-remove
+              />
+            </resettable-wrapper>
           </v-col>
         </v-row>
 
@@ -466,11 +500,7 @@ export default {
           </v-col>
 
           <v-col cols="12" md="9" class="mt-n4 mt-md-0 text-body-1">
-            <ListInput
-              label="Labels"
-              :value="labels"
-              @input="handleLabelInput"
-            />
+            <ListInput v-model="labels" label="Labels" />
           </v-col>
         </v-row>
 
@@ -506,28 +536,34 @@ export default {
             </v-col>
 
             <v-col cols="12" md="9" class="mt-n4 mt-md-0">
-              <v-select v-model="loggingLevel" outlined :items="loggingLevels">
-                <template #item="{ item }">
-                  <div>
-                    <v-chip
-                      class="ma-2 debuglevel cursor-pointer"
-                      :class="item.text.toLowerCase()"
-                    >
-                      {{ item.text }}
-                    </v-chip>
-                  </div>
-                </template>
-                <template #selection="{ item }">
-                  <div>
-                    <v-chip
-                      class="ma-2 debuglevel cursor-pointer"
-                      :class="item.text.toLowerCase()"
-                    >
-                      {{ item.text }}
-                    </v-chip>
-                  </div>
-                </template>
-              </v-select>
+              <resettable-wrapper v-model="loggingLevel">
+                <v-select
+                  v-model="loggingLevel"
+                  outlined
+                  :items="loggingLevels"
+                >
+                  <template #item="{ item }">
+                    <div>
+                      <v-chip
+                        class="ma-2 debuglevel cursor-pointer"
+                        :class="item.text.toLowerCase()"
+                      >
+                        {{ item.text }}
+                      </v-chip>
+                    </div>
+                  </template>
+                  <template #selection="{ item }">
+                    <div>
+                      <v-chip
+                        class="ma-2 debuglevel cursor-pointer"
+                        :class="item.text.toLowerCase()"
+                      >
+                        {{ item.text }}
+                      </v-chip>
+                    </div>
+                  </template>
+                </v-select>
+              </resettable-wrapper>
             </v-col>
           </v-row>
         </v-row>
@@ -559,34 +595,49 @@ export default {
           </v-col>
 
           <v-col cols="12" md="9" class="mt-n4 mt-md-0 text-body-1">
-            <DictInput v-model="context" />
+            <resettable-wrapper
+              v-model="context"
+              class="resettable-dictionary-json"
+            >
+              <code-input v-model="context" show-types />
+            </resettable-wrapper>
           </v-col>
         </v-row>
 
         <v-row v-if="showAdvanced" class="mt-8" no-gutters>
-          <div class="text-h5">
-            Run Configuration
-            <MenuTooltip>
-              <p>
-                The settings that determine where and how your flow should be
-                executed. Each run config type corresponds to an agent; options
-                displayed depend on the type of config selected.
-              </p>
+          <div class="d-flex flex-grow-1 justify-space-between">
+            <div class="text-h5">
+              Run Configuration
+              <MenuTooltip>
+                <p>
+                  The settings that determine where and how your flow should be
+                  executed. Each run config type corresponds to an agent;
+                  options displayed depend on the type of config selected.
+                </p>
 
-              <p>
-                Refer to the
-                <ExternalLink
-                  href="https://docs.prefect.io/orchestration/flow_config/run_configs.html#labels"
-                  >documentation</ExternalLink
-                >
-                for more details on run configs, including setting them at
-                registration time.
-              </p>
-            </MenuTooltip>
-            <span class="text-body-2 text--disabled ml-2">(Optional)</span>
+                <p>
+                  Refer to the
+                  <ExternalLink
+                    href="https://docs.prefect.io/orchestration/flow_config/run_configs.html#labels"
+                    >documentation</ExternalLink
+                  >
+                  for more details on run configs, including setting them at
+                  registration time.
+                </p>
+              </MenuTooltip>
+              <span class="text-body-2 text--disabled ml-2">(Optional)</span>
+            </div>
+            <v-btn
+              class="text-none"
+              color="utilGrayLight"
+              x-small
+              depressed
+              @click="resetRunConfigValues"
+              >Reset to default values</v-btn
+            >
           </div>
 
-          <RunConfig v-model="runConfig" />
+          <RunConfig ref="runConfig" v-model="runConfig" />
         </v-row>
 
         <div class="text-center">

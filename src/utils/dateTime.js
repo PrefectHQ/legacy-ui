@@ -122,3 +122,7 @@ export const roundedOneAgo = unitOftime => {
     .startOf(roundedTo)
     .format()
 }
+
+export function isIsoDateString(value) {
+  return /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d/.test(value)
+}
