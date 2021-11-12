@@ -1,11 +1,13 @@
 <script>
 import NewProjectDialog from '@/pages/Dashboard/NewProject-Dialog'
 import { mapGetters } from 'vuex'
+import { pollsProjectsMixin } from '@/mixins/polling/pollsProjectsMixin'
 
 export default {
   components: {
     NewProjectDialog
   },
+  mixins: [pollsProjectsMixin],
   data() {
     return {
       newProjectDialog: false,
@@ -17,8 +19,7 @@ export default {
         : {
             name: 'All Projects',
             id: null
-          },
-      unsubscribeProjects: null
+          }
     }
   },
   computed: {
@@ -86,15 +87,6 @@ export default {
         this.projectSelect = val.params.id
       }
     }
-  },
-  async beforeMount() {
-    this.unsubscribeProjects = await this.$store.dispatch(
-      'polling/subscribe',
-      'projects'
-    )
-  },
-  beforeDestroy() {
-    this.unsubscribeProjects()
   },
   methods: {
     projectSelectTitleClass(item) {

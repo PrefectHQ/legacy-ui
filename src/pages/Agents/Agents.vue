@@ -1,6 +1,7 @@
 <script>
 import uniq from 'lodash/uniq'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { pollsAgentsMixin } from '@/mixins/polling/pollsAgentsMixin'
 import LogRocket from 'logrocket'
 import SubPageNav from '@/layouts/SubPageNav'
 import { formatTime } from '@/mixins/formatTimeMixin.js'
@@ -15,7 +16,7 @@ export default {
     AgentTile,
     SubPageNav
   },
-  mixins: [formatTime],
+  mixins: [formatTime, pollsAgentsMixin],
   data() {
     return {
       cleanUpDialog: false,
@@ -27,8 +28,7 @@ export default {
       statusInput: STATUSES,
       clearingAgents: false,
       clearingError: false,
-      tab: 'overview',
-      unsubscribeAgents: null
+      tab: 'overview'
     }
   },
   computed: {
@@ -83,15 +83,6 @@ export default {
         this.loading = 0
       }, 5000)
     }
-  },
-  async beforeMount() {
-    this.unsubscribeAgents = await this.$store.dispatch(
-      'polling/subscribe',
-      'agents'
-    )
-  },
-  beforeDestroy() {
-    this.unsubscribeAgents()
   },
   methods: {
     ...mapActions('alert', ['setAlert']),

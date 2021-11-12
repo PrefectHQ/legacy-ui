@@ -16,7 +16,6 @@ export default {
   },
   data() {
     return {
-      activateTimeout: null,
       items: [],
       newProjectDialog: false,
       types: {
@@ -83,7 +82,6 @@ export default {
   watch: {
     async isOpen(val) {
       if (val) {
-        this.focusDrawer()
         this.updateItems()
 
         this.unwatchFlows = this.$watch('flows', this.updateItems)
@@ -109,17 +107,14 @@ export default {
     // Removes the t search shortcut event listener when
     // the component is destroyed
     window.removeEventListener('keyup', this.handleKeyboardShortcut)
-
-    clearTimeout(this.activateTimeout)
   },
   methods: {
     ...mapMutations('sideNav', ['close', 'open']),
     ...mapMutations('data', ['addTasks']),
-    focusDrawer() {
-      clearTimeout(this.activateTimeout)
-      this.activateTimeout = setTimeout(() => {
-        this.$refs['drawer'].focus()
-      }, 250)
+    onIntersect([entry]) {
+      if (entry.isIntersecting) {
+        entry.target.focus()
+      }
     },
     closeAll() {
       this.$refs['tree'].close()
@@ -277,7 +272,7 @@ export default {
         </div>
 
         <div
-          ref="drawer"
+          v-intersect="{ handler: onIntersect }"
           class="focusable tree-view flex-grow-1 flex-shrink-1"
           tabindex="-1"
         >

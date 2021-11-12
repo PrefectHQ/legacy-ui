@@ -1,6 +1,7 @@
 <script>
 import LogRocket from 'logrocket'
 import { mapActions, mapGetters } from 'vuex'
+import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
 import { clearCache } from '@/vue-apollo'
 
 import { adjectives } from '@/components/RunConfig/adjectives'
@@ -10,6 +11,7 @@ const adjectivesLength = adjectives.length
 const animalsLength = animals.length
 
 export default {
+  mixins: [pollsTenantsMixin],
   data() {
     return {
       currentTeam: null,
@@ -20,8 +22,7 @@ export default {
 
       // Regexes to check if a slug is invalid
       slugCharRegex: /^[a-z0-9|-]*$/,
-      dashPositionRegex: /^(-)|-{2,}|(-)$/,
-      unsubscribeTenants: null
+      dashPositionRegex: /^(-)|-{2,}|(-)$/
     }
   },
   computed: {
@@ -39,15 +40,6 @@ export default {
   mounted() {
     this.teamSlug = this.slugifyString(this.teamName)
     this.currentTeam = this.tenant.slug
-  },
-  async beforeMount() {
-    this.unsubscribeTenants = await this.$store.dispatch(
-      'polling/subscribe',
-      'tenants'
-    )
-  },
-  beforeDestroy() {
-    this.unsubscribeTenants()
   },
   methods: {
     ...mapActions('alert', ['addNotification', 'updateNotification']),

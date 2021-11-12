@@ -1,5 +1,6 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { pollsProjectsMixin } from '@/mixins/polling/pollsProjectsMixin'
 import AddAction from '@/pages/Dashboard/Automations/AddAction'
 import CreateAgentConfigForm from '@/pages/Dashboard/Automations/CreateAgentConfigForm'
 import {
@@ -19,6 +20,7 @@ export default {
     ConfirmDialog,
     UpgradeBadge
   },
+  mixins: [pollsProjectsMixin],
   props: {
     hookDetail: {
       type: Object,
@@ -73,8 +75,7 @@ export default {
         notNull: val => val > 0 || 'Duration must be greater than 0 seconds'
       },
       animated: false,
-      agentConfigId: '',
-      unsubscribeProjects: null
+      agentConfigId: ''
     }
   },
   computed: {
@@ -331,15 +332,6 @@ export default {
       : {
           name: 'does this'
         }
-  },
-  async beforeMount() {
-    this.unsubscribeProjects = await this.$store.dispatch(
-      'polling/subscribe',
-      'projects'
-    )
-  },
-  beforeDestroy() {
-    this.unsubscribeProjects()
   },
   methods: {
     ...mapActions('alert', ['setAlert']),

@@ -1,6 +1,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin'
+import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
 import AcceptConfirmInputRow from '@/components/AcceptConfirmInputRow'
 import { clearCache } from '@/vue-apollo'
 
@@ -37,12 +38,11 @@ const tenantProtectedRoutes = [
 
 export default {
   components: { AcceptConfirmInputRow },
-  mixins: [handleMembershipInvitations],
+  mixins: [handleMembershipInvitations, pollsTenantsMixin],
   data() {
     return {
       loading: false,
-      model: false,
-      unsubscribeTenants: null
+      model: false
     }
   },
   computed: {
@@ -76,15 +76,6 @@ export default {
           })
         : this.tenants
     }
-  },
-  async beforeMount() {
-    this.unsubscribeTenants = await this.$store.dispatch(
-      'polling/subscribe',
-      'tenants'
-    )
-  },
-  beforeDestroy() {
-    this.unsubscribeTenants()
   },
   methods: {
     ...mapActions('alert', ['addNotification', 'updateNotification']),

@@ -7,6 +7,7 @@ import AgentFlowRunHistory from '@/pages/Agents/AgentFlowRunHistory'
 import AgentRunsInProgress from '@/pages/Dashboard/InProgress-Tile.vue'
 import SubmittableRuns from '@/pages/Agents/SubmittableRuns'
 import FlowRunTableTile from '@/pages/Agents/AgentFlowRunTable-Tile'
+import { pollsAgentsMixin } from '@/mixins/polling/pollsAgentsMixin'
 
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 
@@ -21,13 +22,13 @@ export default {
     SubmittableRuns,
     FlowRunTableTile
   },
+  mixins: [pollsAgentsMixin],
   data() {
     return {
       tab: 'overview',
       tabs: [{ name: 'overview', target: 'overview' }],
       loading: false,
-      showConfirmDialog: false,
-      unsubscribeAgents: null
+      showConfirmDialog: false
     }
   },
   computed: {
@@ -59,15 +60,6 @@ export default {
     if (!this.agentDetails) {
       this.$router.push({ name: 'agents' })
     }
-  },
-  async beforeMount() {
-    this.unsubscribeAgents = await this.$store.dispatch(
-      'polling/subscribe',
-      'agents'
-    )
-  },
-  beforeDestroy() {
-    this.unsubscribeAgents()
   },
   methods: {
     ...mapMutations('agent', ['setAgents']),

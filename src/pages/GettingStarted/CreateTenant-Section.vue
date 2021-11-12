@@ -1,28 +1,20 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
 
 export default {
+  mixins: [pollsTenantsMixin],
   data() {
     return {
       serverUrlInput: this.serverUrl,
       error: false,
       loading: false,
-      success: this.tenants?.length > 0,
-      unsubscribeTenants: null
+      success: this.tenants?.length > 0
     }
   },
   computed: {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'tenants'])
-  },
-  async beforeMount() {
-    this.unsubscribeTenants = await this.$store.dispatch(
-      'polling/subscribe',
-      'tenants'
-    )
-  },
-  beforeDestroy() {
-    this.unsubscribeTenants()
   },
   methods: {
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),

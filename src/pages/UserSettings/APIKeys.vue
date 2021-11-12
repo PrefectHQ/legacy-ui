@@ -1,6 +1,7 @@
 <script>
 import { setTimeout } from 'timers'
 import { mapGetters } from 'vuex'
+import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
 import DateTime from '@/components/DateTime'
 
 import Alert from '@/components/Alert'
@@ -15,7 +16,7 @@ export default {
     ConfirmDialog,
     ManagementLayout
   },
-  mixins: [formatTime],
+  mixins: [formatTime, pollsTenantsMixin],
   data() {
     return {
       createKeyDialog: false,
@@ -57,8 +58,7 @@ export default {
       label: 'Expiry Date',
       hint: 'Leave blank for an expiry of 2100-01-01 UTC',
       warning:
-        'You have selected a time in the past.  Your API key will have an expiry of 2100-01-01 UTC',
-      unsubscribeTenants: null
+        'You have selected a time in the past.  Your API key will have an expiry of 2100-01-01 UTC'
     }
   },
   computed: {
@@ -81,15 +81,6 @@ export default {
   },
   mounted() {
     return (this.newKeyTenant = this.tenant)
-  },
-  async beforeMount() {
-    this.unsubscribeTenants = await this.$store.dispatch(
-      'polling/subscribe',
-      'tenants'
-    )
-  },
-  beforeDestroy() {
-    this.unsubscribeTenants()
   },
   methods: {
     clearAlert() {

@@ -6,6 +6,7 @@ import uniqueId from 'lodash/uniqueId'
 import debounce from 'lodash/debounce'
 import throttle from 'lodash/throttle'
 import { mapGetters } from 'vuex'
+import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
 
 const d3 = Object.assign({}, d3_base, d3_regression)
 
@@ -14,6 +15,7 @@ const xAxisHeight = 40
 const startDate = new Date('2018-01-17T00:00:00+00:00')
 
 export default {
+  mixins: [pollsTenantsMixin],
   props: {
     baseline: {
       type: Number,
@@ -66,8 +68,7 @@ export default {
       previousX: null,
       previousY: null,
       x: null,
-      y: null,
-      unsubscribeTenants: null
+      y: null
     }
   },
   computed: {
@@ -290,18 +291,10 @@ export default {
   updated() {
     if (!this.chart) this.createChart()
   },
-  async beforeMount() {
-    this.unsubscribeTenants = await this.$store.dispatch(
-      'polling/subscribe',
-      'tenants'
-    )
-  },
   beforeDestroy() {
     window.removeEventListener('resize', this.resizeChart)
 
     this.interactionGroup.on('mouseout', null)
-
-    this.unsubscribeTenants()
   },
   methods: {
     barMouseover(e) {

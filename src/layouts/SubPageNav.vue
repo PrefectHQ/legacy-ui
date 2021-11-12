@@ -40,7 +40,7 @@ export default {
       )
     }
   },
-  async beforeMount() {
+  async created() {
     this.unsubscribeFlows = await this.$store.dispatch(
       'polling/subscribe',
       'flows'

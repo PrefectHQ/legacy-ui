@@ -1,6 +1,7 @@
 <script>
 /* eslint-disable vue/no-v-html */
 import { mapGetters } from 'vuex'
+import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import NavTabBar from '@/components/NavTabBar'
 import SubPageNav from '@/layouts/SubPageNav'
@@ -16,11 +17,7 @@ export default {
     NavTabBar,
     SubPageNav
   },
-  data() {
-    return {
-      unsubscribeTenants: null
-    }
-  },
+  mixins: [pollsTenantsMixin],
   computed: {
     ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('license', ['planType', 'license']),
@@ -78,15 +75,6 @@ export default {
     multitenancy() {
       return this.license?.terms.tenants > 1
     }
-  },
-  async beforeMount() {
-    this.unsubscribeTenants = await this.$store.dispatch(
-      'polling/subscribe',
-      'tenants'
-    )
-  },
-  beforeDestroy() {
-    this.unsubscribeTenants()
   }
 }
 </script>

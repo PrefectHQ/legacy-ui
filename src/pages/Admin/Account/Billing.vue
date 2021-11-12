@@ -1,9 +1,11 @@
 <script>
 import CardDetails from '@/components/Plans/CardDetails'
 import { mapActions, mapGetters } from 'vuex'
+import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
 
 export default {
   components: { CardDetails },
+  mixins: [pollsTenantsMixin],
   props: {
     page: {
       type: String,
@@ -14,8 +16,7 @@ export default {
   data() {
     return {
       editCardDetails: false,
-      loading: false,
-      unsubscribeTenants: null
+      loading: false
     }
   },
   computed: {
@@ -48,15 +49,6 @@ export default {
           d.id == this.tenant?.stripe_customer?.default_source
       )
     }
-  },
-  async beforeMount() {
-    this.unsubscribeTenants = await this.$store.dispatch(
-      'polling/subscribe',
-      'tenants'
-    )
-  },
-  beforeDestroy() {
-    this.unsubscribeTenants()
   },
   methods: {
     ...mapActions('tenant', ['getTenants']),
