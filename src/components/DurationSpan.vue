@@ -1,6 +1,8 @@
 <script>
-import { durationDifference } from '@/utils/dateTime'
-import { toPlural } from '@/utils/string'
+import {
+  durationDifference,
+  toDurationDifferenceString
+} from '@/utils/dateTime'
 import {
   MS_PER_SECOND,
   MS_PER_MINUTE,
@@ -43,8 +45,8 @@ export default {
     }
   },
   computed: {
-    blocks() {
-      return Object.entries(this.duration ?? {})
+    durationDifferenceString() {
+      return toDurationDifferenceString(this.duration ?? {})
     },
     smallestBlock() {
       const blocks = Object.keys(this.duration ?? {})
@@ -92,21 +94,14 @@ export default {
         this.updateDuration,
         this.smallestBlock.msInBlock
       )
-    },
-    toPlural
+    }
   }
 }
 </script>
 
 <template>
   <span class="duration-span">
-    <span
-      v-for="[key, value] in blocks"
-      :key="key"
-      class="duration-span__block"
-    >
-      {{ value }} {{ toPlural(key, value) }}
-    </span>
+    {{ durationDifferenceString }}
   </span>
 </template>
 

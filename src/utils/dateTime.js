@@ -1,5 +1,6 @@
 import { duration } from '@/utils/moment'
 import moment from '@/utils/moment'
+import { toPlural } from '@/utils/string'
 
 export const MS_PER_SECOND = 1000
 export const MS_PER_MINUTE = MS_PER_SECOND * 60
@@ -149,17 +150,22 @@ export function getMillisecondsUntilNextHour() {
 
 export function durationDifference(start, end) {
   const difference = end - start
+  const day = Math.floor(difference / MS_PER_DAY)
+  const hour = Math.floor((difference % MS_PER_DAY) / MS_PER_HOUR)
+  const minute = Math.floor((difference % MS_PER_HOUR) / MS_PER_MINUTE)
+  const second = Math.floor((difference % MS_PER_MINUTE) / MS_PER_SECOND)
 
-  return Object.entries({
-    day: Math.floor(difference / MS_PER_DAY),
-    hour: Math.floor((difference % MS_PER_DAY) / MS_PER_HOUR),
-    minute: Math.floor((difference % MS_PER_HOUR) / MS_PER_MINUTE),
-    second: Math.floor((difference % MS_PER_MINUTE) / MS_PER_SECOND)
-  }).reduce((duration, [key, value]) => {
-    if (Object.keys(duration).length < 2 && value > 0) {
-      duration[key] = value
-    }
+  return { day, hour, minute, second }
+}
 
-    return duration
-  }, {})
+export function toDurationDifferenceString(durationDifference) {
+  return Object.entries(durationDifference)
+    .reduce((blocks, [key, value]) => {
+      if (blocks.length < 2 && value > 0) {
+        blocks.push(`${value} ${toPlural(key, value)}`)
+      }
+
+      return blocks
+    }, [])
+    .join(', ')
 }

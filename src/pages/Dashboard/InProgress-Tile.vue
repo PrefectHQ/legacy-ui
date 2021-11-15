@@ -267,71 +267,69 @@ export default {
       </v-list>
 
       <v-virtual-scroll v-else :items="runs" height="178px" item-height="50px">
-        <v-slide-x-transition mode="out-in" leave-absolute group>
-          <template #default="{item}">
-            <div
-              :key="item.id"
-              :class="item.state == 'Cancelling' ? 'blue-grey lighten-5' : ''"
-            >
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title class="d-flex align-center">
-                    <div
-                      class="text-truncate d-inline-block"
-                      style="max-width: 50%;"
+        <template #default="{item}">
+          <div
+            :key="item.id"
+            :class="item.state == 'Cancelling' ? 'blue-grey lighten-5' : ''"
+          >
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title class="d-flex align-center">
+                  <div
+                    class="text-truncate d-inline-block"
+                    style="max-width: 50%;"
+                  >
+                    <router-link
+                      :class="
+                        item.state == 'Cancelling' ? 'text--disabled' : ''
+                      "
+                      :to="{
+                        name: 'flow',
+                        params: { id: item.flow.flow_group_id }
+                      }"
                     >
-                      <router-link
-                        :class="
-                          item.state == 'Cancelling' ? 'text--disabled' : ''
-                        "
-                        :to="{
-                          name: 'flow',
-                          params: { id: item.flow.flow_group_id }
-                        }"
-                      >
-                        {{ item.flow.name }}
-                      </router-link>
-                    </div>
-                    <div class="font-weight-bold d-inline-block">
-                      <v-icon style="font-size: 12px;">
-                        chevron_right
-                      </v-icon>
-                    </div>
+                      {{ item.flow.name }}
+                    </router-link>
+                  </div>
+                  <div class="font-weight-bold d-inline-block">
+                    <v-icon style="font-size: 12px;">
+                      chevron_right
+                    </v-icon>
+                  </div>
 
-                    <div
-                      class="text-truncate d-inline-block text--disabled"
-                      style="max-width: 35%;"
+                  <div
+                    class="text-truncate d-inline-block text--disabled"
+                    style="max-width: 35%;"
+                  >
+                    <router-link
+                      :class="
+                        item.state == 'Cancelling' ? 'text--disabled' : ''
+                      "
+                      :to="{ name: 'flow-run', params: { id: item.id } }"
                     >
-                      <router-link
-                        :class="
-                          item.state == 'Cancelling' ? 'text--disabled' : ''
-                        "
-                        :to="{ name: 'flow-run', params: { id: item.id } }"
-                      >
-                        {{ item.name }}
-                      </router-link>
-                    </div>
-                  </v-list-item-title>
-                  <v-list-item-subtitle v-if="item.state == 'Cancelling'">
-                    Cancelling...
-                  </v-list-item-subtitle>
-                  <v-list-item-subtitle v-else-if="item.start_time">
-                    Running for
-                    <DurationSpan
-                      class="font-weight-bold"
-                      :start-time="item.start_time"
-                    />
-                  </v-list-item-subtitle>
-                  <v-list-item-subtitle v-else-if="item.state == 'Submitted'">
-                    Submitted for execution
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
+                      {{ item.name }}
+                    </router-link>
+                  </div>
+                </v-list-item-title>
+                <v-list-item-subtitle v-if="item.state == 'Cancelling'">
+                  Cancelling...
+                </v-list-item-subtitle>
+                <v-list-item-subtitle v-else-if="item.start_time">
+                  Running for
+                  <DurationSpan
+                    class="font-weight-bold"
+                    :start-time="item.start_time"
+                  />
+                </v-list-item-subtitle>
+                <v-list-item-subtitle v-else-if="item.state == 'Submitted'">
+                  Submitted for execution
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
 
-              <v-divider class="my-1 mx-4 grey lighten-4" />
-            </div>
-          </template>
-        </v-slide-x-transition>
+            <v-divider class="my-1 mx-4 grey lighten-4" />
+          </div>
+        </template>
       </v-virtual-scroll>
 
       <div v-if="runs && runs.length > 3" class="pa-0 card-footer"> </div>
