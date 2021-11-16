@@ -4,7 +4,7 @@ import CodeInput from '@/components/CustomInputs/CodeInput'
 import ManagementLayout from '@/layouts/ManagementLayout'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import Alert from '@/components/Alert'
-import { parseJson } from '@/utils/json'
+import { tryParseJson } from '@/utils/json'
 
 export default {
   components: {
@@ -55,7 +55,6 @@ export default {
       rules: {
         required: val => !!val || 'This field is required.'
       },
-      invalidSecret: false,
 
       // Dialogs
       secretModifyDialog: false,
@@ -91,12 +90,6 @@ export default {
       return this.secretNames
         ?.map(secret => secret.name)
         .includes(this.secretNameInput)
-    },
-    disableConfirm() {
-      if (!this.secretNameInput) return false
-      if (!this.secretValueInput) return false
-      if (this.invalidSecret) return false
-      return true
     }
   },
   watch: {
@@ -151,7 +144,14 @@ export default {
       this.secretNameInput = null
       this.secretValueInput = null
       this.selectedTypeIndex = 0
-      this.invalidSecret = false
+    },
+    async validateAndSetSecret() {
+      if (!this.secretNameInput || !this.$refs.secretValueInput.validate()) {
+        this.handleAlert('error', 'Cannot save with errors in form.')
+        return
+      }
+
+      await this.setSecret()
     },
     async setSecret() {
       this.isSettingSecret = true
@@ -163,7 +163,7 @@ export default {
         )
       }
       const value =
-        parseJson(this.secretValueInput) ?? this.secretValueInput ?? []
+        tryParseJson(this.secretValueInput) ?? this.secretValueInput ?? []
       const secretResult = await this.$apollo.mutate({
         mutation: require('@/graphql/Secrets/set-secret.gql'),
         variables: {
@@ -381,11 +381,10 @@ export default {
     <ConfirmDialog
       v-model="secretModifyDialog"
       :dialog-props="{ 'max-width': '75vh' }"
-      :disabled="!disableConfirm"
       :loading="isSettingSecret"
       :title="isSecretUpdate ? 'Modify Secret' : 'Create New Secret'"
       @cancel="resetSelectedSecret"
-      @confirm="setSecret"
+      @confirm="validateAndSetSecret"
     >
       <span v-if="!isSecretUpdate">
         Add a secret that will allow your team to access sensitive data during
@@ -413,6 +412,7 @@ export default {
 
       <code-input
         v-if="secretModifyDialog"
+        ref="secretValueInput"
         v-model="secretValueInput"
         class="text-body-1"
         placeholder="Secret value"
