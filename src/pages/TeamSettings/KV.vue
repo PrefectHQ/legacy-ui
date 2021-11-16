@@ -35,7 +35,6 @@ export default {
         required: val => !!val || 'This field is required.'
       },
       errorMessage: '',
-      invalidKV: false,
 
       // Types
       selectedInputMode: 'text',
@@ -85,12 +84,6 @@ export default {
         return false
       }
       return this.kv?.map(kv => kv.key).includes(this.keyInput)
-    },
-    disableConfirm() {
-      if (!this.keyInput) return false
-      if (!this.KvValueInput) return false
-      if (this.invalidKV) return false
-      return true
     },
     hasEditedKvInput() {
       return this.KvValueInput != formatJson(this.item?.value)
@@ -189,9 +182,16 @@ export default {
       this.selectedKV = null
       this.keyInput = null
       this.resetKvValueInput()
-      this.invalidKV = false
       this.expanded = []
       this.isEditable = false
+    },
+    async validateAndSetKV() {
+      if (!this.keyInput || !this.$refs.KvValueInput.validate()) {
+        this.handleAlert('error', 'Cannot save with errors in form.')
+        return
+      }
+
+      await this.setKV()
     },
     async setKV() {
       this.isSettingKV = true
@@ -207,7 +207,9 @@ export default {
           return
         }
       }
-      const value = parseJson(this.KvValueInput) ?? this.KvValueInput
+      const value = isValidJson(this.KvValueInput)
+        ? parseJson(this.KvValueInput)
+        : this.KvValueInput
       const kvResult = await this.$apollo.mutate({
         mutation: require('@/graphql/KV/set-key-value.gql'),
         variables: {
@@ -440,6 +442,7 @@ export default {
                 @input="setSelectedInputMode"
               >
                 <code-input
+                  ref="KvValueInput"
                   v-model="KvValueInput"
                   class="text-body-1 mt-2"
                   :mode.sync="selectedInputMode"
@@ -450,7 +453,7 @@ export default {
                     small
                     color="primary"
                     :loading="isSettingKV"
-                    @click="setKV"
+                    @click="validateAndSetKV"
                     >Save</v-btn
                   >
                 </div>
@@ -541,11 +544,10 @@ export default {
     <ConfirmDialog
       v-model="keyModifyDialog"
       :dialog-props="{ 'max-width': '75vh' }"
-      :disabled="!disableConfirm"
       :loading="isSettingKV"
       confirm-text="Save"
       title="Create KV"
-      @confirm="setKV"
+      @confirm="validateAndSetKV"
       @cancel="resetSelectedKV"
     >
       <v-text-field
@@ -568,6 +570,7 @@ export default {
       />
 
       <code-input
+        ref="KvValueInput"
         v-model="KvValueInput"
         class="text-body-1"
         placeholder="Value"
