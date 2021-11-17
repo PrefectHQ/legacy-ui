@@ -13,6 +13,7 @@
       readonly-key
       disable-add
       disable-remove
+      @input="autoCheckOnEdit"
     />
   </resettable-wrapper>
 </template>
@@ -20,6 +21,7 @@
 <script>
 import ResettableWrapper from '@/components/CustomInputs/ResettableWrapper'
 import CodeInput from '@/components/CustomInputs/CodeInput'
+import { tryParseJson } from '@/utils/json'
 
 export default {
   name: 'ScheduleParameter',
@@ -61,6 +63,21 @@ export default {
     reset(value) {
       this.internalValue = value
       this.internalChecked = []
+    },
+    addKeyToChecked(key) {
+      if (!this.internalChecked.includes(key)) {
+        this.internalChecked.push(key)
+      }
+    },
+    autoCheckOnEdit(updated) {
+      const updatedObject = tryParseJson(updated) || {}
+      const previousObject = tryParseJson(this.value) || {}
+
+      const keysThatChanged = Object.entries(updatedObject)
+        .filter(([key, value]) => value !== previousObject[key])
+        .map(([key]) => key)
+
+      keysThatChanged.forEach(this.addKeyToChecked)
     }
   }
 }
