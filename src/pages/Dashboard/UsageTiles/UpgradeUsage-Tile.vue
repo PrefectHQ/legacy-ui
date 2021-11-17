@@ -23,7 +23,7 @@ export default {}
       >
         Upgrade
       </v-btn>
-      <v-btn small color="primary" text :to="'/team/account'">
+      <v-btn small color="primary" text :to="'/admin/account'">
         Details
       </v-btn>
     </v-card-actions>
