@@ -1,4 +1,4 @@
-export function toPlural(word, count) {
+export function toPluralString(word, count) {
   if (count == 1) {
     return word
   }

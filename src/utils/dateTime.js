@@ -1,6 +1,6 @@
 import { duration } from '@/utils/moment'
 import moment from '@/utils/moment'
-import { toPlural } from '@/utils/string'
+import { toPluralString } from '@/utils/string'
 
 export const MS_PER_SECOND = 1000
 export const MS_PER_MINUTE = MS_PER_SECOND * 60
@@ -162,7 +162,7 @@ export function toDurationDifferenceString(durationDifference) {
   return Object.entries(durationDifference)
     .reduce((blocks, [key, value]) => {
       if (blocks.length < 2 && value > 0) {
-        blocks.push(`${value} ${toPlural(key, value)}`)
+        blocks.push(`${value} ${toPluralString(key, value)}`)
       }
 
       return blocks
