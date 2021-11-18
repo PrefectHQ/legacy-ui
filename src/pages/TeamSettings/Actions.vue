@@ -5,7 +5,9 @@ import Alert from '@/components/Alert'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import ExternalLink from '@/components/ExternalLink'
 import ManagementLayout from '@/layouts/ManagementLayout'
-import DictInput from '@/components/CustomInputs/DictInput'
+import DictInput from '@/components/CustomInputs/DictInput2'
+import { formatJson } from '@/utils/json'
+
 export default {
   components: {
     Alert,
@@ -122,7 +124,9 @@ export default {
       this.alertMessage = message
       this.alertShow = true
     },
-
+    formatItemValue(item) {
+      return formatJson(item?.action_config)
+    },
     async removeAction() {
       this.isRemovingAction = true
       try {
@@ -264,17 +268,19 @@ export default {
           </template>
 
           <!-- ACTION CONFIG -->
-          <template v-slot:expanded-item="{ headers, item }">
+          <template #expanded-item="{ headers, item }">
             <td
               v-if="Object.keys(item.action_config).length"
               :colspan="headers.length"
             >
-              <DictInput
+              <dict-input
                 v-if="Object.keys(item.action_config).length"
-                :disableEdit="true"
-                disabled
-                :dict="item.action_config"
-                :rules="[1, 2]"
+                class="mt-3"
+                readonly-key
+                readonly-value
+                disable-add
+                disable-remove
+                :value="formatItemValue(item)"
               />
             </td>
             <td v-else :colspan="headers.length">
