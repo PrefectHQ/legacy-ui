@@ -2,6 +2,7 @@
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
 import { formatTime } from '@/mixins/formatTimeMixin'
+import { FINISHED_STATES } from '@/utils/states'
 
 export default {
   components: {
@@ -75,7 +76,11 @@ export default {
       return `%${this.searchTerm}%`
     }
   },
-  methods: {},
+  methods: {
+    isFinished(state) {
+      return FINISHED_STATES.includes(state)
+    }
+  },
   apollo: {
     taskRuns: {
       query: require('@/graphql/TaskRun/table-mapped-task-runs.gql'),
@@ -274,7 +279,13 @@ export default {
           <DurationSpan
             v-if="item.start_time"
             :start-time="item.start_time"
-            :end-time="item.end_time"
+            :end-time="
+              item.end_time
+                ? item.end_time
+                : isFinished(item.state)
+                ? item.start_time
+                : null
+            "
           />
           <span v-else>...</span>
         </template>
