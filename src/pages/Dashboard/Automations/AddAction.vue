@@ -2,8 +2,8 @@
 import { actionTypes, jsonPlacehold } from '@/utils/automations'
 import { mapGetters } from 'vuex'
 import ListInput from '@/components/CustomInputs/ListInput'
-import JsonInput from '@/components/CustomInputs/JsonInput'
-import jsBeautify from 'js-beautify'
+import JsonInput from '@/components/CustomInputs/JsonInput2'
+import { formatJson, isValidJson } from '@/utils/json'
 
 export default {
   components: {
@@ -43,7 +43,6 @@ export default {
       accountSid: '',
       apiToken: '',
       jsonPayload: null,
-      validJson: true,
       routingKey: '',
       webhookURLString: null,
       severity: '',
@@ -220,6 +219,9 @@ export default {
     },
     isMSTeams() {
       return this.actionType.type === 'MS_TEAMS'
+    },
+    validJson() {
+      return isValidJson(this.jsonPayload)
     }
     // needsNext() {
     //   if (
@@ -243,7 +245,7 @@ export default {
   methods: {
     jsonPlaceholder() {
       this.jsonPlacehold.message = this.messagePlaceholder
-      return jsBeautify(JSON.stringify(this.jsonPlacehold))
+      return formatJson(this.jsonPlacehold)
     },
     buttonColor(selectedStep) {
       return this.step.name === selectedStep ? 'codePink' : 'utilGrayDark'
@@ -261,9 +263,6 @@ export default {
       if (this.step.name === 'openMessageText')
         this.steps['openMessageText'].complete = true
       this.step = this.steps[selectedStep]
-    },
-    handleJsonValidation(event) {
-      this.validJson = !event
     },
     handleNext() {
       if (this.step.name === 'openMessageText') {
@@ -646,14 +645,10 @@ export default {
           @keydown.enter="saveMessage"
         />
 
-        <JsonInput
+        <json-input
           v-else
           v-model="jsonPayload"
-          selected-type="json"
-          skip-required
-          add-corners
-          :placeholder-text="jsonPlaceholder()"
-          @invalid-secret="handleJsonValidation"
+          :placeholder="jsonPlaceholder()"
         />
       </div>
     </v-card-text>
