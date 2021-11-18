@@ -1,6 +1,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import DictInput from '@/components/CustomInputs/DictInput'
+import DictInput from '@/components/CustomInputs/DictInput2'
+import { formatJson } from '@/utils/json'
 
 export default {
   components: { DictInput },
@@ -113,6 +114,9 @@ export default {
       const input = { name: name, config }
       this.createAction(input)
     },
+    formatItemValue(item) {
+      return formatJson(item?.action_config)
+    },
     async createAction(input) {
       let success
       try {
@@ -204,10 +208,10 @@ export default {
         </div>
       </div>
       <div
-        class="text-center"
         v-else-if="
           integrationKeys && integrationKeys.length === successIds.length
         "
+        class="text-center"
       >
         <v-data-table
           fixed-header
@@ -246,17 +250,19 @@ export default {
           </template>
 
           <!-- ACTION CONFIG -->
-          <template v-slot:expanded-item="{ headers, item }">
+          <template #expanded-item="{ headers, item }">
             <td
               v-if="Object.keys(item.action_config).length"
               :colspan="headers.length"
             >
-              <DictInput
+              <dict-input
                 v-if="Object.keys(item.action_config).length"
-                :disableEdit="true"
-                disabled
-                :dict="item.action_config"
-                :rules="[1, 2]"
+                class="mt-3"
+                readonly-key
+                readonly-value
+                disable-add
+                disable-remove
+                :value="formatItemValue(item)"
               />
             </td>
             <td v-else :colspan="headers.length">

@@ -46,35 +46,35 @@ export default {
           mobile: true,
           text: 'Name',
           value: 'name',
-          width: '15%'
+          width: '25%'
         },
         {
           mobile: true,
           text: 'Description',
           value: 'description',
           align: 'left',
-          width: '20%'
+          width: '25%'
         },
         {
           mobile: true,
           text: 'Flows',
           value: 'active_flow_count.aggregate.count',
           align: 'left',
-          width: '15%'
+          width: '10%'
         },
         {
           mobile: false,
           text: 'Created',
           value: 'created',
           align: 'left',
-          width: '20%'
+          width: '15%'
         },
         {
           mobile: false,
           text: 'Project ID',
           value: 'id',
           align: 'center',
-          width: '15%'
+          width: '10%'
         },
         {
           mobile: true,
