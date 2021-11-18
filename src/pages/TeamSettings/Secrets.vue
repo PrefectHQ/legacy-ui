@@ -1,17 +1,17 @@
 <script>
 import { mapGetters } from 'vuex'
-import JsonInput from '@/components/CustomInputs/JsonInput'
-
-import Alert from '@/components/Alert'
-import ConfirmDialog from '@/components/ConfirmDialog'
+import CodeInput from '@/components/CustomInputs/CodeInput'
 import ManagementLayout from '@/layouts/ManagementLayout'
+import ConfirmDialog from '@/components/ConfirmDialog'
+import Alert from '@/components/Alert'
+import { tryParseJson } from '@/utils/json'
 
 export default {
   components: {
     Alert,
     ConfirmDialog,
     ManagementLayout,
-    JsonInput
+    CodeInput
   },
   data() {
     return {
@@ -55,19 +55,6 @@ export default {
       rules: {
         required: val => !!val || 'This field is required.'
       },
-      invalidSecret: false,
-
-      //Types
-      selectedTypeIndex: 0,
-      secretTypes: [
-        { value: 'auto', text: 'Auto' },
-        { value: 'string', text: 'String' },
-        { value: 'json', text: 'JSON' }
-      ],
-
-      //jsonInput
-      placeholderText:
-        "Enter your secret value here...\n\nClick on 'Type' to select a type validation",
 
       // Dialogs
       secretModifyDialog: false,
@@ -103,20 +90,11 @@ export default {
       return this.secretNames
         ?.map(secret => secret.name)
         .includes(this.secretNameInput)
-    },
-    disableConfirm() {
-      if (!this.secretNameInput) return false
-      if (!this.secretValueInput) return false
-      if (this.invalidSecret) return false
-      return true
     }
   },
   watch: {
     tenant() {
       this.$apollo.queries.secretNames.refetch()
-    },
-    selectedTypeIndex() {
-      this.validSecretJSON()
     }
   },
   methods: {
@@ -166,58 +144,31 @@ export default {
       this.secretNameInput = null
       this.secretValueInput = null
       this.selectedTypeIndex = 0
-      this.invalidSecret = false
     },
-    validSecretJSON() {
-      this.invalidSecret = false
-      if (this.selectedTypeIndex !== 2) {
-        this.$refs.secretRef.removeJsonErrors()
-        return true
+    async validateAndSetSecret() {
+      if (!this.secretNameInput || !this.$refs.secretValueInput.validate()) {
+        this.handleAlert('error', 'Cannot save with errors in form.')
+        return
       }
-      if (!this.$refs.secretRef) {
-        this.$refs.secretRef.removeJsonErrors()
-        return true
-      }
-      // Check JSON using the JsonInput component's validation (need to check for true over truthy here because of the way the jsonInput returns for other components)
-      if (this.$refs.secretRef.validateJson() === true) return true
-      return false
-    },
-    setInvalidSecret(event) {
-      this.invalidSecret = event
+
+      await this.setSecret()
     },
     async setSecret() {
       this.isSettingSecret = true
-      if (this.selectedTypeIndex === 2 && !this.validSecretJSON()) {
-        this.isSettingSecret = false
-        this.invalidSecret = true
-        return
-      }
+
       if (this.isSecretUpdate) {
         await this.deleteSecret(
           { name: this.previousSecretName },
           { isModifying: true }
         )
       }
-      let value = this.secretValueInput
-      if (this.selectedTypeIndex === 0) {
-        try {
-          value = JSON.parse(this.secretValueInput)
-        } catch {
-          try {
-            value = String.raw`${this.secretValueInput}`
-          } catch {
-            value = JSON.stringify(this.secretValueInput)
-          }
-        }
-      }
-      if (this.selectedTypeIndex === 2)
-        value = JSON.parse(this.secretValueInput)
-
+      const value =
+        tryParseJson(this.secretValueInput) ?? this.secretValueInput ?? []
       const secretResult = await this.$apollo.mutate({
         mutation: require('@/graphql/Secrets/set-secret.gql'),
         variables: {
           name: this.secretNameInput,
-          value: value || []
+          value
         }
       })
 
@@ -430,11 +381,10 @@ export default {
     <ConfirmDialog
       v-model="secretModifyDialog"
       :dialog-props="{ 'max-width': '75vh' }"
-      :disabled="!disableConfirm"
       :loading="isSettingSecret"
       :title="isSecretUpdate ? 'Modify Secret' : 'Create New Secret'"
       @cancel="resetSelectedSecret"
-      @confirm="setSecret"
+      @confirm="validateAndSetSecret"
     >
       <span v-if="!isSecretUpdate">
         Add a secret that will allow your team to access sensitive data during
@@ -460,42 +410,14 @@ export default {
         validate-on-blur
       />
 
-      <JsonInput
+      <code-input
         v-if="secretModifyDialog"
-        ref="secretRef"
+        ref="secretValueInput"
         v-model="secretValueInput"
-        prepend-icon="lock"
         class="text-body-1"
-        :selected-type="secretTypes[selectedTypeIndex].value"
-        :placeholder-text="placeholderText"
-        @input="validSecretJSON"
-        @invalid-secret="setInvalidSecret"
-      >
-        <v-menu top offset-y>
-          <template #activator="{ on }">
-            <v-btn
-              text
-              small
-              class="position-absolute"
-              :style="{
-                bottom: '25px',
-                right: '80px',
-                'z-index': 3
-              }"
-              color="accent"
-              v-on="on"
-              >Type</v-btn
-            >
-          </template>
-          <v-list>
-            <v-list-item-group v-model="selectedTypeIndex" color="primary">
-              <v-list-item v-for="(item, index) in secretTypes" :key="index">
-                <v-list-item-title>{{ item.text }} </v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-menu>
-      </JsonInput>
+        placeholder="Secret value"
+        :editors="['text', 'json']"
+      />
     </ConfirmDialog>
 
     <ConfirmDialog
