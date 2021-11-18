@@ -7,23 +7,23 @@ const PARSED_SCHEDULE_REGEX = /([0-9]{1,2}:?[0-9]{0,2})|(?:am|pm|days|day|years|
 
 // [1-5]?[0-9]
 // Tests: https://regex101.com/r/e588QW/1
-const CRON_MINUTE_REGEX = /(^\*{1})$|(^[1-5]?[0-9](?:[,-/][1-5]?[0-9])*$)/i
+const CRON_MINUTE_REGEX = /(^\*{1})$|(^(\*\/)?[1-5]?[0-9](?:[,-/][1-5]?[0-9])*$)/i
 
 // 2[0-3]|1[0-9]|[0-9]
 // Tests: https://regex101.com/r/5cbtnj/1
-const CRON_HOUR_REGEX = /^(^\*{1})$|(^(2[0-3]|1[0-9]|[0-9])(?:[,-/](2[0-3]|1[0-9]|[0-9]))*$)/i
+const CRON_HOUR_REGEX = /^(^\*{1})$|(^(\*\/)?(2[0-3]|1[0-9]|[0-9])(?:[,-/](2[0-3]|1[0-9]|[0-9]))*$)/i
 
 // 3[01]|[12][0-9]|[1-9]
 // Tests: https://regex101.com/r/y1auyB/1
-const CRON_DAY_MONTH_REGEX = /^(\*{1})$|(^(3[01]|[12][0-9]|[1-9])(?:[,-/](3[01]|[12][0-9]|[1-9]))*$)/i
+const CRON_DAY_MONTH_REGEX = /^(\*{1})$|(^(\*\/)?(3[01]|[12][0-9]|[1-9])(?:[,-/](3[01]|[12][0-9]|[1-9]))*$)/i
 
 // 1[0-2]|[1-9]
 // Tests: https://regex101.com/r/dPw34Y/1
-const CRON_MONTH_REGEX = /^(\*{1})$|(^(1[0-2]|[1-9])(?:[,-/](1[0-2]|[1-9]))*$)|(^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(?:[,-/](jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec))*$)/i
+const CRON_MONTH_REGEX = /^(\*{1})$|(^(\*\/)?(1[0-2]|[1-9])(?:[,-/](1[0-2]|[1-9]))*$)|(^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(?:[,-/](jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec))*$)/i
 
 // [0-6]
 // Tests: https://regex101.com/r/G4cbea/1
-const CRON_DAY_WEEK_REGEX = /^(\*{1})$|(^([0-6])(?:[,-/#]([0-6]))*$)|(^(sun|mon|tue|wed|thu|fri|sat)(?:[,-/#](sun|mon|tue|wed|thu|fri|sat))*$)/i
+const CRON_DAY_WEEK_REGEX = /^(\*{1})$|(^(\*\/)?([0-6])(?:[,-/#]([0-6]))*$)|(^(sun|mon|tue|wed|thu|fri|sat)(?:[,-/#](sun|mon|tue|wed|thu|fri|sat))*$)/i
 
 export {
   EMAIL_REGEX,
