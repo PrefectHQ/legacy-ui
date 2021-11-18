@@ -285,7 +285,7 @@ export default {
       >
         <p>
           Your team has no users available. You can add more from the
-          <router-link :to="'/team/account'"> Account Page</router-link>
+          <router-link :to="'/admin/account'"> Account Page</router-link>
         </p>
       </v-alert>
     </template>
