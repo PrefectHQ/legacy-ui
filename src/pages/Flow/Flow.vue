@@ -274,6 +274,7 @@ export default {
           class="text-truncate"
           :style="{
             width: selectedFlow.name.length + 'ch',
+            minWidth: '10vw',
             maxWidth: titleBarMaxWidth
           }"
         >

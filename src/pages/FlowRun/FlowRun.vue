@@ -247,6 +247,7 @@ export default {
         :style="{
           display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block',
           width: flowRunNameLength + 'ch',
+          minWidth: '10vw',
           maxWidth: titleBarMaxWidth
         }"
       >

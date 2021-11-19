@@ -212,6 +212,7 @@ export default {
         :style="{
           display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block',
           width: taskRunNameLength + 'ch',
+          minWidth: '10vw',
           maxWidth: titleBarMaxWidth
         }"
       >
