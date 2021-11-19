@@ -271,10 +271,9 @@ export default {
       >
         <div
           v-if="flowGroup"
-          class="text-truncate"
+          class="text-truncate minTitleWidth"
           :style="{
             width: selectedFlow.name.length + 'ch',
-            minWidth: '10vw',
             maxWidth: titleBarMaxWidth
           }"
         >
@@ -544,3 +543,9 @@ export default {
     </v-bottom-navigation>
   </v-sheet>
 </template>
+
+<style>
+.minTitleWidth {
+  min-width: 20vw;
+}
+</style>

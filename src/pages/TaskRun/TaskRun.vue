@@ -209,10 +209,10 @@ export default {
     <SubPageNav icon="pi-task-run" page-type="Task Run">
       <span
         slot="page-title"
+        class="minTitleWidth"
         :style="{
           display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block',
           width: taskRunNameLength + 'ch',
-          minWidth: '10vw',
           maxWidth: titleBarMaxWidth
         }"
       >
@@ -383,5 +383,9 @@ export default {
 .v-badge--inline .v-badge__badge,
 .v-badge--inline .v-badge__wrapper {
   margin: 5px;
+}
+
+.minTitleWidth {
+  min-width: 20vw;
 }
 </style>
