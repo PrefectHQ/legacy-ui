@@ -11,14 +11,14 @@ const serverHeaders = [
   {
     text: 'Name',
     value: 'name',
-    width: '20%'
+    width: '30%'
   },
   {
     text: 'Schedule',
     value: 'schedule',
     sortable: false,
     align: 'center',
-    width: '20%'
+    width: '10%'
   },
   {
     text: 'Project',
@@ -44,7 +44,7 @@ const serverHeadersPost = [
     text: 'Run History',
     value: 'flow_runs',
     sortable: false,
-    width: '25%'
+    width: '20%'
   }
 ]
 

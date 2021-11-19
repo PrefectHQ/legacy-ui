@@ -157,6 +157,14 @@ export default {
       versions.unshift({ text: 'All', value: null })
 
       return versions
+    },
+    titleBarMaxWidth() {
+      if (this.$vuetify.breakpoint.lgAndUp) {
+        return '60vw'
+      } else if (this.$vuetify.breakpoint.mdAndDown) {
+        return '40vw'
+      }
+      return '30vw'
     }
   },
   watch: {
@@ -265,7 +273,14 @@ export default {
             : $vuetify.breakpoint.smAndDown && { display: 'inline' }
         "
       >
-        <div v-if="flowGroup">
+        <div
+          v-if="flowGroup"
+          class="text-truncate"
+          :style="{
+            width: selectedFlow.name.length + 'ch',
+            maxWidth: titleBarMaxWidth
+          }"
+        >
           {{ selectedFlow.name }}
           <span
             v-if="selectedFlow.archived"

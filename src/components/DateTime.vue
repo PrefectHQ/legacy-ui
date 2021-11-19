@@ -109,15 +109,18 @@ export default {
       this.$emit('input', val)
     },
     // Keep the constituent parts of DateTime in sync with the user-provided value prop.
-    value(val) {
-      if (val) {
-        const valueMoment = this.momentWithTimezone(val)
-        this.date = valueMoment.format('YYYY-MM-DD')
-        this.timeHr = valueMoment.format('hh')
-        this.timeMin = valueMoment.format('mm')
-        this.timeAmPm = valueMoment.format('A')
-      } else {
-        this.handleDateTimeClear()
+    value: {
+      immediate: true,
+      handler(val) {
+        if (val) {
+          const valueMoment = this.momentWithTimezone(val)
+          this.date = valueMoment.format('YYYY-MM-DD')
+          this.timeHr = valueMoment.format('hh')
+          this.timeMin = valueMoment.format('mm')
+          this.timeAmPm = valueMoment.format('A')
+        } else {
+          this.handleDateTimeClear()
+        }
       }
     }
   },

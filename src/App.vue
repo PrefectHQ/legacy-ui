@@ -10,7 +10,6 @@ import GlobalSearch from '@/components/GlobalSearchBar/GlobalSearch'
 import TeamSideNav from '@/components/Nav/TeamSideNav'
 import WorkQueueBanner from '@/components/WorkQueueBanner'
 import { eventsMixin } from '@/mixins/eventsMixin'
-import debounce from 'lodash/debounce'
 import VSnackbars from '@/components/Snackbars/Snackbars'
 
 const SERVER_KEY = `${process.env.VUE_APP_RELEASE_TIMESTAMP}_server_url`
@@ -61,7 +60,6 @@ export default {
       refreshTimeout: null,
       reset: false,
       shown: true,
-      showFooter: false,
       startupHasRun: false,
       wholeAppShown: true
     }
@@ -186,8 +184,6 @@ export default {
       }
     },
     async $route(new_route, old_route) {
-      this.showFooter = false
-
       if (
         new_route?.params?.tenant &&
         new_route?.params?.tenant !== old_route?.params?.tenant &&
@@ -204,10 +200,8 @@ export default {
     }
   },
   beforeDestroy() {
-    document.removeEventListener('keydown', this.handleKeydown)
     window.removeEventListener('offline', this.handleOffline)
     window.removeEventListener('online', this.handleOnline)
-    window.removeEventListener('scroll', this.handleScroll)
 
     // this.oktaClient?.remove()
 
@@ -378,10 +372,8 @@ export default {
     })
   },
   async beforeMount() {
-    document.addEventListener('keydown', this.handleKeydown)
     window.addEventListener('offline', this.handleOffline)
     window.addEventListener('online', this.handleOnline)
-    window.addEventListener('scroll', this.handleScroll)
     const dark = localStorage.getItem('dark_mode') === 'true' || this.isDark
     if (dark) {
       this.$vuetify.theme.dark = true
@@ -432,7 +424,6 @@ export default {
     ...mapActions('data', ['resetData']),
     ...mapMutations('data', ['setFlows', 'setProjects']),
     ...mapActions('tenant', ['getTenants', 'setCurrentTenant']),
-    ...mapMutations('sideNav', { closeSideNav: 'close' }),
     ...mapMutations('tenant', [
       'setDefaultTenant',
       'unsetTenants',
@@ -445,11 +436,6 @@ export default {
       'unsetUser'
     ]),
     ...mapMutations({ setUser: 'user/user' }),
-    handleKeydown(e) {
-      if (e.key === 'Escape') {
-        this.closeSideNav()
-      }
-    },
     handleOffline() {
       // if the page isn't visible don't display a message
       if (document.hidden || document.msHidden || document.webkitHidden) return
@@ -458,19 +444,6 @@ export default {
       // if the page isn't visible don't display a message
       if (document.hidden || document.msHidden || document.webkitHidden) return
     },
-    handleScroll: debounce(
-      function() {
-        if (this.$route.name == 'plans') return (this.showFooter = true)
-        if (
-          window.innerHeight + window.pageYOffset + 50 >=
-          document.body.offsetHeight
-        ) {
-          this.showFooter = true
-        } else this.showFooter = false
-      },
-      150,
-      { leading: true, trailing: true }
-    ),
     handleVisibilityChange() {
       this.currentInteraction = moment()
 
@@ -552,7 +525,7 @@ export default {
       <GlobalSearch v-if="$vuetify.breakpoint.xsOnly && showNav" />
 
       <v-slide-y-reverse-transition>
-        <Footer v-if="!fullPageRoute && showFooter && !isWelcome" />
+        <Footer v-if="!fullPageRoute && !isWelcome" />
       </v-slide-y-reverse-transition>
     </v-main>
 

@@ -24,29 +24,45 @@ export default {
         {
           text: 'Name',
           value: 'name',
-          width: '20%'
+          width: '30%',
+          mobile: true
         },
         {
           text: 'Scheduled Start',
           value: 'scheduled_start_time',
           align: 'start',
-          width: '18%'
+          width: '10%',
+          mobile: false
         },
         {
           text: 'Start Time',
           value: 'start_time',
           align: 'start',
-          width: '18%'
+          width: '10%',
+          mobile: true
         },
-        { text: 'End Time', value: 'end_time', align: 'start', width: '18%' },
+        {
+          text: 'End Time',
+          value: 'end_time',
+          align: 'start',
+          width: '10%',
+          mobile: true
+        },
         {
           text: 'Duration',
           value: 'duration',
           align: 'end',
-          width: '15%',
-          sortable: false
+          width: '10%',
+          sortable: false,
+          mobile: false
         },
-        { text: 'State', value: 'state', align: 'end', width: '10%' }
+        {
+          text: 'State',
+          value: 'state',
+          align: 'end',
+          width: '5%',
+          mobile: true
+        }
       ],
       itemsPerPage: 15,
       page: 1,
@@ -67,6 +83,11 @@ export default {
     },
     pollInterval() {
       return this.flow.archived ? 0 : 5000
+    },
+    headersByViewport() {
+      return this.$vuetify.breakpoint.mdAndUp
+        ? this.headers
+        : this.headers.filter(header => header.mobile)
     }
   },
   watch: {
@@ -215,7 +236,7 @@ export default {
           nextIcon: 'keyboard_arrow_right'
         }"
         class="truncate-table"
-        :headers="headers"
+        :headers="headersByViewport"
         :header-props="{ 'sort-icon': 'arrow_drop_up' }"
         :items="flowRuns || []"
         :items-per-page.sync="itemsPerPage"

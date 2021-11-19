@@ -58,6 +58,9 @@ export default {
   },
   computed: {
     ...mapGetters('tenant', ['tenant']),
+    taskRunNameLength() {
+      return this.taskRun?.name?.length
+    },
     taskRunId() {
       return this.$route.params.id
     },
@@ -100,6 +103,14 @@ export default {
           cardLinkText: 'Artifacts API Docs'
         }
       ]
+    },
+    titleBarMaxWidth() {
+      if (this.$vuetify.breakpoint.lgAndUp) {
+        return '70vw'
+      } else if (this.$vuetify.breakpoint.mdAndDown) {
+        return '40vw'
+      }
+      return '30vw'
     }
   },
   watch: {
@@ -205,14 +216,11 @@ export default {
     <SubPageNav icon="pi-task-run" page-type="Task Run">
       <span
         slot="page-title"
-        style="
-          max-width: 100%;
-          min-width: 300px;
-          width: auto;
-          "
-        :style="[
-          { display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block' }
-        ]"
+        :style="{
+          display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block',
+          width: taskRunNameLength + 'ch',
+          maxWidth: titleBarMaxWidth
+        }"
       >
         <EditableTextField
           :content="

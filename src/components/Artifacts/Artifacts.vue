@@ -156,7 +156,7 @@ export default {
           Artifacts</span
         >! You can learn how to generate artifacts from your flow/task in the
         <a
-          href="https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts"
+          href="https://docs.prefect.io/api/latest/backend/artifacts.html"
           target="_blank"
         >
           Artifacts API Docs</a

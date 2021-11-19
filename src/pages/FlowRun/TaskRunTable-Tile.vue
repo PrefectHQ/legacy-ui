@@ -38,20 +38,20 @@ export default {
           text: 'Task',
           value: 'task.name',
           sortable: false,
-          width: '27.5%'
+          width: '37.5%'
         },
         {
           text: 'Start Time',
           value: 'start_time',
           align: 'start',
-          width: '20%'
+          width: '15%'
         },
         { text: 'End Time', value: 'end_time', align: 'start', width: '15%' },
         {
           text: 'Duration',
           value: 'duration',
           align: 'end',
-          width: '17.5%',
+          width: '15.5%',
           sortable: false
         },
         { text: 'State', value: 'state', align: 'end', width: '10%' },
