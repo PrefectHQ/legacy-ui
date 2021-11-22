@@ -243,6 +243,7 @@ export default {
     <SubPageNav icon="pi-flow-run" page-type="Flow Run">
       <span
         slot="page-title"
+        class="minTitleWidth"
         :style="{
           display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block',
           width: flowRunNameLength + 'ch',
@@ -431,5 +432,9 @@ export default {
 .v-badge--inline .v-badge__badge,
 .v-badge--inline .v-badge__wrapper {
   margin: 5px;
+}
+
+.minTitleWidth {
+  min-width: 20vw;
 }
 </style>
