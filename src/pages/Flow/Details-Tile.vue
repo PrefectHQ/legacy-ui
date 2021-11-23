@@ -177,6 +177,8 @@ export default {
     <v-tabs-items v-model="tab" class="flex-grow-1">
       <v-tab-item>
         <v-list class="card-content">
+          <LabelEdit :flow="flow" :flow-group="flowGroup" />
+
           <v-list-item dense>
             <v-list-item-content>
               <v-list-item-subtitle class="text-caption">
@@ -217,8 +219,6 @@ export default {
               </div>
             </v-list-item-content>
           </v-list-item>
-
-          <LabelEdit :flow="flow" :flow-group="flowGroup" />
         </v-list>
       </v-tab-item>
       <v-tab-item>
