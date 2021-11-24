@@ -93,7 +93,7 @@ export default {
         <TimelineTooltip
           :tooltip="tooltip"
           :loading="tooltipLoading"
-          :is-dashboard="$route.name === 'dashboard'"
+          :show-project-name="$route.name === 'dashboard'"
         />
       </template>
     </BarChart>

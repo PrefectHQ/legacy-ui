@@ -8,7 +8,7 @@ export default {
   props: {
     tooltip: { type: Object, required: true },
     loading: { type: Boolean, required: false, default: false },
-    isDashboard: { type: Boolean, required: false, default: false }
+    showProjectName: { type: Boolean, required: false, default: false }
   }
 }
 </script>
@@ -38,7 +38,7 @@ export default {
     <div class="divider"></div>
     <div
       v-if="
-        props.isDashboard &&
+        props.showProjectName &&
           !props.loading &&
           props.tooltip.data.flow.project.name
       "
