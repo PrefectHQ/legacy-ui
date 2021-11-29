@@ -7,7 +7,8 @@ export const flowRunHistoryMixin = {
       flowRuns: [],
       scheduledFlowRuns: [],
       tooltip: null,
-      tooltipLoading: false
+      tooltipLoading: false,
+      unwatchFlowRuns: null
     }
   },
   computed: {
@@ -166,44 +167,29 @@ export const flowRunHistoryMixin = {
   },
   methods: {
     _barMouseout() {
-      this.tooltip = null
+      this.setTooltip(null)
       this.tooltipLoading = false
     },
-    async _barMouseover(d) {
-      this.tooltipLoading = !!d.data.flow_id
+    async _barMouseover(tooltipData) {
+      this.setTooltip(tooltipData)
+      this.checkFormatTime(tooltipData, 'end_time')
+      this.checkFormatTime(tooltipData, 'start_time')
+      this.checkFormatTime(tooltipData, 'scheduled_start_time')
 
-      const tooltipData = d
+      tooltipData.status_style = this.statusStyle(tooltipData.data.state)
 
-      this.tooltip = tooltipData
-
-      if (d.data.end_time) {
-        d.data.display_end_time = this.formatTime(d.data.end_time)
-      }
-
-      if (d.data.start_time) {
-        d.data.display_start_time = this.formatTime(d.data.start_time)
-      }
-
-      if (d.data.scheduled_start_time) {
-        d.data.display_scheduled_start_time = this.formatTime(
-          d.data.scheduled_start_time
-        )
-      }
-
-      d.status_style = this.statusStyle(d.data.state)
-
-      if (!d.data.flow_id) {
-        this.tooltip = d
+      const flowId = tooltipData.data.flow_id
+      if (!flowId) {
+        this.setTooltip(tooltipData)
         return
       }
 
-      const flow_id = d.data.flow_id
       try {
+        this.tooltipLoading = true
+
         const { data } = await this.$apollo.query({
           query: require('@/graphql/Dashboard/timeline-flow.gql'),
-          variables: {
-            flowId: d.data.flow_id
-          }
+          variables: { flowId }
         })
 
         tooltipData.data.flow = data.flow_by_pk
@@ -213,8 +199,8 @@ export const flowRunHistoryMixin = {
         // We check this to make sure we're not showing the tooltip
         // when _barMouseout has already run or a different
         // bar has been hovered
-        if (this.tooltip && this.tooltip.data.flow_id == flow_id)
-          this.tooltip = tooltipData
+        if (this.tooltip && this.tooltip.data.flow_id == flowId)
+          this.setTooltip(tooltipData)
       }
     },
     _barClick(d) {
@@ -227,7 +213,7 @@ export const flowRunHistoryMixin = {
       })
     },
     formatTime(timestamp) {
-      if (!timestamp) throw new Error('Did not recieve a timestamp')
+      if (!timestamp) throw new Error('Did not receive a timestamp')
 
       let t = moment(timestamp).tz(this.timezone),
         shortenedTz = moment()
@@ -282,6 +268,34 @@ export const flowRunHistoryMixin = {
         'background-color': `var(--v-${state}-base)`,
         height: '1rem',
         width: '1rem'
+      }
+    },
+    setTooltip(tooltip) {
+      if (this.unwatchFlowRuns) {
+        this.unwatchFlowRuns()
+      }
+
+      if (tooltip) {
+        this.unwatchFlowRuns = this.$watch(
+          'flowRuns',
+          this.validateTooltipIdStillPresent
+        )
+      }
+
+      this.tooltip = tooltip
+    },
+    validateTooltipIdStillPresent() {
+      const exists = this.flowRuns.some(f => f.id == this.tooltip.data.id)
+
+      if (!exists) {
+        this.setTooltip(null)
+      }
+    },
+    checkFormatTime(tooltipData, property) {
+      if (tooltipData.data[property]) {
+        const formatted = this.formatTime(tooltipData.data[property])
+
+        tooltipData.data[`display_${property}`] = formatted
       }
     }
   }

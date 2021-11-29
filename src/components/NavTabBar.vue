@@ -23,7 +23,6 @@ export default {
   },
   data() {
     return {
-      tab: this.getTab(),
       pageScrolled: false
     }
   },
@@ -33,45 +32,35 @@ export default {
     },
     secondaryTabs() {
       return this.tabs.filter(tab => !tab.hidden && tab.align === 'right')
-    }
-  },
-  watch: {
-    tab(val) {
-      if (this.paths) return
-      let query = {}
-      if (val) {
-        if (this.$route.params.id) {
-          query[val] = this.$route.params.id // schematic uses this
+    },
+    tab: {
+      get() {
+        const route = this.tabs.find(
+          t => t.to?.path == this.$route.path || t.to?.name == this.$route.name
+        )
+
+        if (Object.keys(this.$route.query).length != 0) {
+          return Object.keys(this.$route.query)[0]
+        } else if (route) {
+          return route.to.path || route.to.name
         }
-        if (this.$route.query.version) {
+
+        return 'overview'
+      },
+      set(value) {
+        if (this.paths) return
+
+        const query = { [value]: null }
+
+        if (value && this.$route.query.version) {
           query.version = this.$route.query.version
         }
-        query[val] = ''
+
+        this.$router.replace({ query }).catch()
       }
-      this.$router
-        .replace({
-          query: query
-        })
-        .catch(e => e)
-    },
-    $route() {
-      this.tab = this.getTab()
     }
   },
   methods: {
-    getTab() {
-      const route = this.tabs.find(
-        t => t.to?.path == this.$route.path || t.to?.name == this.$route.name
-      )
-
-      if (Object.keys(this.$route.query).length != 0) {
-        return Object.keys(this.$route.query)[0]
-      } else if (route) {
-        return route.to.path || route.to.name
-      }
-
-      return 'overview'
-    },
     scrolled() {
       this.pageScrolled = window.scrollY > 30
     }

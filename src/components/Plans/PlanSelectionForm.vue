@@ -56,13 +56,6 @@ export default {
       return title
     }
   },
-  watch: {
-    step(val) {
-      if (val == 'select-card') {
-        this.getTenants()
-      }
-    }
-  },
   mounted() {
     this.getTenants()
   },
@@ -100,24 +93,33 @@ export default {
     },
     handleConfirm(sourceId) {
       this.paymentSource = sourceId
-      this.step = 'confirm'
+      this.setStep('confirm')
     },
     handleNext() {
       if (this.paymentSource == 'new') {
-        this.step = 'add-card'
+        this.setStep('add-card')
       } else {
-        this.step = 'confirm'
+        this.setStep('confirm')
       }
     },
     selectPayment(id) {
       this.paymentSource = id
     },
+    setStep(step) {
+      this.step = step
+
+      if (step == 'select-card') {
+        this.getTenants()
+      }
+    },
     async handleSubmit() {
       await this.updatePlan()
       if (!this.error) {
         this.$emit('complete')
-        this.step = 'complete'
-      } else this.step = 'error'
+        this.setStep('complete')
+      } else {
+        this.setStep('error')
+      }
     }
   }
 }
@@ -140,7 +142,7 @@ export default {
         >
           <div
             class="d-inline-block text-subtitle-1 font-weight-light mx-auto cursor-pointer mt-4 h-auto"
-            @click="step = 'select-card'"
+            @click="setStep('select-card')"
           >
             <v-icon color="blue-grey">chevron_left</v-icon>
             Choose an existing method instead
@@ -327,7 +329,7 @@ export default {
         >
           <div
             class="d-inline-block text-subtitle-1 font-weight-light cursor-pointer mt-4 h-auto"
-            @click="step = 'select-card'"
+            @click="setStep('select-card')"
           >
             <v-icon color="blue-grey">chevron_left</v-icon>
             Change payment method

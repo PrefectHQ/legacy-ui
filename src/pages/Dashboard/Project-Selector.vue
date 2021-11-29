@@ -70,19 +70,15 @@ export default {
           this.$route.params.id === '' ? null : this.$route.params.id
       }
     },
-    $route(val) {
-      if (val.params && !('id' in val.params) && this.projectId !== null) {
+    '$route.params.id'(val) {
+      if (!val && this.projectId !== null) {
         this.projectSelect = null
         this.projectId = null
         this.$emit('project-select', null)
-      } else if (
-        val.params &&
-        'id' in val.params &&
-        this.projectId !== val.params.id
-      ) {
+      } else if (val && this.projectId !== val) {
         // This will ensure the normal emit and project id setting
         // happens in the watcher above
-        this.projectSelect = val.params.id
+        this.projectSelect = val
       }
     }
   },
