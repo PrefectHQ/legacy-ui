@@ -98,8 +98,7 @@ export default {
           badgeText: 'Beta',
           cardText:
             'The Artifacts API is a beta feature currently under development. Task mapping with artifacts may have unexpected results... for more information on artifacts, check out the',
-          cardLink:
-            'https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts',
+          cardLink: 'https://docs.prefect.io/api/latest/backend/artifacts.html',
           cardLinkText: 'Artifacts API Docs'
         }
       ]
@@ -209,6 +208,7 @@ export default {
     <SubPageNav icon="pi-task-run" page-type="Task Run">
       <span
         slot="page-title"
+        class="minTitleWidth"
         :style="{
           display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block',
           width: taskRunNameLength + 'ch',
@@ -382,5 +382,9 @@ export default {
 .v-badge--inline .v-badge__badge,
 .v-badge--inline .v-badge__wrapper {
   margin: 5px;
+}
+
+.minTitleWidth {
+  min-width: 20vw;
 }
 </style>
