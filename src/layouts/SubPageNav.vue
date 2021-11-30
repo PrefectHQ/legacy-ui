@@ -24,7 +24,6 @@ export default {
   data() {
     return {
       pageScrolled: false,
-      hasAnyFlows: false,
       unsubscribeFlows: null,
       unwatchFlows: null
     }
@@ -36,7 +35,8 @@ export default {
         !this.hideBanners &&
         !this.$vuetify.breakpoint.smAndDown &&
         !this.pageScrolled &&
-        !this.hasAnyFlows
+        this.flows != null &&
+        this.flows.length === 0
       )
     }
   },
@@ -55,8 +55,7 @@ export default {
       this.pageScrolled = window.scrollY > 30
     },
     flowsChanged(flows) {
-      if (Object.keys(flows).length > 0) {
-        this.hasAnyFlows = true
+      if (flows.length > 0) {
         this.unsubscribeFlows()
         this.unwatchFlows()
       }
