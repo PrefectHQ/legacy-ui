@@ -18,7 +18,8 @@ export default {
   },
   data() {
     return {
-      error: false
+      error: false,
+      loading: false
     }
   },
   computed: {
@@ -49,7 +50,7 @@ export default {
     },
     async restart() {
       try {
-        this.cancel()
+        this.loading = true
 
         this.writeLogs()
 
@@ -103,6 +104,9 @@ export default {
           })
 
           if (data?.set_flow_run_states) {
+            this.loading = false
+            this.cancel()
+
             this.setAlert({
               alertShow: true,
               alertMessage: 'Flow run restarted.',
@@ -120,6 +124,8 @@ export default {
       }
 
       if (this.error === true) {
+        this.loading = false
+        this.cancel()
         this.setAlert({
           alertShow: true,
           alertMessage:
@@ -180,7 +186,12 @@ export default {
     <v-card-actions>
       <v-spacer></v-spacer>
 
-      <v-btn :disabled="!isEligibleToRestart" color="primary" @click="restart">
+      <v-btn
+        :disabled="!isEligibleToRestart || loading"
+        color="primary"
+        :loading="loading"
+        @click="restart"
+      >
         Confirm
       </v-btn>
 
