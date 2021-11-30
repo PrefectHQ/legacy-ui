@@ -115,7 +115,7 @@ export default {
           <span>
             {{ !usage ? 0 : usage.toLocaleString()
             }}<span v-if="planType('FREE')" class="text-h5 ml-1"
-              >/10,000</span
+              >/20,000</span
             ></span
           >
         </v-skeleton-loader>
