@@ -37,22 +37,24 @@ export default {
     }
   },
   watch: {
-    $route(val) {
-      // this.search = val.query.schematic
-      if (!val.query.schematic) {
+    '$route.query.schematic'(val) {
+      if (!val) {
         this.task = null
         this.searchInput = null
-        return
+      } else {
+        this.updatePreview()
       }
-      this.updatePreview()
     },
     searchInput(val) {
       let selected = this.options.find(opt => opt.name == val)
       if (selected) this.handleSelect(selected)
     },
     tasks() {
-      if (!this.$route.query.schematic) return (this.task = null)
-      this.updatePreview()
+      if (!this.$route.query.schematic) {
+        this.task = null
+      } else {
+        this.updatePreview()
+      }
     }
   },
   mounted() {
