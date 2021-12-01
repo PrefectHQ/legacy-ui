@@ -2,7 +2,7 @@
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
 import { formatTime } from '@/mixins/formatTimeMixin'
-
+import { duration } from '@/utils/calculateDuration'
 export default {
   filters: {
     typeClass: val => val.split('.').pop()
@@ -50,6 +50,9 @@ export default {
         this.copiedText = {}
         this.copiedText[text] = false
       }, 1000)
+    },
+    durationCalc(startTime, endTime, state) {
+      return duration(startTime, endTime, state)
     }
   }
 }
@@ -192,7 +195,13 @@ export default {
                 <DurationSpan
                   v-if="taskRun.start_time"
                   :start-time="taskRun.start_time"
-                  :end-time="taskRun.end_time"
+                  :end-time="
+                    durationCalc(
+                      taskRun.start_time,
+                      taskRun.end_time,
+                      taskRun.state
+                    )
+                  "
                 />
                 <span v-else>
                   <v-skeleton-loader type="text"></v-skeleton-loader>
