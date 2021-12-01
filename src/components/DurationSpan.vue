@@ -1,12 +1,10 @@
 <script>
 import {
-  durationDifference,
-  toDurationDifferenceString
-} from '@/utils/dateTime'
-import {
   MS_PER_SECOND,
   MS_PER_MINUTE,
   MS_PER_HOUR,
+  durationDifference,
+  toDurationDifferenceString,
   getMillisecondsUntilNextSecond,
   getMillisecondsUntilNextMinute,
   getMillisecondsUntilNextHour
@@ -104,10 +102,3 @@ export default {
     {{ durationDifferenceString }}
   </span>
 </template>
-
-<style lang="scss" scoped>
-.duration-span__block:first-child {
-  margin-right: 2px;
-  content: ',';
-}
-</style>
