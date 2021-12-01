@@ -74,15 +74,14 @@ export default {
       default: ''
     }
   },
-  data() {
-    return {
-      internalValue: this.value
-    }
-  },
-  watch: {
-    value(val) {
-      // Keep the internal state of the alert on par with the value prop.
-      this.internalValue = val
+  computed: {
+    internalValue: {
+      get() {
+        return this.value
+      },
+      set(value) {
+        this.$emit('input', value)
+      }
     }
   },
   methods: {
@@ -92,16 +91,9 @@ export default {
     handleCancel() {
       this.internalValue = false
       this.$emit('cancel')
-      this.emitInternalValue()
     },
     handleConfirm() {
       this.$emit('confirm')
-      this.emitInternalValue()
-    },
-    // Propagate the internal value to the component's parent.
-    // This method is what allows us to set v-model on this component.
-    handleInput() {
-      this.emitInternalValue()
     }
   }
 }
@@ -112,7 +104,6 @@ export default {
     :value="internalValue"
     v-bind="dialogProps"
     :width="width"
-    @input="handleInput"
     @click:outside="handleCancel"
     @keydown.esc="handleCancel"
   >
