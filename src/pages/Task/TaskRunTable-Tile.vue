@@ -3,7 +3,7 @@ import CardTitle from '@/components/Card-Title'
 import { roundedOneAgo } from '@/utils/dateTime'
 import DurationSpan from '@/components/DurationSpan'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import { duration } from '@/utils/calculateDuration'
+import { calculateDuration } from '@/utils/states'
 
 export default {
   components: {
@@ -73,9 +73,7 @@ export default {
     }
   },
   methods: {
-    durationCalc(startTime, endTime, state) {
-      return duration(startTime, endTime, state)
-    }
+    calculateDuration
   },
   apollo: {
     task: {
@@ -205,7 +203,9 @@ export default {
           <DurationSpan
             v-if="item.start_time"
             :start-time="item.start_time"
-            :end-time="durationCalc(item.start_time, item.end_time, item.state)"
+            :end-time="
+              calculateDuration(item.start_time, item.end_time, item.state)
+            "
           />
           <span v-else>...</span>
         </template>

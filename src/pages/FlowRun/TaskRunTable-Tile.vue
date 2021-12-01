@@ -5,7 +5,7 @@ import DurationSpan from '@/components/DurationSpan'
 import ResumeButton from '@/components/ResumeButton'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import { STATE_NAMES } from '@/utils/states'
-import { duration } from '@/utils/calculateDuration'
+import { calculateDuration } from '@/utils/states'
 
 export default {
   components: {
@@ -100,9 +100,7 @@ export default {
         return true
       }
     },
-    durationCalc(startTime, endTime, state) {
-      return duration(startTime, endTime, state)
-    }
+    calculateDuration
   },
   apollo: {
     flowRun: {
@@ -280,7 +278,9 @@ export default {
           <DurationSpan
             v-if="item.start_time"
             :start-time="item.start_time"
-            :end-time="durationCalc(item.start_time, item.end_time, item.state)"
+            :end-time="
+              calculateDuration(item.start_time, item.end_time, item.state)
+            "
           />
           <span v-else>...</span>
         </template>
