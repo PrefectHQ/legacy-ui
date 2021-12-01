@@ -183,7 +183,9 @@ export default {
             depressed
             style="height: 46px;"
             small
-            :disabled="!hasPermission('update', 'run') || !canRestart"
+            :disabled="
+              !hasPermission('update', 'run') || !canRestart || restartDialog
+            "
             color="info"
             @click="handleRestartClick"
           >
