@@ -18,6 +18,7 @@
 
 <script>
 import { formatTime } from '@/mixins/formatTimeMixin'
+import { getMillisecondsUntilNextMinute } from '@/utils/dateTime'
 
 export default {
   mixins: [formatTime],
@@ -30,7 +31,7 @@ export default {
   },
   created() {
     this.setTime()
-    this.triggetSetTimeIntervalAtNextMinute()
+    this.triggerSetTimeIntervalAtNextMinute()
   },
   destroyed() {
     clearInterval(this.clockInterval)
@@ -39,8 +40,8 @@ export default {
     setTime() {
       this.time = this.dateParts(Date.now())
     },
-    triggetSetTimeIntervalAtNextMinute() {
-      const millisecondsUntilNextMinute = this.getMillisecondsUntilNextMinute()
+    triggerSetTimeIntervalAtNextMinute() {
+      const millisecondsUntilNextMinute = getMillisecondsUntilNextMinute()
 
       this.clockInterval = setTimeout(
         this.setTimeOnMinuteInterval,
@@ -50,9 +51,6 @@ export default {
     setTimeOnMinuteInterval() {
       this.setTime()
       this.clockInterval = setInterval(this.setTime, 60000)
-    },
-    getMillisecondsUntilNextMinute() {
-      return 60000 - this.time.seconds * 1000 + this.time.milliseconds
     }
   }
 }
