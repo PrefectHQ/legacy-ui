@@ -38,7 +38,6 @@ export default {
   data() {
     return {
       loading: 0,
-      tab: this.getTab(),
       tabs: [
         {
           name: 'Overview',
@@ -83,28 +82,25 @@ export default {
     upstreamCount() {
       if (!this.task) return null
       return this.task.upstream_edges.length
+    },
+    tab: {
+      get() {
+        const keys = Object.keys(this.$route.query ?? {})
+        if (keys.length > 0 && this.tabs?.find(tab => tab.target == keys[0])) {
+          return keys[0]
+        }
+
+        return 'overview'
+      },
+      set(value) {
+        this.$router.replace({ query: { [value]: null } })
+      }
     }
   },
   watch: {
-    $route() {
-      this.tab = this.getTab()
-
-      if (this.$route.name == 'task') {
+    '$route.name'(val) {
+      if (val == 'task') {
         this.activateTask(this.$route.params.id)
-      }
-    },
-    tab(val) {
-      let query = { ...this.$route.query }
-      switch (val) {
-        case 'schematic':
-          query = 'schematic'
-          break
-        case 'runs':
-          /* eslint-disable-next-line */
-          query = 'runs'
-          break
-        default:
-          break
       }
     },
     task(val) {
@@ -113,17 +109,9 @@ export default {
   },
   async beforeMount() {
     await this.activateTask(this.$route.params.id)
-    this.tab = this.getTab()
   },
   methods: {
-    ...mapActions('data', ['activateTask', 'resetActiveData']),
-    getTab() {
-      if (Object.keys(this.$route.query).length != 0) {
-        let target = Object.keys(this.$route.query)[0]
-        if (this.tabs?.find(tab => tab.target == target)) return target
-      }
-      return 'overview'
-    }
+    ...mapActions('data', ['activateTask', 'resetActiveData'])
   },
   apollo: {
     task: {
@@ -284,11 +272,6 @@ export default {
         Runs
         <v-icon>pi-task-run</v-icon>
       </v-btn>
-
-      <!-- <v-btn disabled @click="tab = 'analytics'">
-        Analytics
-        <v-icon>insert_chart_outlined</v-icon>
-      </v-btn> -->
     </v-bottom-navigation>
   </v-sheet>
 </template>

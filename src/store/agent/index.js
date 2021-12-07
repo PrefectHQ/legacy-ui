@@ -80,7 +80,7 @@ const mutations = {
       }
     })
     state.agents = agents
-    healthyList.sort((a, b) => a.id - b.id)
+    healthyList.sort((a, b) => a.id.localeCompare(b.id))
     oldList.sort((a, b) => a.secondsSinceLastQuery - b.secondsSinceLastQuery)
     const fullList = [...healthyList, ...staleList, ...oldList]
     state.sortedAgents = fullList

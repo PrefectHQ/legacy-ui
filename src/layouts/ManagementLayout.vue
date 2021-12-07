@@ -16,14 +16,14 @@ export default {
       required: false
     }
   },
-  data() {
-    return {
-      showPage: this.show || false
-    }
-  },
-  watch: {
-    show(val) {
-      this.showPage = val
+  computed: {
+    showPage: {
+      get() {
+        return this.show
+      },
+      set(value) {
+        this.$emit('update:show', value)
+      }
     }
   },
   mounted() {

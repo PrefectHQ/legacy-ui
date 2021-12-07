@@ -52,7 +52,6 @@ export default {
   data() {
     return {
       loading: 0,
-      tab: this.getTab(),
       taskRunNameLoading: false
     }
   },
@@ -98,8 +97,7 @@ export default {
           badgeText: 'Beta',
           cardText:
             'The Artifacts API is a beta feature currently under development. Task mapping with artifacts may have unexpected results... for more information on artifacts, check out the',
-          cardLink:
-            'https://docs.prefect.io/api/latest/artifacts/artifacts.html#artifacts',
+          cardLink: 'https://docs.prefect.io/api/latest/backend/artifacts.html',
           cardLinkText: 'Artifacts API Docs'
         }
       ]
@@ -111,12 +109,22 @@ export default {
         return '40vw'
       }
       return '30vw'
+    },
+    tab: {
+      get() {
+        const keys = Object.keys(this.$route.query ?? {})
+        if (keys.length > 0 && this.tabs?.find(tab => tab.target == keys[0])) {
+          return keys[0]
+        }
+
+        return 'overview'
+      },
+      set(value) {
+        this.$router.replace({ query: { [value]: null } })
+      }
     }
   },
   watch: {
-    $route() {
-      this.tab = this.getTab()
-    },
     taskRun(val, prevVal) {
       if (val === 'not-found') this.$router.push({ name: 'not-found' })
       if (!val || val?.id == prevVal?.id) return
@@ -134,12 +142,6 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    getTab() {
-      if (Object.keys(this.$route.query).length != 0) {
-        return Object.keys(this.$route.query)[0]
-      }
-      return 'overview'
-    },
     parseMarkdown(md) {
       return parser(md)
     },
@@ -209,6 +211,7 @@ export default {
     <SubPageNav icon="pi-task-run" page-type="Task Run">
       <span
         slot="page-title"
+        class="minTitleWidth"
         :style="{
           display: $vuetify.breakpoint.smAndDown ? 'inline' : 'block',
           width: taskRunNameLength + 'ch',
@@ -382,5 +385,9 @@ export default {
 .v-badge--inline .v-badge__badge,
 .v-badge--inline .v-badge__wrapper {
   margin: 5px;
+}
+
+.minTitleWidth {
+  min-width: 20vw;
 }
 </style>
