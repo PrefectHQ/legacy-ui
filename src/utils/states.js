@@ -106,6 +106,18 @@ export const FINISHED_STATES = [
   'Skipped'
 ]
 
+export function calculateDuration(startTime, endTime, state) {
+  if (endTime) {
+    return endTime
+  }
+
+  if (FINISHED_STATES.includes(state)) {
+    return startTime
+  }
+
+  return null
+}
+
 export default function(state) {
   return STATE_COLORS[state]
 }
