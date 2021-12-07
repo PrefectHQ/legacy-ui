@@ -1,5 +1,14 @@
 <script>
-import moment from 'moment-timezone'
+import {
+  MS_PER_SECOND,
+  MS_PER_MINUTE,
+  MS_PER_HOUR,
+  durationDifference,
+  toDurationDifferenceString,
+  getMillisecondsUntilNextSecond,
+  getMillisecondsUntilNextMinute,
+  getMillisecondsUntilNextHour
+} from '@/utils/dateTime'
 
 export default {
   props: {
@@ -16,43 +25,80 @@ export default {
   data() {
     return {
       duration: null,
-      interval: null
+      interval: null,
+      intervalBlocks: {
+        second: {
+          msInBlock: MS_PER_SECOND,
+          msUntilNextBlock: getMillisecondsUntilNextSecond
+        },
+        minute: {
+          msInBlock: MS_PER_MINUTE,
+          msUntilNextBlock: getMillisecondsUntilNextMinute
+        },
+        hour: {
+          msInBlock: MS_PER_HOUR,
+          msUntilNextBlock: getMillisecondsUntilNextHour
+        }
+      }
+    }
+  },
+  computed: {
+    durationDifferenceString() {
+      return toDurationDifferenceString(this.duration ?? {})
+    },
+    smallestBlock() {
+      const blocks = Object.keys(this.duration ?? {})
+        .map(key => this.intervalBlocks[key])
+        .sort((a, b) => a.msInBlock - b.msInBlock)
+
+      return blocks.length ? blocks[0] : null
     }
   },
   watch: {
     endTime() {
-      this.updateDuration()
+      this.startIntervalAtNextBlock()
     }
   },
   mounted() {
-    this.updateDuration()
+    this.startIntervalAtNextBlock()
   },
   beforeDestroy() {
     clearInterval(this.interval)
   },
   methods: {
     updateDuration() {
+      this.duration = durationDifference(
+        new Date(this.startTime),
+        this.endTime ? new Date(this.endTime) : new Date()
+      )
+    },
+    startIntervalAtNextBlock() {
       clearInterval(this.interval)
-      if (!this.endTime) {
-        let now = new moment(),
-          start = new moment(this.startTime)
-        this.duration = moment.duration(now.diff(start))
+      this.updateDuration()
 
-        this.interval = setInterval(() => {
-          let now = new moment(),
-            start = new moment(this.startTime)
-          this.duration = moment.duration(now.diff(start))
-        }, 1000)
-      } else {
-        let end = new moment(this.endTime),
-          start = new moment(this.startTime)
-        this.duration = moment.duration(end.diff(start))
+      if (this.endTime) {
+        return
       }
+
+      this.interval = setTimeout(
+        this.startInterval,
+        this.smallestBlock.msUntilNextBlock()
+      )
+    },
+    startInterval() {
+      this.updateDuration()
+
+      this.interval = setInterval(
+        this.updateDuration,
+        this.smallestBlock.msInBlock
+      )
     }
   }
 }
 </script>
 
 <template>
-  <span>{{ duration | duration }}</span>
+  <span class="duration-span">
+    {{ durationDifferenceString }}
+  </span>
 </template>

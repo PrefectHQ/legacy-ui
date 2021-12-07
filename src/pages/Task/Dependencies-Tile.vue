@@ -51,21 +51,22 @@ export default {
     }
   },
   watch: {
-    $route(val) {
-      if (!val.query.schematic) return (this.task = null)
-      this.task = this.tasks.find(
-        task => task.id == this.$route.query.schematic
-      )
+    '$route.query.schematic'(val) {
+      this.setTask(val)
     },
     tasks() {
-      if (!this.$route.query.schematic) return (this.task = null)
-
-      this.task = this.tasks.find(
-        task => task.id == this.$route.query.schematic
-      )
+      this.setTask(this.$route.query.schematic)
     }
   },
-  methods: {}
+  methods: {
+    setTask(id) {
+      if (!id) {
+        this.task = null
+      } else {
+        this.task = this.tasks.find(task => task.id == id)
+      }
+    }
+  }
 }
 </script>
 

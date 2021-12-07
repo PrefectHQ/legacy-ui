@@ -44,9 +44,6 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant', 'role']),
     ...mapGetters('license', ['license', 'planType']),
-    needAlert() {
-      return !location.href.includes('prefect.io')
-    },
     isUsageBased() {
       return this.license?.terms?.is_usage_based
     },
