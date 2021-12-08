@@ -10,7 +10,11 @@ import {
 import ConfirmDialog from '@/components/ConfirmDialog'
 import UpgradeBadge from '@/components/UpgradeBadge'
 
-const systemActions = ['CancelFlowRunAction', 'PauseScheduleAction']
+const systemActions = [
+  'CancelFlowRunAction',
+  'PauseScheduleAction',
+  'CreateFlowRunAction'
+]
 
 export default {
   components: {
@@ -129,68 +133,67 @@ export default {
           action?.action_config?.flow_group_id ===
             this.selectedFlows[0]?.flow_group_id
       )
-      return actions
-        ? this.agentOrFlow === 'agent'
-          ? actions.filter(
-              action =>
-                action.action_type !== 'CancelFlowRunAction' &&
-                action.action_type !== 'PauseScheduleAction'
-            )
-          : actions.find(
-              action => action.action_type === 'CancelFlowRunAction'
-            ) &&
-            actions.find(
-              action =>
-                action.action_type === 'PauseScheduleAction' &&
-                action.action_config.flow_group_id ===
-                  this.selectedFlows[0].flow_group_id
-            )
-          ? actions
-          : actions.find(action => action.action_type === 'PauseScheduleAction')
-          ? [
-              ...actions,
-              {
-                name: 'cancel run',
-                value: 'CANCEL_RUN',
-                action_type: 'CancelFlowRunAction'
-              }
-            ]
-          : actions.find(action => action.action_type === 'CancelFlowRunAction')
-          ? [
-              ...actions,
-              {
-                name: 'pause schedule',
-                value: 'PAUSE_SCHEDULE',
-                action_type: 'PauseScheduleAction'
-              }
-            ]
-          : [
-              ...actions,
-              {
-                name: 'pause schedule',
-                value: 'PAUSE_SCHEDULE',
-                action_type: 'PauseScheduleAction'
-              },
-              {
-                name: 'cancel run',
-                value: 'CANCEL_RUN',
-                action_type: 'CancelFlowRunAction'
-              }
-            ]
-        : [
-            {
-              name: 'cancel run',
-              value: 'CANCEL_RUN',
-              id: 1,
-              action_type: 'CancelFlowRunAction'
-            },
-            {
-              name: 'pause schedule',
-              value: 'PAUSE_SCHEDULE',
-              id: 2,
-              action_type: 'PauseScheduleAction'
-            }
-          ]
+
+      if (actions) {
+        if (this.agentOrFlow === 'agent') {
+          return actions.filter(
+            action => !systemActions.includes(action.action_type)
+          )
+        }
+        if (
+          !actions.find(action => action.action_type === 'CancelFlowRunAction')
+        ) {
+          actions.push({
+            name: 'cancel run',
+            value: 'CANCEL_RUN',
+            action_type: 'CancelFlowRunAction'
+          })
+        }
+        if (
+          !actions.find(
+            action =>
+              action.action_type === 'PauseScheduleAction' &&
+              action.action_config.flow_group_id ===
+                this.selectedFlows[0].flow_group_id
+          )
+        ) {
+          actions.push({
+            name: 'pause schedule',
+            value: 'PAUSE_SCHEDULE',
+            action_type: 'PauseScheduleAction'
+          })
+        }
+        if (
+          !actions.find(action => action.action_type === 'CreateFlowRunAction')
+        ) {
+          actions.push({
+            name: 'start new run',
+            value: 'START_RUN',
+            action_type: 'CreateFlowRunAction'
+          })
+        }
+        return actions
+      }
+      return [
+        {
+          name: 'cancel run',
+          value: 'CANCEL_RUN',
+          id: 1,
+          action_type: 'CancelFlowRunAction'
+        },
+        {
+          name: 'pause schedule',
+          value: 'PAUSE_SCHEDULE',
+          id: 2,
+          action_type: 'PauseScheduleAction'
+        },
+        {
+          name: 'start new run',
+          value: 'START_RUN',
+          id: 3,
+          action_type: 'CreateFlowRunAction'
+        }
+      ]
     },
     customActions() {
       return this.editedActions.filter(
