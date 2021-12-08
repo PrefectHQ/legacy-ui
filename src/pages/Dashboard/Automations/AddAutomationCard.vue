@@ -614,7 +614,6 @@ export default {
             config: startConfig,
             name: 'start a new run'
           })
-          console.log('new action', action, this.selectedFlows)
         }
         if (flow) {
           if (this.includeTo) {
