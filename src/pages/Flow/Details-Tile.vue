@@ -194,6 +194,8 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
+          <LabelEdit :flow="flow" :flow-group="flowGroup" />
+
           <v-list-item v-if="flow.core_version" dense>
             <v-list-item-content>
               <v-list-item-subtitle class="text-caption">
@@ -217,8 +219,6 @@ export default {
               </div>
             </v-list-item-content>
           </v-list-item>
-
-          <LabelEdit :flow="flow" :flow-group="flowGroup" />
         </v-list>
       </v-tab-item>
       <v-tab-item>

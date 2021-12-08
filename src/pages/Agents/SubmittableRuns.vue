@@ -266,12 +266,12 @@ export default {
     </v-card-text>
 
     <v-card-text
-      class="pa-0"
+      class="px-0 py-2"
       :class="
         lateRuns && lateRuns.length ? 'late-card-content' : 'card-content'
       "
     >
-      <v-tabs-items v-model="tab" class="flex-grow-1">
+      <v-tabs-items v-model="tab">
         <v-tab-item>
           <v-skeleton-loader v-if="loading" type="list-item-three-line" />
 
@@ -292,17 +292,18 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
-          <v-list v-else dense>
-            <v-lazy
-              v-for="item in submittableRuns"
-              :key="item.id"
-              :options="{
-                threshold: 0.75
-              }"
-              min-height="44"
-              transition="fade-transition"
-            >
-              <v-list-item dense :disabled="setToRun.includes(item.id)">
+          <v-virtual-scroll
+            v-else
+            :items="submittableRuns"
+            height="232px"
+            item-height="50px"
+          >
+            <template #default="{item}">
+              <v-list-item
+                :key="item.id"
+                :disabled="setToRun.includes(item.id)"
+                dense
+              >
                 <v-list-item-content>
                   <v-list-item-subtitle class="text-body-1 font-weight-regular">
                     <router-link
@@ -350,8 +351,8 @@ export default {
                   </v-tooltip>
                 </v-list-item-action>
               </v-list-item>
-            </v-lazy>
-          </v-list>
+            </template>
+          </v-virtual-scroll>
 
           <Alert
             v-model="showAlert"
@@ -383,17 +384,14 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
-          <v-list v-else dense>
-            <v-lazy
-              v-for="item in lateRuns"
-              :key="item.id"
-              :options="{
-                threshold: 0.75
-              }"
-              min-height="40px"
-              transition="fade"
-            >
-              <v-list-item dense three-line>
+          <v-virtual-scroll
+            v-else
+            :items="lateRuns"
+            height="232px"
+            item-height="76px"
+          >
+            <template #default="{item}">
+              <v-list-item :key="item.id" dense three-line>
                 <v-list-item-content>
                   <v-list-item-subtitle class="text-body-1 font-weight-regular">
                     <router-link
@@ -426,8 +424,8 @@ export default {
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
-            </v-lazy>
-          </v-list>
+            </template>
+          </v-virtual-scroll>
         </v-tab-item>
       </v-tabs-items>
     </v-card-text>
@@ -477,14 +475,16 @@ a {
 }
 
 .late-card-content {
-  min-height: calc(280px - var(--v-tabs-height));
+  height: 100%;
   max-height: calc(280px - var(--v-tabs-height));
   overflow-y: auto;
+  position: relative;
 }
 
 .card-content {
-  min-height: calc(300px - var(--v-tabs-height));
+  height: 100%;
   max-height: calc(300px - var(--v-tabs-height));
   overflow-y: auto;
+  position: relative;
 }
 </style>

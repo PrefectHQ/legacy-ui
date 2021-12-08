@@ -274,8 +274,8 @@ export default {
       </v-tab>
     </v-tabs>
 
-    <v-card-text class="pa-0 card-content">
-      <v-tabs-items v-model="tab" class="flex-grow-1">
+    <v-card-text class="px-0 py-2 card-content">
+      <v-tabs-items v-model="tab">
         <v-tab-item>
           <v-skeleton-loader v-if="loading" type="list-item-three-line" />
 
@@ -296,31 +296,32 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
-          <v-list v-else dense class="card-content">
-            <v-lazy
-              v-for="run in upcomingRuns"
-              :key="run.id"
-              :options="{
-                threshold: 0.75
-              }"
-              min-height="44"
-              transition="fade-transition"
-            >
-              <v-list-item dense :disabled="setToRun.includes(run.id)">
+          <v-virtual-scroll
+            v-else
+            :items="upcomingRuns"
+            height="178px"
+            item-height="50px"
+          >
+            <template #default="{item}">
+              <v-list-item
+                :key="item.id"
+                dense
+                :disabled="setToRun.includes(item.id)"
+              >
                 <v-list-item-content>
                   <v-list-item-subtitle class="text-body-1 font-weight-regular">
                     <router-link
-                      :to="{ name: 'flow-run', params: { id: run.id } }"
+                      :to="{ name: 'flow-run', params: { id: item.id } }"
                     >
-                      {{ run.name }}
+                      {{ item.name }}
                     </router-link>
                   </v-list-item-subtitle>
 
                   <span class="text-caption mb-0 ml-n1 d-flex align-center">
-                    <LabelWarning :flow="run.flow" :flow-run="run" />
+                    <LabelWarning :flow="item.flow" :flow-run="item" />
                     <span class="ml-1">
                       Scheduled for
-                      {{ formatDateTime(run.scheduled_start_time) }}
+                      {{ formatDateTime(item.scheduled_start_time) }}
                     </span>
                   </span>
                 </v-list-item-content>
@@ -332,21 +333,21 @@ export default {
                         text
                         x-small
                         aria-label="Run Now"
-                        :disabled="setToRun.includes(run.id)"
+                        :disabled="setToRun.includes(item.id)"
                         color="primary"
                         class="vertical-button"
                         v-on="on"
-                        @click="runFlowNow(run.id, run.version, run.name)"
+                        @click="runFlowNow(item.id, item.version, item.name)"
                       >
                         <v-icon small dense color="primary">fa-rocket</v-icon>
                       </v-btn>
                     </template>
-                    <span> Run {{ run.name }} now </span>
+                    <span> Run {{ item.name }} now </span>
                   </v-tooltip>
                 </v-list-item-action>
               </v-list-item>
-            </v-lazy>
-          </v-list>
+            </template>
+          </v-virtual-scroll>
         </v-tab-item>
         <v-tab-item>
           <v-skeleton-loader v-if="loading" type="list-item-three-line" />
@@ -365,42 +366,39 @@ export default {
             </v-list-item-content>
           </v-list-item>
 
-          <v-list v-else dense class="card-content">
-            <v-lazy
-              v-for="run in lateRuns"
-              :key="run.id"
-              :options="{
-                threshold: 0.75
-              }"
-              min-height="40px"
-              transition="fade"
-            >
-              <v-list-item dense two-line>
+          <v-virtual-scroll
+            v-else
+            :items="lateRuns"
+            height="178px"
+            item-height="64px"
+          >
+            <template #default="{ item }">
+              <v-list-item :key="item.id" dense two-line>
                 <v-list-item-content>
                   <v-list-item-subtitle class="text-body-1 font-weight-regular">
                     <router-link
-                      :to="{ name: 'flow-run', params: { id: run.id } }"
+                      :to="{ name: 'flow-run', params: { id: item.id } }"
                     >
-                      {{ run.name }}
+                      {{ item.name }}
                     </router-link>
                   </v-list-item-subtitle>
 
                   <span class="text-caption mb-0 ml-n1 d-flex align-center">
-                    <LabelWarning :flow-run="run" location="flowPage" />
+                    <LabelWarning :flow-run="item" location="flowPage" />
                     <span class="ml-1">
                       Scheduled for
-                      {{ formatDateTime(run.scheduled_start_time) }}
+                      {{ formatDateTime(item.scheduled_start_time) }}
                     </span>
                   </span>
 
                   <v-list-item-subtitle class="text-caption">
-                    <DurationSpan :start-time="run.scheduled_start_time" />
+                    <DurationSpan :start-time="item.scheduled_start_time" />
                     behind schedule
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
-            </v-lazy>
-          </v-list>
+            </template>
+          </v-virtual-scroll>
         </v-tab-item>
       </v-tabs-items>
     </v-card-text>

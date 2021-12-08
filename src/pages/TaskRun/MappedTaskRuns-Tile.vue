@@ -2,6 +2,7 @@
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
 import { formatTime } from '@/mixins/formatTimeMixin'
+import { calculateDuration } from '@/utils/states'
 
 export default {
   components: {
@@ -79,7 +80,8 @@ export default {
     onIntersect([entry]) {
       this.$apollo.queries.taskRuns.skip = !entry.isIntersecting
       this.$apollo.queries.taskRunsCount.skip = !entry.isIntersecting
-    }
+    },
+    calculateDuration
   },
   apollo: {
     taskRuns: {
@@ -279,7 +281,9 @@ export default {
           <DurationSpan
             v-if="item.start_time"
             :start-time="item.start_time"
-            :end-time="item.end_time"
+            :end-time="
+              calculateDuration(item.start_time, item.end_time, item.state)
+            "
           />
           <span v-else>...</span>
         </template>

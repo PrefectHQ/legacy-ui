@@ -1,5 +1,11 @@
 import { duration } from '@/utils/moment'
 import moment from '@/utils/moment'
+import { toPluralString } from '@/utils/string'
+
+export const MS_PER_SECOND = 1000
+export const MS_PER_MINUTE = MS_PER_SECOND * 60
+export const MS_PER_HOUR = MS_PER_MINUTE * 60
+export const MS_PER_DAY = MS_PER_HOUR * 24
 
 export const runTimeToEnglish = (startDate, endDate) => {
   if (
@@ -125,4 +131,41 @@ export const roundedOneAgo = unitOftime => {
 
 export function isIsoDateString(value) {
   return /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d/.test(value)
+}
+
+export function getMillisecondsUntilNextSecond() {
+  const now = new Date()
+  return MS_PER_SECOND - now.getMilliseconds()
+}
+
+export function getMillisecondsUntilNextMinute() {
+  const now = new Date()
+  return MS_PER_MINUTE - now.getSeconds() * getMillisecondsUntilNextSecond()
+}
+
+export function getMillisecondsUntilNextHour() {
+  const now = new Date()
+  return MS_PER_HOUR - now.getMinutes() * getMillisecondsUntilNextMinute()
+}
+
+export function durationDifference(start, end) {
+  const difference = end - start
+  const day = Math.floor(difference / MS_PER_DAY)
+  const hour = Math.floor((difference % MS_PER_DAY) / MS_PER_HOUR)
+  const minute = Math.floor((difference % MS_PER_HOUR) / MS_PER_MINUTE)
+  const second = Math.floor((difference % MS_PER_MINUTE) / MS_PER_SECOND)
+
+  return { day, hour, minute, second }
+}
+
+export function toDurationDifferenceString(durationDifference) {
+  return Object.entries(durationDifference)
+    .reduce((blocks, [key, value]) => {
+      if (blocks.length < 2 && value > 0) {
+        blocks.push(`${value} ${toPluralString(key, value)}`)
+      }
+
+      return blocks
+    }, [])
+    .join(', ')
 }

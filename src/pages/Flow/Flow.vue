@@ -61,7 +61,6 @@ export default {
   data() {
     return {
       loadingKey: 0,
-      tab: this.getTab(),
       tabs: [
         {
           name: 'Overview',
@@ -98,11 +97,6 @@ export default {
           target: 'automations',
           icon: 'fad fa-random'
         },
-        // {
-        //   name: 'Versions',
-        //   target: 'versions',
-        //   icon: 'loop'
-        // },
         {
           name: 'Run',
           target: 'run',
@@ -165,61 +159,33 @@ export default {
         return '40vw'
       }
       return '30vw'
+    },
+    tab: {
+      get(){
+      const keys = Object.keys(this.$route.query ?? {})
+      if (keys.length > 0 && this.tabs?.find(tab => tab.target == keys[0])) {
+        return keys[0]
+      }
+
+      return 'overview'
+      },
+      set(value){
+        this.$router.replace({query: { [value]: null }})
+      }
     }
   },
   watch: {
-    $route() {
-      this.tab = this.getTab()
-
-      if (this.$route.name == 'flow') {
+    'this.$route.name'(val){
+      if (val == 'flow') {
         this.activateFlow(this.$route.params.id)
-      }
-    },
-    tab(val) {
-      let query = { ...this.$route.query }
-      switch (val) {
-        case 'schematic':
-          query = 'schematic'
-          break
-        case 'runs':
-          query = 'runs'
-          break
-        case 'tasks':
-          query = 'tasks'
-          break
-        case 'description':
-          query = 'description'
-          break
-        case 'versions':
-          query = 'versions'
-          break
-        case 'automations':
-          query = 'automations'
-          break
-        case 'run':
-          query = 'run'
-          break
-        case 'settings':
-          query = 'settings'
-          break
-        default:
-          break
       }
     }
   },
   async beforeMount() {
-    await this.activateFlow(this.$route.params.id)
-    this.tab = this.getTab()
+  await this.activateFlow(this.$route.params.id)
   },
   methods: {
     ...mapActions('data', ['activateFlow', 'resetActiveData']),
-    getTab() {
-      if (Object.keys(this.$route.query).length != 0) {
-        let target = Object.keys(this.$route.query)[0]
-        if (this.tabs?.find(tab => tab.target == target)) return target
-      }
-      return 'overview'
-    },
     onIntersect([entry]) {
       this.$apollo.queries.flowGroup.skip = !entry.isIntersecting
       this.$apollo.queries.lastFlowRun.skip = !entry.isIntersecting

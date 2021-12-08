@@ -4,7 +4,9 @@ import moment from 'moment-timezone'
 import DurationSpan from '@/components/DurationSpan'
 import ResumeButton from '@/components/ResumeButton'
 import { formatTime } from '@/mixins/formatTimeMixin'
-import { FINISHED_STATES, STATE_NAMES } from '@/utils/states'
+import { STATE_NAMES } from '@/utils/states'
+import { calculateDuration } from '@/utils/states'
+
 export default {
   components: {
     CardTitle,
@@ -98,13 +100,11 @@ export default {
         return true
       }
     },
-    isFinished(state) {
-      return FINISHED_STATES.includes(state)
-    },
     onIntersect([entry]) {
       this.$apollo.queries.flowRun.skip = !entry.isIntersecting
       this.$apollo.queries.taskRunsCount.skip = !entry.isIntersecting
-    }
+    },
+    calculateDuration
   },
   apollo: {
     flowRun: {
@@ -283,11 +283,7 @@ export default {
             v-if="item.start_time"
             :start-time="item.start_time"
             :end-time="
-              item.end_time
-                ? item.end_time
-                : isFinished(item.state)
-                ? item.start_time
-                : null
+              calculateDuration(item.start_time, item.end_time, item.state)
             "
           />
           <span v-else>...</span>

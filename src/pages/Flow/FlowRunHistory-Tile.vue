@@ -34,12 +34,6 @@ export default {
     }
   },
   watch: {
-    flowRuns() {
-      if (this.tooltip) {
-        let exists = this.flowRuns.find(f => f.id == this.tooltip.data.id)
-        this.tooltip = exists ? this.tooltip : null
-      }
-    },
     watch: {
       flow() {
         this.$apollo.queries.flowRuns.stopPolling()

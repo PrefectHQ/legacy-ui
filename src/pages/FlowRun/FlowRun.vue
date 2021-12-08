@@ -57,7 +57,6 @@ export default {
       error: false,
       flowRunNameLoading: false,
       loadingKey: 0,
-      tab: this.getTab(),
       tabs: [
         {
           name: 'Overview',
@@ -109,44 +108,23 @@ export default {
         return '40vw'
       }
       return '30vw'
-    }
-  },
-  watch: {
-    $route() {
-      this.tab = this.getTab()
     },
-    tab(val) {
-      let query = { ...this.$route.query }
-      switch (val) {
-        case 'schematic':
-          query = 'schematic'
-          break
-        case 'logs':
-          query = 'logId'
-          break
-        case 'chart':
-          query = { chart: '' }
-          break
-        case 'artifacts':
-          /* eslint-disable-next-line */
-          query = 'artifacts'
-          break
-        default:
-          break
+    tab: {
+      get() {
+        const keys = Object.keys(this.$route.query ?? {})
+        if (keys.length > 0 && this.tabs?.find(tab => tab.target == keys[0])) {
+          return keys[0]
+        }
+
+        return 'overview'
+      },
+      set(value) {
+        this.$router.replace({ query: { [value]: null } })
       }
     }
-  },
-  beforeMount() {
-    this.tab = this.getTab()
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    getTab() {
-      if (Object.keys(this.$route.query).length != 0) {
-        return Object.keys(this.$route.query)[0]
-      }
-      return 'overview'
-    },
     parseMarkdown(md) {
       return parser(md)
     },
