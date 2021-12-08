@@ -1030,20 +1030,40 @@ export default {
                 <div
                   v-for="config in agentConfigs"
                   :key="config.id"
+                  class="d-inline-block agent-chip pa-2 my-2 mr-4 cursor-pointer text-body-1"
                   v-ripple
-                  class="d-inline-block chip-small pa-2 my-2 mr-4 cursor-pointer text-body-1"
+                  @click="selectAgentConfig(config)"
                   :class="{
                     active:
                       selectedAgentConfig &&
-                      selectedAgentConfig.id === config.id,
-                    flash: animated
+                      selectedAgentConfig.id === config.id
                   }"
-                  @click="selectAgentConfig(config)"
                 >
-                  <span v-if="config.name">{{ config.name }}</span>
-                  <span v-else class="text--disabled"
-                    >Unnamed agent config</span
-                  >
+                  <span>
+                    <span v-if="config.name">{{ config.name }}</span>
+                    <span v-else class="text--disabled">{{ config.id }}</span>
+                  </span>
+                  <span>
+                    <v-menu :close-on-content-click="false" offset-y>
+                      <template #activator="{ on, attrs }">
+                        <v-btn
+                          class="px-2"
+                          text
+                          small
+                          fab
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon>more_horiz</v-icon>
+                        </v-btn>
+                      </template>
+                      <v-card>
+                        <div>
+                          hello
+                        </div>
+                      </v-card>
+                    </v-menu>
+                  </span>
                 </div>
               </div>
             </v-col>
@@ -1488,6 +1508,16 @@ export default {
   &:hover,
   &:focus {
     background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+.agent-chip {
+  border-radius: 5px;
+  max-width: fit-content;
+  border: 1px solid var(--v-utilGrayLight-base);
+
+  &.active {
+    border: 2px solid;
+    border-color: var(--v-accentPink-base) !important;
   }
 }
 
