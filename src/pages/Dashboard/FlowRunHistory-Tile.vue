@@ -27,14 +27,6 @@ export default {
       return this.loadingKey > 0
     }
   },
-  watch: {
-    flowRuns() {
-      if (this.tooltip) {
-        let exists = this.flowRuns.find(f => f.id == this.tooltip.data.id)
-        this.tooltip = exists ? this.tooltip : null
-      }
-    }
-  },
   apollo: {
     flowRuns: {
       query: require('@/graphql/Dashboard/timeline-flow-runs.gql'),

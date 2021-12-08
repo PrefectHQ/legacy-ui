@@ -232,7 +232,7 @@ export default {
       </v-tab>
     </v-tabs>
 
-    <v-card-text class="pa-0">
+    <v-card-text class="px-0 py-2 card-content">
       <v-overlay v-if="overlay" absolute z-index="1">
         <CancelAll :flow-runs="cancellable" @finish="refetch" />
       </v-overlay>
@@ -240,7 +240,7 @@ export default {
       <v-skeleton-loader v-else-if="loading" type="list-item-three-line">
       </v-skeleton-loader>
 
-      <v-list v-else-if="!loading && runs.length === 0" class="card-content">
+      <v-list v-else-if="!loading && runs.length === 0">
         <v-list-item>
           <v-list-item-avatar class="mr-0">
             <v-icon class="mb-1" :color="tileColor">
@@ -266,79 +266,71 @@ export default {
         </v-list-item>
       </v-list>
 
-      <v-list v-else class="card-content">
-        <v-slide-x-transition mode="out-in" leave-absolute group>
-          <v-lazy
-            v-for="run in runs"
-            :key="run.id"
-            :options="{
-              threshold: 0.75
-            }"
-            min-height="40px"
-            transition="fade"
-            :class="run.state == 'Cancelling' ? 'blue-grey lighten-5' : ''"
+      <v-virtual-scroll v-else :items="runs" height="178px" item-height="50px">
+        <template #default="{item}">
+          <div
+            :key="item.id"
+            :class="item.state == 'Cancelling' ? 'blue-grey lighten-5' : ''"
           >
-            <div>
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title class="d-flex align-center">
-                    <div
-                      class="text-truncate d-inline-block"
-                      style="max-width: 50%;"
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title class="d-flex align-center">
+                  <div
+                    class="text-truncate d-inline-block"
+                    style="max-width: 50%;"
+                  >
+                    <router-link
+                      :class="
+                        item.state == 'Cancelling' ? 'text--disabled' : ''
+                      "
+                      :to="{
+                        name: 'flow',
+                        params: { id: item.flow.flow_group_id }
+                      }"
                     >
-                      <router-link
-                        :class="
-                          run.state == 'Cancelling' ? 'text--disabled' : ''
-                        "
-                        :to="{
-                          name: 'flow',
-                          params: { id: run.flow.flow_group_id }
-                        }"
-                      >
-                        {{ run.flow.name }}
-                      </router-link>
-                    </div>
-                    <div class="font-weight-bold d-inline-block">
-                      <v-icon style="font-size: 12px;">
-                        chevron_right
-                      </v-icon>
-                    </div>
+                      {{ item.flow.name }}
+                    </router-link>
+                  </div>
+                  <div class="font-weight-bold d-inline-block">
+                    <v-icon style="font-size: 12px;">
+                      chevron_right
+                    </v-icon>
+                  </div>
 
-                    <div
-                      class="text-truncate d-inline-block text--disabled"
-                      style="max-width: 35%;"
+                  <div
+                    class="text-truncate d-inline-block text--disabled"
+                    style="max-width: 35%;"
+                  >
+                    <router-link
+                      :class="
+                        item.state == 'Cancelling' ? 'text--disabled' : ''
+                      "
+                      :to="{ name: 'flow-run', params: { id: item.id } }"
                     >
-                      <router-link
-                        :class="
-                          run.state == 'Cancelling' ? 'text--disabled' : ''
-                        "
-                        :to="{ name: 'flow-run', params: { id: run.id } }"
-                      >
-                        {{ run.name }}
-                      </router-link>
-                    </div>
-                  </v-list-item-title>
-                  <v-list-item-subtitle v-if="run.state == 'Cancelling'">
-                    Cancelling...
-                  </v-list-item-subtitle>
-                  <v-list-item-subtitle v-else-if="run.start_time">
-                    Running for
-                    <DurationSpan
-                      class="font-weight-bold"
-                      :start-time="run.start_time"
-                    />
-                  </v-list-item-subtitle>
-                  <v-list-item-subtitle v-else-if="run.state == 'Submitted'">
-                    Submitted for execution
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
+                      {{ item.name }}
+                    </router-link>
+                  </div>
+                </v-list-item-title>
+                <v-list-item-subtitle v-if="item.state == 'Cancelling'">
+                  Cancelling...
+                </v-list-item-subtitle>
+                <v-list-item-subtitle v-else-if="item.start_time">
+                  Running for
+                  <DurationSpan
+                    class="font-weight-bold"
+                    :start-time="item.start_time"
+                  />
+                </v-list-item-subtitle>
+                <v-list-item-subtitle v-else-if="item.state == 'Submitted'">
+                  Submitted for execution
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
 
-              <v-divider class="my-1 mx-4 grey lighten-4" />
-            </div>
-          </v-lazy>
-        </v-slide-x-transition>
-      </v-list>
+            <v-divider class="my-1 mx-4 grey lighten-4" />
+          </div>
+        </template>
+      </v-virtual-scroll>
 
       <div v-if="runs && runs.length > 3" class="pa-0 card-footer"> </div>
     </v-card-text>

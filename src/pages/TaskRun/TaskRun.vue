@@ -52,7 +52,6 @@ export default {
   data() {
     return {
       loading: 0,
-      tab: this.getTab(),
       taskRunNameLoading: false
     }
   },
@@ -110,12 +109,22 @@ export default {
         return '40vw'
       }
       return '30vw'
+    },
+    tab: {
+      get() {
+        const keys = Object.keys(this.$route.query ?? {})
+        if (keys.length > 0 && this.tabs?.find(tab => tab.target == keys[0])) {
+          return keys[0]
+        }
+
+        return 'overview'
+      },
+      set(value) {
+        this.$router.replace({ query: { [value]: null } })
+      }
     }
   },
   watch: {
-    $route() {
-      this.tab = this.getTab()
-    },
     taskRun(val, prevVal) {
       if (val === 'not-found') this.$router.push({ name: 'not-found' })
       if (!val || val?.id == prevVal?.id) return
@@ -133,12 +142,6 @@ export default {
   },
   methods: {
     ...mapActions('alert', ['setAlert']),
-    getTab() {
-      if (Object.keys(this.$route.query).length != 0) {
-        return Object.keys(this.$route.query)[0]
-      }
-      return 'overview'
-    },
     parseMarkdown(md) {
       return parser(md)
     },
