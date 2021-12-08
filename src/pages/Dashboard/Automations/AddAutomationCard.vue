@@ -126,12 +126,15 @@ export default {
       return 'has'
     },
     editedActions() {
-      // Most actions are independent and can be used across flows but PauseScheduleAction can take a flow group id so need to filter here
+      // Most actions are independent and can be used across flows but PauseScheduleAction and CreateScheduleAction can take a flow group id so need to filter here
       const actions = this.actions.filter(
         action =>
-          action.action_type !== 'PauseScheduleAction' ||
-          action?.action_config?.flow_group_id ===
-            this.selectedFlows[0]?.flow_group_id
+          (action.action_type !== 'PauseScheduleAction' ||
+            action?.action_config?.flow_group_id ===
+              this.selectedFlows[0]?.flow_group_id) &&
+          (action.action_type !== 'CreateFlowRunAction' ||
+            action?.action_config?.flow_group_id ===
+              this.selectedFlows[0]?.flow_group_id)
       )
 
       if (actions) {
@@ -160,6 +163,7 @@ export default {
           actions.push({
             name: 'pause schedule',
             value: 'PAUSE_SCHEDULE',
+            id: 2,
             action_type: 'PauseScheduleAction'
           })
         }
@@ -167,8 +171,9 @@ export default {
           !actions.find(action => action.action_type === 'CreateFlowRunAction')
         ) {
           actions.push({
-            name: 'start new run',
+            name: 'start a new run',
             value: 'START_RUN',
+            id: 3,
             action_type: 'CreateFlowRunAction'
           })
         }
@@ -598,6 +603,18 @@ export default {
             config: pauseConfig,
             name: 'pause the schedule'
           })
+        }
+        if (action?.value === 'START_RUN') {
+          const startConfig = {
+            create_flow_run: {
+              flow_group_id: this.selectedFlows[0].flow_group_id
+            }
+          }
+          action = await this.createAction({
+            config: startConfig,
+            name: 'start a new run'
+          })
+          console.log('new action', action, this.selectedFlows)
         }
         if (flow) {
           if (this.includeTo) {
