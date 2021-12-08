@@ -145,7 +145,7 @@ export default {
               </div>
             </v-list-item-content>
           </v-list-item>
-
+          <LabelEdit type="flowRun" :flow-run="flowRun" />
           <v-list-item v-if="flowRun.state_message" dense>
             <v-list-item-content>
               <v-list-item-subtitle class="text-caption">
@@ -274,7 +274,6 @@ export default {
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <LabelEdit type="flowRun" :flow-run="flowRun" />
         </v-list>
       </v-tab-item>
       <v-tab-item :value="tabs.parameters">
