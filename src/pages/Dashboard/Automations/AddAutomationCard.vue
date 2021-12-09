@@ -73,7 +73,9 @@ export default {
         notNull: val => val > 0 || 'Duration must be greater than 0 seconds'
       },
       animated: false,
-      agentConfigId: ''
+      agentConfigId: '',
+      copiedText: {},
+      deletingConfig: false
     }
   },
   computed: {
@@ -575,6 +577,43 @@ export default {
         this.deleting = false
       }
     },
+    copyToClipboard(value) {
+      this.copiedText = {}
+      this.copiedText[value] = true
+      navigator.clipboard.writeText(value)
+
+      setTimeout(() => {
+        this.copiedText = {}
+        this.copiedText[value] = false
+      }, 600)
+    },
+    async deleteConfig(id) {
+      this.deletingConfig = true
+      try {
+        await this.$apollo.mutate({
+          mutation: require('@/graphql/Automations/delete-agent-config.gql'),
+          variables: {
+            agentConfigInput: {
+              agent_config_id: id
+            }
+          }
+        })
+        this.$apollo.queries.agentConfigs.refetch()
+        this.setAlert({
+          alertShow: true,
+          alertMessage: 'Agent config deleted',
+          alertType: 'info'
+        })
+      } catch (error) {
+        this.setAlert({
+          alertShow: true,
+          alertMessage: `${error}`,
+          alertType: 'error'
+        })
+      } finally {
+        this.deletingConfig = false
+      }
+    },
     async createHook() {
       this.saving = true
 
@@ -1041,7 +1080,7 @@ export default {
                 >
                   <span>
                     <span v-if="config.name">{{ config.name }}</span>
-                    <span v-else class="text--disabled">{{ config.id }}</span>
+                    <span v-else>{{ config.id }}</span>
                   </span>
                   <span>
                     <v-menu :close-on-content-click="false" offset-y>
@@ -1057,15 +1096,66 @@ export default {
                           <v-icon>more_horiz</v-icon>
                         </v-btn>
                       </template>
-                      <v-card>
+                      <v-card class="pa-4">
                         <div>
-                          hello
+                          <v-btn
+                            text
+                            plain
+                            class="cursor-pointer show-icon-hover-focus-only pa-0 text-subtitle-1"
+                            role="button"
+                            @click="
+                              copyToClipboard(`--agent-config-id ${config.id}`)
+                            "
+                          >
+                            <v-icon color="primary" class="mr-2">
+                              {{
+                                copiedText[`--agent-config-id ${config.id}`]
+                                  ? 'check'
+                                  : 'file_copy'
+                              }}
+                            </v-icon>
+                            <span
+                              class="text-subtitle-1"
+                              style="text-transform: none;"
+                            >
+                              --agent-config-id {{ config.id }}
+                            </span>
+                          </v-btn>
+                        </div>
+                        <div class="mt-2">
+                          <v-btn
+                            text
+                            plain
+                            class="cursor-pointer show-icon-hover-focus-only pa-0 text-subtitle-1"
+                            role="button"
+                            @click="deleteConfig(config.id)"
+                            :loading="deletingConfig"
+                          >
+                            <v-icon color="red" class="mr-2">
+                              delete
+                            </v-icon>
+                            <span
+                              class="text-subtitle-1"
+                              style="text-transform: none;"
+                            >
+                              Delete
+                            </span>
+                          </v-btn>
                         </div>
                       </v-card>
                     </v-menu>
                   </span>
                 </div>
               </div>
+            </v-col>
+            <v-col cols="12" class="mt-2">
+              <span class="text-subtitle-1 font-weight-light"
+                >To set up an agent automation you need to add the
+                agent-config-id flag at agent registration. If you attach the
+                same id to multiple agents,</span
+              ><span class="mb-2 text-subtitle-1 font-weight-medium">
+                Prefect will only notify you if all agents are unhealthy.</span
+              >
             </v-col>
           </v-row>
 
