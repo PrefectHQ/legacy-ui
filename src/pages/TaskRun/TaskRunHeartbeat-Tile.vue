@@ -41,6 +41,11 @@ export default {
         : null
     }
   },
+  methods: {
+    onIntersect([entry]) {
+      this.$apollo.queries.taskRun.skip = !entry.isIntersecting
+    }
+  },
   apollo: {
     taskRun: {
       query: require('@/graphql/TaskRun/heartbeat.gql'),
@@ -61,7 +66,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2" tile>
+  <v-card v-intersect="{ handler: onIntersect }" class="pa-2" tile>
     <CardTitle title="Activity" icon="show_chart">
       <v-select
         slot="action"

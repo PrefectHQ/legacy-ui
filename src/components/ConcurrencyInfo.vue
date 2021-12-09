@@ -13,6 +13,11 @@ export default {
       return this.license?.terms?.flow_concurrency
     }
   },
+  methods: {
+    onIntersect([entry]) {
+      this.$apollo.queries.concurrentRuns.skip = !entry.isIntersecting
+    }
+  },
   apollo: {
     concurrentRuns: {
       query: require('@/graphql/concurrent-runs.gql'),
@@ -28,7 +33,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="concurrentRuns && license">
+  <div v-if="concurrentRuns && license" v-intersect="{ handler: onIntersect }">
     {{ concurrentRuns.length
     }}{{ flowConcurrency ? `/${flowConcurrency}` : '' }} slot{{
       concurrentRuns.length === 1 || flowConcurrency === 1 ? '' : 's'

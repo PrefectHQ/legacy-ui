@@ -17,6 +17,7 @@ import sideNav from '@/store/sideNav'
 import tenant from '@/store/tenant'
 import user from '@/store/user'
 import alert from '@/store/alert'
+import polling from '@/store/polling'
 
 Vue.use(Vuex)
 
@@ -42,6 +43,7 @@ const store = new Vuex.Store({
     auth,
     data,
     license,
+    polling,
     refresh,
     sideNav,
     tenant,

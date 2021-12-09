@@ -15,6 +15,11 @@ export default {
       return !this.hasPermission('update', 'run')
     }
   },
+  methods: {
+    onIntersect([entry]) {
+      this.$apollo.queries.taskRunIds.skip = !entry.isIntersecting
+    }
+  },
   apollo: {
     taskRunIds: {
       query: require('@/graphql/FlowRun/task-run-ids.gql'),
@@ -36,7 +41,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="activeButton">
+  <div v-if="activeButton" v-intersect="{ handler: onIntersect }">
     <v-dialog v-model="setStateDialog" max-width="600" @click:outside="reset">
       <template #activator="{ on: dialog }">
         <v-tooltip bottom>

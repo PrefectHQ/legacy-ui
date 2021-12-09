@@ -47,7 +47,6 @@ export default {
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['timezone']),
-    ...mapGetters('data', ['flows']),
     agent() {
       const agent = { ...this.rawAgent }
       const getTimeOverdue = time => new Date() - new Date(time)
@@ -175,8 +174,7 @@ export default {
   methods: {
     ...mapMutations('agent', ['setRefetch']),
     flowName(flowRun) {
-      const flow = this.flows?.filter(flow => flow?.id === flowRun.flow_id)[0]
-      return flow?.name
+      return flowRun?.flow?.name
     },
     flowRunName(flowRun) {
       return flowRun?.name
@@ -193,6 +191,9 @@ export default {
     },
     getFriendlyCount(count) {
       return count > 999 ? '1,000+' : count
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.flowRuns.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -209,7 +210,12 @@ export default {
 </script>
 
 <template>
-  <v-card class="py-2" tile height="380px">
+  <v-card
+    v-intersect="{ handler: onIntersect }"
+    class="py-2"
+    tile
+    height="380px"
+  >
     <v-system-bar :color="systemBarColor" :height="5" absolute />
 
     <CardTitle :title="title" :icon="titleIcon" :icon-color="titleIconColor">

@@ -192,6 +192,11 @@ export default {
       if (!this.logsQueryResultsTarget || !this.logsQueryResults) return
 
       this.scopeLogs()
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.logsQueryResults.skip = !entry.isIntersecting
+      this.$apollo.queries.logsQueryResultsOlder.skip = !entry.isIntersecting
+      this.$apollo.queries.logsQueryResultsNewer.skip = !entry.isIntersecting
     }
   },
   created() {
@@ -513,7 +518,7 @@ export default {
 </script>
 
 <template>
-  <div data-private>
+  <div v-intersect="{ handler: onIntersect }" data-private>
     <v-card class="logs-card" tile>
       <v-system-bar :color="entityState" :height="5" absolute>
         <!-- We should include a state icon here when we've got those -->

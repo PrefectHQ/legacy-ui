@@ -68,6 +68,9 @@ export default {
           'margin-right': '8px'
         }
       }
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.flow.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -92,6 +95,7 @@ export default {
 <template>
   <span
     v-if="loadingKey < 1"
+    v-intersect="{ handler: onIntersect }"
     class="text-caption max-width"
     :class="[textAlign]"
   >

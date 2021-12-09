@@ -27,6 +27,12 @@ export default {
       return this.loadingKey > 0
     }
   },
+  methods: {
+    onIntersect([entry]) {
+      this.$apollo.queries.flowRuns.skip = !entry.isIntersecting
+      this.$apollo.queries.scheduledFlowRuns.skip = !entry.isIntersecting
+    }
+  },
   apollo: {
     flowRuns: {
       query: require('@/graphql/Dashboard/timeline-flow-runs.gql'),
@@ -57,7 +63,12 @@ export default {
 </script>
 
 <template>
-  <v-card class="px-3 pt-7 pb-0" style="height: 100%;" tile>
+  <v-card
+    v-intersect="{ handler: onIntersect }"
+    class="px-3 pt-7 pb-0"
+    style="height: 100%;"
+    tile
+  >
     <div class="text-caption text-left grey--text timeline-title">
       <v-icon x-small>pi-flow-run</v-icon><span class="ml-1">Run History</span>
     </div>

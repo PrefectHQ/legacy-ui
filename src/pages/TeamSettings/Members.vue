@@ -224,6 +224,9 @@ export default {
         this.inviteError = null
         this.roleInput = this.roles.find(r => r.name == 'TENANT_ADMIN').id
       })
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.roles.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -244,7 +247,11 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout :show="!isLoadingMembersTable" control-show>
+  <ManagementLayout
+    v-intersect="{ handler: onIntersect }"
+    :show="!isLoadingMembersTable"
+    control-show
+  >
     <template #title>Team Members</template>
 
     <template #subtitle>

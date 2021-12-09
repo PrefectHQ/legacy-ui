@@ -3,6 +3,7 @@ import ConfirmDialog from '@/components/ConfirmDialog'
 
 import TeamListItem from '@/components/TeamListItem'
 import { mapActions, mapGetters } from 'vuex'
+import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
 import { clearCache } from '@/vue-apollo'
 
 export default {
@@ -10,6 +11,7 @@ export default {
     ConfirmDialog,
     TeamListItem
   },
+  mixins: [pollsTenantsMixin],
   data() {
     return {
       confirmDeleteDialog: false,

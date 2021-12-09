@@ -313,6 +313,10 @@ export default {
         b.formattedTime = this.logTime(b.time)
       })
       this.hoveredBreakpoints = e?.breakpoints
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.taskRuns.skip = !entry.isIntersecting
+      this.$apollo.queries.mappedChildren.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -376,6 +380,7 @@ export default {
 
 <template>
   <v-card
+    v-intersect="{ handler: onIntersect }"
     class="px-3 pt-7 pb-2 mx-auto"
     style="
       max-height: 200px;"

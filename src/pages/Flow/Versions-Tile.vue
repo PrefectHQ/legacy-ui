@@ -121,6 +121,10 @@ export default {
         d.flow_id = flowId
         return d
       })
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.versions.skip = !entry.isIntersecting
+      this.$apollo.queries.versionsCount.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -158,7 +162,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2 mt-2" tile>
+  <v-card v-intersect="{ handler: onIntersect }" class="pa-2 mt-2" tile>
     <CardTitle title="Flow Versions" icon="loop">
       <v-text-field
         slot="action"

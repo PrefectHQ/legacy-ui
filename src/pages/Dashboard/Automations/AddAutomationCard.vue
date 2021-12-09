@@ -1,5 +1,6 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { pollsProjectsMixin } from '@/mixins/polling/pollsProjectsMixin'
 import AddAction from '@/pages/Dashboard/Automations/AddAction'
 import CreateAgentConfigForm from '@/pages/Dashboard/Automations/CreateAgentConfigForm'
 import {
@@ -19,6 +20,7 @@ export default {
     ConfirmDialog,
     UpgradeBadge
   },
+  mixins: [pollsProjectsMixin],
   props: {
     hookDetail: {
       type: Object,
@@ -712,6 +714,9 @@ export default {
           this.closeCard()
         }
       }
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.flows.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -762,7 +767,11 @@ export default {
 </script>
 
 <template>
-  <v-card class="pb-4 px-4" elevation="4">
+  <v-card
+    v-intersect="{ handler: onIntersect }"
+    class="pb-4 px-4"
+    elevation="4"
+  >
     <v-card-text class="text-h5 font-weight-light pb-0 pt-4 px-0">
       <v-row no-gutters>
         <v-col cols="9" lg="10">

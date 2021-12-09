@@ -1,9 +1,11 @@
 <script>
 import CardDetails from '@/components/Plans/CardDetails'
 import { mapActions, mapGetters } from 'vuex'
+import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
 
 export default {
   components: { CardDetails },
+  mixins: [pollsTenantsMixin],
   props: {
     page: {
       type: String,
