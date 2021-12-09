@@ -82,6 +82,9 @@ export default {
         height: '1rem',
         width: '1rem'
       }
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.flowRunsAggregate.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -121,7 +124,12 @@ export default {
 </script>
 
 <template>
-  <v-card class="py-2" tile style="height: 100%;">
+  <v-card
+    v-intersect="{ handler: onIntersect }"
+    class="py-2"
+    tile
+    style="height: 100%;"
+  >
     <v-tooltip top>
       <template #activator="{ on }">
         <CardTitle title="Summary" icon="pi-flow-run">

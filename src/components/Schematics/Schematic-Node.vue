@@ -158,6 +158,9 @@ export default {
     },
     isFinished(state) {
       return FINISHED_STATES.includes(state)
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.mappedChildren.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -183,6 +186,7 @@ export default {
 
 <template>
   <div
+    v-intersect="{ handler: onIntersect }"
     v-ripple
     class="utilGrayLight d-flex align-center node ripple"
     :class="showDetails ? 'elevation-3' : ''"

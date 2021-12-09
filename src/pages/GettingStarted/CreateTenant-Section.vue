@@ -1,7 +1,9 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
 
 export default {
+  mixins: [pollsTenantsMixin],
   data() {
     return {
       serverUrlInput: this.serverUrl,

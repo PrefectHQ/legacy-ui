@@ -91,6 +91,12 @@ export default {
       'user',
       'plan'
     ]),
+    ...mapGetters('polling', [
+      'shouldPollTenants',
+      'shouldPollAgents',
+      'shouldPollProjects',
+      'shouldPollFlows'
+    ]),
     notFoundPage() {
       return this.$route.name === 'not-found'
     },
@@ -227,7 +233,11 @@ export default {
       {
         query: require('@/graphql/Tenant/tenants.js').default(this.isCloud),
         skip() {
-          return (this.isCloud && !this.isAuthorized) || !this.connected
+          return (
+            (this.isCloud && !this.isAuthorized) ||
+            !this.connected ||
+            !this.shouldPollTenants
+          )
         },
         fetchPolicy: 'no-cache',
         pollInterval: 60000,
@@ -244,7 +254,11 @@ export default {
         return require('@/graphql/Agent/agents.js').default(this.isCloud)
       },
       skip() {
-        return (this.isCloud && !this.isAuthorized) || !this.connected
+        return (
+          (this.isCloud && !this.isAuthorized) ||
+          !this.connected ||
+          !this.shouldPollAgents
+        )
       },
       pollInterval: 1000,
       // Without this, server UI with no actual server shows results
@@ -263,7 +277,11 @@ export default {
           return require('@/graphql/Nav/projects.gql')
         },
         skip() {
-          return (this.isCloud && !this.isAuthorized) || !this.connected
+          return (
+            (this.isCloud && !this.isAuthorized) ||
+            !this.connected ||
+            !this.shouldPollProjects
+          )
         },
         pollInterval: 10000,
         update(data) {
@@ -279,7 +297,11 @@ export default {
         return require('@/graphql/Nav/flows.gql')
       },
       skip() {
-        return (this.isCloud && !this.isAuthorized) || !this.connected
+        return (
+          (this.isCloud && !this.isAuthorized) ||
+          !this.connected ||
+          !this.shouldPollFlows
+        )
       },
       pollInterval: 10000,
       update(data) {

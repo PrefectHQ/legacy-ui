@@ -51,7 +51,11 @@ export default {
       this.$apollo.queries.flowRuns.startPolling(this.pollInterval)
     }
   },
-  methods: {},
+  methods: {
+    onIntersect([entry]) {
+      this.$apollo.queries.flowRuns.skip = !entry.isIntersecting
+    }
+  },
   apollo: {
     flowRuns: {
       query: require('@/graphql/Flow/timeline-flow-runs.gql'),
@@ -75,6 +79,7 @@ export default {
 
 <template>
   <v-card
+    v-intersect="{ handler: onIntersect }"
     class="pa-0 pt-7 mb-4 appBackground"
     style="max-height: 114px;"
     tile

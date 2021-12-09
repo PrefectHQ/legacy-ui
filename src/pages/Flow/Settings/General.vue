@@ -267,6 +267,9 @@ export default {
         this.loading.versionLocking = false
         this.error.versionLocking = e
       }
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.projects.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -280,7 +283,11 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2 pb-6 mt-2" outlined>
+  <v-card
+    v-intersect="{ handler: onIntersect }"
+    class="pa-2 pb-6 mt-2"
+    outlined
+  >
     <CardTitle title="Flow Settings" icon="settings" />
 
     <v-card-text class="pl-12" style="max-width: 1000px;">

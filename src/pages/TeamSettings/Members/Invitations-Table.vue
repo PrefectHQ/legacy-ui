@@ -111,6 +111,9 @@ export default {
       this.isRevokingInvitation = false
       this.dialogRevokeInvite = false
       this.selectedUser = null
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.pendingInvitations.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -157,7 +160,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div v-intersect="{ handler: onIntersect }">
     <v-data-table
       fixed-header
       :headers="headers"

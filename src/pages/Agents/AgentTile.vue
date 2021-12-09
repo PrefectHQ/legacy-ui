@@ -238,6 +238,9 @@ export default {
     },
     labelSelected(label) {
       return this.selectedLabels.includes(label)
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.flowRuns.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -278,6 +281,7 @@ export default {
 
 <template>
   <v-card
+    v-intersect="{ handler: onIntersect }"
     :disabled="agent.isDeleting || isDeleting"
     class="agent-card py-2"
     :tile="showAll"

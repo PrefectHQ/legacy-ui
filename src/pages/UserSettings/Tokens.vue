@@ -87,6 +87,9 @@ export default {
         this.alertMessage = 'Something went wrong when deleting a token.'
         this.alertType = 'error'
       }
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.tokens.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -101,7 +104,7 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout show>
+  <ManagementLayout v-intersect="{ handler: onIntersect }" show>
     <template #title>Personal Access Tokens</template>
 
     <template #subtitle>
