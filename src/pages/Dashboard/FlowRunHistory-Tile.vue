@@ -93,7 +93,11 @@ export default {
       @bar-mouseover="_barMouseover"
     >
       <template v-if="canShowTooltip" slot="tooltip">
-        <TimelineTooltip :tooltip="tooltip" :loading="tooltipLoading" />
+        <TimelineTooltip
+          :tooltip="tooltip"
+          :loading="tooltipLoading"
+          :show-project-name="$route.name === 'dashboard'"
+        />
       </template>
     </BarChart>
   </v-card>
