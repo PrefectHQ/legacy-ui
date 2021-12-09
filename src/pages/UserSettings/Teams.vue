@@ -1,6 +1,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { clearCache } from '@/vue-apollo'
+import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
 import { handleMembershipInvitations } from '@/mixins/membershipInvitationMixin'
 import AcceptConfirmInputRow from '@/components/AcceptConfirmInputRow'
 
@@ -13,7 +14,7 @@ export default {
     ConfirmDialog,
     AcceptConfirmInputRow
   },
-  mixins: [handleMembershipInvitations],
+  mixins: [handleMembershipInvitations, pollsTenantsMixin],
   data() {
     return {
       dialogRemoveUser: false,
@@ -197,6 +198,9 @@ export default {
       this.dialogRemoveUser = false
       this.isRemovingUser = false
       this.confirmInput = null
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.pendingInvitations.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -216,7 +220,7 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout>
+  <ManagementLayout v-intersect="{ handler: onIntersect }">
     <template #title>Your Teams</template>
 
     <template #subtitle>

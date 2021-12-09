@@ -24,7 +24,11 @@ export default {
     ...mapGetters('user', ['timezone'])
   },
   watch: {},
-  methods: {},
+  methods: {
+    onIntersect([entry]) {
+      this.$apollo.queries.flowRun.skip = !entry.isIntersecting
+    }
+  },
   apollo: {
     flowRun: {
       query: require('@/graphql/Schematics/flow-run.gql'),
@@ -57,7 +61,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2 mt-2" tile>
+  <v-card v-intersect="{ handler: onIntersect }" class="pa-2 mt-2" tile>
     <CardTitle title="Flow Run Schematic" icon="pi-schematic">
       <div v-if="flowRun" slot="badge" class="text-body-2">
         <span>

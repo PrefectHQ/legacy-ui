@@ -59,6 +59,9 @@ export default {
         : ['white--text']
 
       return [state, ...textColor]
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.mappedChildren.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -80,7 +83,10 @@ export default {
 </script>
 
 <template>
-  <v-card-text class="full-height position-relative pa-0 text-caption">
+  <v-card-text
+    v-intersect="{ handler: onIntersect }"
+    class="full-height position-relative pa-0 text-caption"
+  >
     <v-list-item
       class="py-2 pr-2 pl-3"
       dense

@@ -92,6 +92,10 @@ export default {
       this.$router.push({
         name: 'notifications'
       })
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.notifications.skip = !entry.isIntersecting
+      this.$apollo.queries.notificationsCount.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -131,6 +135,7 @@ export default {
 
 <template>
   <v-card
+    v-intersect="{ handler: onIntersect }"
     class="py-2 position-relative d-flex flex-column"
     style="height: 100%;"
     tile

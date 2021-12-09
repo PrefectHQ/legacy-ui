@@ -166,6 +166,9 @@ export default {
       } finally {
         this.flowRunNameLoading = false
       }
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.flowRun.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -207,6 +210,7 @@ export default {
 <template>
   <v-sheet
     v-if="error && !flowRun"
+    v-intersect="{ handler: onIntersect }"
     color="appBackground"
     class="position-relative"
   >

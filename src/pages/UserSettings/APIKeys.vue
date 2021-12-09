@@ -1,6 +1,7 @@
 <script>
 import { setTimeout } from 'timers'
 import { mapGetters } from 'vuex'
+import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
 import DateTime from '@/components/DateTime'
 
 import Alert from '@/components/Alert'
@@ -15,7 +16,7 @@ export default {
     ConfirmDialog,
     ManagementLayout
   },
-  mixins: [formatTime],
+  mixins: [formatTime, pollsTenantsMixin],
   data() {
     return {
       createKeyDialog: false,

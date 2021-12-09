@@ -57,6 +57,9 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.flowRun.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -78,7 +81,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="!flowRunId">
+  <div v-if="!flowRunId" v-intersect="{ handler: onIntersect }">
     <p>
       It's now time to run the demo flow using our locally-deployed agent!
     </p>

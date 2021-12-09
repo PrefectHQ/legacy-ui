@@ -185,7 +185,11 @@ export default {
   await this.activateFlow(this.$route.params.id)
   },
   methods: {
-    ...mapActions('data', ['activateFlow', 'resetActiveData'])
+    ...mapActions('data', ['activateFlow', 'resetActiveData']),
+    onIntersect([entry]) {
+      this.$apollo.queries.flowGroup.skip = !entry.isIntersecting
+      this.$apollo.queries.lastFlowRun.skip = !entry.isIntersecting
+    }
   },
   apollo: {
     flowGroup: {
@@ -220,7 +224,7 @@ export default {
 </script>
 
 <template>
-  <v-sheet color="appBackground">
+  <v-sheet v-intersect="{ handler: onIntersect }" color="appBackground">
     <SubPageNav icon="pi-flow" page-type="Flow">
       <span
         slot="page-title"

@@ -82,6 +82,9 @@ export default {
     formatTimeRelative(timestamp) {
       let timeObj = moment(timestamp).tz(this.timezone)
       return timeObj ? timeObj.fromNow() : moment(timestamp).fromNow()
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.errors.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -118,6 +121,7 @@ export default {
 
 <template>
   <v-card
+    v-intersect="{ handler: onIntersect }"
     class="py-2 position-relative"
     tile
     :style="{

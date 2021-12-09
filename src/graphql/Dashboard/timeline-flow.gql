@@ -2,5 +2,8 @@ query TimelineFlow($flowId: uuid!) {
   flow_by_pk(id: $flowId) {
     id
     name
+    project {
+      name
+    }
   }
 }

@@ -1,6 +1,7 @@
 <script>
 import LogRocket from 'logrocket'
 import { mapActions, mapGetters } from 'vuex'
+import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
 import { clearCache } from '@/vue-apollo'
 
 import { adjectives } from '@/components/RunConfig/adjectives'
@@ -10,6 +11,7 @@ const adjectivesLength = adjectives.length
 const animalsLength = animals.length
 
 export default {
+  mixins: [pollsTenantsMixin],
   data() {
     return {
       currentTeam: null,

@@ -146,7 +146,11 @@ export default {
     }
   },
   watch: {},
-  methods: {},
+  methods: {
+    onIntersect([entry]) {
+      this.$apollo.queries.taskRunDependencies.skip = !entry.isIntersecting
+    }
+  },
   apollo: {
     taskRunDependencies: {
       query() {
@@ -190,7 +194,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2" tile>
+  <v-card v-intersect="{ handler: onIntersect }" class="pa-2" tile>
     <CardTitle title="Dependencies" icon="share" :subtitle="subtitle">
       <div slot="action" class="d-flex align-end justify-center flex-column">
         <v-checkbox
