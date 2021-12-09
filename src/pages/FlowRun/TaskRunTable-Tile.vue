@@ -100,6 +100,10 @@ export default {
         return true
       }
     },
+    onIntersect([entry]) {
+      this.$apollo.queries.flowRun.skip = !entry.isIntersecting
+      this.$apollo.queries.taskRunsCount.skip = !entry.isIntersecting
+    },
     calculateDuration
   },
   apollo: {
@@ -143,7 +147,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2" tile>
+  <v-card v-intersect="{ handler: onIntersect }" class="pa-2" tile>
     <CardTitle icon="pi-task-run">
       <div
         :slot="$vuetify.breakpoint.lgAndUp && 'title'"

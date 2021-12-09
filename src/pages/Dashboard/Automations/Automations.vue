@@ -63,6 +63,9 @@ export default {
     },
     handleDone() {
       this.sortHooks()
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.hooks.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -82,7 +85,10 @@ export default {
 </script>
 
 <template>
-  <div v-if="!hasPermission('read', 'hook')">
+  <div
+    v-if="!hasPermission('read', 'hook')"
+    v-intersect="{ handler: onIntersect }"
+  >
     <v-row>
       <v-col cols="12" class="text-center text-h6 pa-12">
         You do not have access to Automations. If you'd like to be able to

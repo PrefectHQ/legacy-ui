@@ -43,6 +43,9 @@ export default {
       if (this.stateGroupFinished(states)) return 'Finished'
       if (this.stateGroupSuccess(states)) return 'Success'
       return 'Custom'
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.cloudHooks.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -66,7 +69,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2 mt-2" outlined>
+  <v-card v-intersect="{ handler: onIntersect }" class="pa-2 mt-2" outlined>
     <CardTitle title="Cloud Hooks" icon="cloud" />
 
     <v-card-text class="pl-12">

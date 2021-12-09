@@ -165,6 +165,11 @@ export default {
               role => role.id === this.role
             )[0]
       }
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.roles.skip = !entry.isIntersecting
+      this.$apollo.queries.rolesInUse.skip = !entry.isIntersecting
+      this.$apollo.queries.rolesInvited.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -202,6 +207,7 @@ export default {
 <template>
   <v-sheet
     v-if="!hasPermission('read', 'role')"
+    v-intersect="{ handler: onIntersect }"
     height="100vH"
     class="appBackground"
   >

@@ -1,6 +1,7 @@
 <script>
 /* eslint-disable vue/no-v-html */
 import { mapGetters } from 'vuex'
+import { pollsTenantsMixin } from '@/mixins/polling/pollsTenantsMixin'
 import BreadCrumbs from '@/components/BreadCrumbs'
 import NavTabBar from '@/components/NavTabBar'
 import SubPageNav from '@/layouts/SubPageNav'
@@ -16,6 +17,7 @@ export default {
     NavTabBar,
     SubPageNav
   },
+  mixins: [pollsTenantsMixin],
   computed: {
     ...mapGetters('tenant', ['tenant', 'tenants']),
     ...mapGetters('license', ['planType', 'license']),

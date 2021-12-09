@@ -184,6 +184,10 @@ export default {
         this.selected.push(obj)
         this.$emit('add', [obj])
       }
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.notifications.skip = !entry.isIntersecting
+      this.$apollo.queries.notificationsCount.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -223,7 +227,12 @@ export default {
 </script>
 
 <template>
-  <v-card v-show="notificationsCount > 0" class="mb-4 py-2 px-4" tile>
+  <v-card
+    v-show="notificationsCount > 0"
+    v-intersect="{ handler: onIntersect }"
+    class="mb-4 py-2 px-4"
+    tile
+  >
     <v-card-title class="pl-1 text-subtitle-2 grey--text text--darken-2">
       {{ tenant.name }}
     </v-card-title>

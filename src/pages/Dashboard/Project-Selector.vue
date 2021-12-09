@@ -1,11 +1,13 @@
 <script>
 import NewProjectDialog from '@/pages/Dashboard/NewProject-Dialog'
 import { mapGetters } from 'vuex'
+import { pollsProjectsMixin } from '@/mixins/polling/pollsProjectsMixin'
 
 export default {
   components: {
     NewProjectDialog
   },
+  mixins: [pollsProjectsMixin],
   data() {
     return {
       newProjectDialog: false,

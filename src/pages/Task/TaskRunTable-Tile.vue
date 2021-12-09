@@ -73,6 +73,10 @@ export default {
     }
   },
   methods: {
+    onIntersect([entry]) {
+      this.$apollo.queries.task.skip = !entry.isIntersecting
+      this.$apollo.queries.taskRunsCount.skip = !entry.isIntersecting
+    },
     calculateDuration
   },
   apollo: {
@@ -114,7 +118,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="pa-2 mt-2" tile>
+  <v-card v-intersect="{ handler: onIntersect }" class="pa-2 mt-2" tile>
     <v-tooltip top>
       <template #activator="{ on }">
         <CardTitle :title="tableTitle" icon="pi-task-run">

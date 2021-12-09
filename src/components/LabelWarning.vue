@@ -27,7 +27,9 @@ export default {
   data() {
     return {
       infoMessage: '',
-      noLabelInfo: false
+      noLabelInfo: false,
+      unsubscribeAgents: null,
+      show: false
     }
   },
   computed: {
@@ -102,6 +104,16 @@ export default {
   methods: {
     labelMessage(message) {
       this.infoMessage = message
+    },
+    async visibilityChanged(visible) {
+      if (visible) {
+        this.unsubscribeAgents = await this.$store.dispatch(
+          'polling/subscribe',
+          'agents'
+        )
+      } else {
+        this.unsubscribeAgents()
+      }
     }
   }
 }
@@ -110,9 +122,11 @@ export default {
 <template>
   <v-menu
     v-if="!labelsAlign"
+    v-model="show"
     :close-on-content-click="false"
     offset-y
     open-on-hover
+    @input="visibilityChanged"
   >
     <template #activator="{ on }">
       <div text class="super-imposed-icon-set cursor-pointer" v-on="on">
