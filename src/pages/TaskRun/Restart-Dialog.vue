@@ -118,6 +118,9 @@ export default {
         }
       })
       return data?.write_run_logs?.success
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.utilityDownstreamTasks.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -137,7 +140,7 @@ export default {
 </script>
 
 <template>
-  <v-card tile>
+  <v-card v-intersect="{ handler: onIntersect }" tile>
     <v-card-title>
       Restart from failed?
     </v-card-title>

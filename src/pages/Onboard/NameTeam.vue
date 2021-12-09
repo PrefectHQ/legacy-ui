@@ -314,6 +314,9 @@ export default {
         name: 'onboard-resources',
         params: { tenant: this.tenant.slug }
       })
+    },
+    onIntersect([entry]) {
+      this.$apollo.queries.pendingInvitations.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -334,6 +337,7 @@ export default {
 <template>
   <v-card
     v-if="tenant.id"
+    v-intersect="{ handler: onIntersect }"
     class="text-center mx-auto px-12 py-8 white--text"
     flat
     tile

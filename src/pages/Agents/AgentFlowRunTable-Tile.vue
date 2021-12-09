@@ -82,6 +82,12 @@ export default {
       this.$apollo.queries.agentFlowRunsCount.startPolling(this.pollInterval)
     }
   },
+  methods: {
+    onIntersect([entry]) {
+      this.$apollo.queries.agentFlowRuns.skip = !entry.isIntersecting
+      this.$apollo.queries.agentFlowRunsCount.skip = !entry.isIntersecting
+    }
+  },
   apollo: {
     agentFlowRuns: {
       query: require('@/graphql/Agent/table-flow-runs.gql'),
@@ -131,7 +137,7 @@ export default {
 </script>
 
 <template>
-  <v-card tile>
+  <v-card v-intersect="{ handler: onIntersect }" tile>
     <CardTitle icon="pi-task-run">
       <div :slot="$vuetify.breakpoint.lgAndUp && 'title'">
         Flow Runs

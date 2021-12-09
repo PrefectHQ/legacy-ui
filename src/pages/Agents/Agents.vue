@@ -1,6 +1,7 @@
 <script>
 import uniq from 'lodash/uniq'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { pollsAgentsMixin } from '@/mixins/polling/pollsAgentsMixin'
 import LogRocket from 'logrocket'
 import SubPageNav from '@/layouts/SubPageNav'
 import { formatTime } from '@/mixins/formatTimeMixin.js'
@@ -15,7 +16,7 @@ export default {
     AgentTile,
     SubPageNav
   },
-  mixins: [formatTime],
+  mixins: [formatTime, pollsAgentsMixin],
   data() {
     return {
       cleanUpDialog: false,
