@@ -510,11 +510,13 @@ export const createRouter = () => {
   })
 
   router.beforeEach((to, from, next) => {
+    console.log('in before each', to)
     if (
       'tenant' in to?.params &&
       !to?.params?.tenant &&
       store.getters['tenant/tenant']?.slug
     ) {
+      console.log('in return')
       return next({
         name: to.name,
         replace: true,

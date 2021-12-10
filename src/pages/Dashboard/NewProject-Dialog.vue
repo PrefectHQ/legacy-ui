@@ -1,5 +1,5 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   props: {
@@ -43,6 +43,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('data', ['activateProject', 'resetActiveData']),
     async createProject() {
       this.projectLoading = true
       try {
@@ -79,16 +80,19 @@ export default {
         throw Error
       }
     },
-    goToProject() {
+    async goToProject() {
+      this.$emit('project-select', this.projectId)
+      console.log('called goToProject', this.projectId, this.$route)
       this.$router
         .push({
           name: 'project',
-          params: {
-            id: this.projectId,
-            tenant: this.tenant.slug
-          }
+          params: { ...this.$route.params, id: this.projectId },
+          query: { ...this.$route.query }
         })
-        .catch(e => e)
+        .catch(e => {
+          console.log('router error', e)
+          return e
+        })
       this.reset()
     },
     reset() {

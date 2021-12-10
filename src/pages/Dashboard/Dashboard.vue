@@ -114,6 +114,7 @@ export default {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('license', ['license']),
     project() {
+      console.log('dashboard project', this.activeProject)
       return this.activeProject
     },
     tabs() {
@@ -170,6 +171,7 @@ export default {
       })
     },
     handleProjectSelect(val) {
+      console.log('dashboard project select called', val)
       this.projectId = val
       if (this.projectId?.length > 0) this.activateProject(this.projectId)
     },
