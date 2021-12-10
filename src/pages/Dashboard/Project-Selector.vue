@@ -55,15 +55,7 @@ export default {
           .catch(e => e)
         return
       }
-      console.log(
-        'val',
-        val,
-        'projectsELECT',
-        this.projectSelect,
-        this.projectId
-      )
       this.projectId = val
-      console.log('in project select', val)
       this.$emit('project-select', this.projectId)
       this.$router
         .push({
@@ -73,14 +65,6 @@ export default {
         })
         .catch(e => e)
       if (!val) this.projectSelect = { name: 'All Projects', id: null }
-    },
-    newProjectDialog(val) {
-      if (!val) {
-        this.projectSelect =
-          this.projectId || this.$route.params.id === ''
-            ? null
-            : this.$route.params.id
-      }
     },
     '$route.params.id'(val) {
       if (!val && this.projectId !== null) {
@@ -96,8 +80,8 @@ export default {
   },
   methods: {
     handleProjectSelect(event) {
-      console.log('calling project select', event)
       this.projectId = event
+      this.projectSelect = event
       this.$emit('project-select', event)
     },
     projectSelectTitleClass(item) {

@@ -180,7 +180,6 @@ const actions = {
     }
 
     if (!project) throw new Error("Couldn't retrieve project.")
-    console.log('in vuex project', project)
     commit('setActiveProject', project)
   },
   async activateTask({ commit, getters, dispatch }, id) {

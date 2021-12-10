@@ -81,18 +81,15 @@ export default {
       }
     },
     async goToProject() {
+      await this.activateProject(this.projectId)
       this.$emit('project-select', this.projectId)
-      console.log('called goToProject', this.projectId, this.$route)
       this.$router
         .push({
           name: 'project',
           params: { ...this.$route.params, id: this.projectId },
           query: { ...this.$route.query }
         })
-        .catch(e => {
-          console.log('router error', e)
-          return e
-        })
+        .catch(e => e)
       this.reset()
     },
     reset() {
