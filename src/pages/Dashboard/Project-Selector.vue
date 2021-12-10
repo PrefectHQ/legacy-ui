@@ -66,12 +66,6 @@ export default {
         .catch(e => e)
       if (!val) this.projectSelect = { name: 'All Projects', id: null }
     },
-    newProjectDialog(val) {
-      if (!val) {
-        this.projectSelect =
-          this.$route.params.id === '' ? null : this.$route.params.id
-      }
-    },
     '$route.params.id'(val) {
       if (!val && this.projectId !== null) {
         this.projectSelect = null
@@ -85,6 +79,11 @@ export default {
     }
   },
   methods: {
+    handleProjectSelect(event) {
+      this.projectId = event
+      this.projectSelect = event
+      this.$emit('project-select', event)
+    },
     projectSelectTitleClass(item) {
       return {
         'new-project': item.id == 'new_project',
@@ -131,7 +130,10 @@ export default {
       </template>
     </v-autocomplete>
 
-    <NewProjectDialog :show.sync="newProjectDialog" />
+    <NewProjectDialog
+      @project-select="handleProjectSelect"
+      :show.sync="newProjectDialog"
+    />
   </div>
 </template>
 
