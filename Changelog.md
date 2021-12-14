@@ -1,15 +1,40 @@
 # Changelog
 
-## Unreleased
+## 2021-12-14
 
-### Features and Improvements
-
-- None
-
-### Bugfixes
-
-- Update free usage task runs count to reflect latest changes - [#1145](https://github.com/PrefectHQ/ui/pull/1145)
-- Allow users to search for flows by both flow id and flow group id - [#1089](https://github.com/PrefectHQ/ui/pull/1089)
+- Feature: Show project name in the run history flow run pop up box [`#1139`](https://github.com/PrefectHQ/ui/pull/1139)
+- Performance: More careful polling of graphql data [`#1125`](https://github.com/PrefectHQ/ui/pull/1125)
+- Dependabot: Bump tmpl from 1.0.4 to 1.0.5 [`#1055`](https://github.com/PrefectHQ/ui/pull/1055)
+- Feature: Elevate labels in the details tile  [`#1151`](https://github.com/PrefectHQ/ui/pull/1151)
+- Dependabot: Bump object-path from 0.11.5 to 0.11.8 [`#1054`](https://github.com/PrefectHQ/ui/pull/1054)
+- Dependabot: Bump axios from 0.21.1 to 0.21.4 [`#1052`](https://github.com/PrefectHQ/ui/pull/1052)
+- Dependabot: resolved high priority codeQL alerts [`#1150`](https://github.com/PrefectHQ/ui/pull/1150)
+- Bugfix: Check for skipped state in task run table to fix endless duration  [`#1134`](https://github.com/PrefectHQ/ui/pull/1134)
+- Performance: Small code review changes for 1120 [`#1148`](https://github.com/PrefectHQ/ui/pull/1148)
+- Performance: Add virtual-scroll to dashboard tiles and improve duration calculations [`#1120`](https://github.com/PrefectHQ/ui/pull/1120)
+- Performance: Removed watchers and/or increased watchers specificity [`#1143`](https://github.com/PrefectHQ/ui/pull/1143)
+- Feature: Add loading state to RestartDialog [`#1144`](https://github.com/PrefectHQ/ui/pull/1144)
+- Bugfix: Do not add 'allFlows' if a user has only one flow [`#1129`](https://github.com/PrefectHQ/ui/pull/1129)
+- Bugfix: Update free usage task runs count to 20,000 [`#1145`](https://github.com/PrefectHQ/ui/pull/1145)
+- Bugfix: Update artifact docs link in the 'beta' badge popover [`#1127`](https://github.com/PrefectHQ/ui/pull/1127)
+- Bugfix: Improve agent sorting [`#1137`](https://github.com/PrefectHQ/ui/pull/1137)
+- Bugfix: Set min-width in titlebars to account for shorter names [`#1136`](https://github.com/PrefectHQ/ui/pull/1136)
+- Performance: Update inputs in flow settings - parameters [`#1103`](https://github.com/PrefectHQ/ui/pull/1103)
+- Feature: 1095/schedules [`#1104`](https://github.com/PrefectHQ/ui/pull/1104)
+- Feature: 1095/team settings [`#1101`](https://github.com/PrefectHQ/ui/pull/1101)
+- Admin: Add Evan to code owners [`#1135`](https://github.com/PrefectHQ/ui/pull/1135)
+- Bugfix: Font-awesome-subsetting [`#1132`](https://github.com/PrefectHQ/ui/pull/1132)
+- Feature: 1095/automations [`#1102`](https://github.com/PrefectHQ/ui/pull/1102)
+- Bugfix: Checks for slashes in Cron regex to set interval schedule via Cron [`#1123`](https://github.com/PrefectHQ/ui/pull/1123)
+- Bugfix: Fix broken link to the account page  [`#1131`](https://github.com/PrefectHQ/ui/pull/1131)
+- Feature: Adjust column width in v-data-table to account for longer names [`#1121`](https://github.com/PrefectHQ/ui/pull/1121)
+- Bugfix:  Fix incorrect syntax for flex-align [`#1128`](https://github.com/PrefectHQ/ui/pull/1128)
+- Bugfix: Removed avoidable watchers when side-nav is not open [`#1124`](https://github.com/PrefectHQ/ui/pull/1124)
+- Bugfix: Performance - Remove global event listeners from App.vue [`#1119`](https://github.com/PrefectHQ/ui/pull/1119)
+- Feature: Expand space in the title bars to account for longer names [`#1098`](https://github.com/PrefectHQ/ui/pull/1098)
+- Feature: Enhancements to run page run-config inputs with new dict, json, yaml inputs [`#1095`](https://github.com/PrefectHQ/ui/pull/1095)
+- Bugfix: Artifacts docs link correction [`#1126`](https://github.com/PrefectHQ/ui/pull/1126)
+- Bugfix: Allow users to search for flows by both flow id and flow group id [`#1089`](https://github.com/PrefectHQ/ui/pull/1089)
 
 ## 2021-11-09
 
