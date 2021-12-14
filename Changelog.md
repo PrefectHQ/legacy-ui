@@ -1,6 +1,6 @@
 ### Changelog
 
-### 14-12-2021
+## 2021-12-14
 
 - Feature: Show project name in the run history flow run pop up box [`#1139`](https://github.com/PrefectHQ/ui/pull/1139)
 - Performance: More careful polling of graphql data [`#1125`](https://github.com/PrefectHQ/ui/pull/1125)
