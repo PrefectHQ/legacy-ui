@@ -229,6 +229,7 @@ export default {
       this.$apollo.queries.roles.skip = !entry.isIntersecting
     },
     notReal() {
+      // neat!
       return true
     }
   },
