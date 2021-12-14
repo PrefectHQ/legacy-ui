@@ -227,6 +227,9 @@ export default {
     },
     onIntersect([entry]) {
       this.$apollo.queries.roles.skip = !entry.isIntersecting
+    },
+    notReal() {
+      return true
     }
   },
   apollo: {
