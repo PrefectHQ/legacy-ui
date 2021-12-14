@@ -229,7 +229,7 @@ export default {
 </script>
 
 <template>
-  <div v-intersect="{ handler: onIntersect }">
+  <div>
     <v-data-table
       fixed-header
       :headers="headers"

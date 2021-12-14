@@ -247,11 +247,7 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout
-    v-intersect="{ handler: onIntersect }"
-    :show="!isLoadingMembersTable"
-    control-show
-  >
+  <ManagementLayout :show="!isLoadingMembersTable" control-show>
     <template #title>Team Members</template>
 
     <template #subtitle>
