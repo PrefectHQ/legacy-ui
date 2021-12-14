@@ -184,10 +184,6 @@ export default {
         this.selected.push(obj)
         this.$emit('add', [obj])
       }
-    },
-    onIntersect([entry]) {
-      this.$apollo.queries.notifications.skip = !entry.isIntersecting
-      this.$apollo.queries.notificationsCount.skip = !entry.isIntersecting
     }
   },
   apollo: {
