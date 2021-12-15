@@ -287,7 +287,8 @@ export default {
         max-width="600"
       >
         <p>
-          Your team has no users available. Contact sales@prefect.io to add more. 
+          Your team has no users available. Contact sales@prefect.io to add
+          more.
         </p>
       </v-alert>
     </template>
