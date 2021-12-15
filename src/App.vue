@@ -184,7 +184,7 @@ export default {
       }
     },
     '$route.params.tenant'(value, previous) {
-      if (value !== previous && value !== this.tenant?.slug) {
+      if (value && value !== previous && value !== this.tenant?.slug) {
         this.setCurrentTenant(value)
       }
     },
