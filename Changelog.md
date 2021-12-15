@@ -1,4 +1,9 @@
 # Changelog
+## 2021-12-14a
+
+- HOTFIX: Remove intersection observers from Members, Invitations-Table, Members-Table components [`#1162`](https://github.com/PrefectHQ/ui/pull/1162)
+- HOTFIX: Remove intersection observer on notifications group component [`#1163`](https://github.com/PrefectHQ/ui/pull/1163)
+- HOTFIX: Rolling back watcher change [`#1158`](https://github.com/PrefectHQ/ui/pull/1158)
 
 ## 2021-12-14
 
