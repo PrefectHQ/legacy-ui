@@ -27,6 +27,7 @@ export const faHistory: IconDefinition;
 export const faKey: IconDefinition;
 export const faKeySkeleton: IconDefinition;
 export const faLaptop: IconDefinition;
+export const faLaptopCode: IconDefinition;
 export const faLaptopHouse: IconDefinition;
 export const faLifeRing: IconDefinition;
 export const faLightbulb: IconDefinition;

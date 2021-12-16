@@ -82,6 +82,7 @@ code:
     - brackets-curly
     - file-alt
     - file-code
+    - laptop-code
   label: Code
 communication:
   icons:
@@ -132,6 +133,7 @@ education:
     - bell
     - books
     - graduation-cap
+    - laptop-code
   label: Education
 emoji:
   icons:
