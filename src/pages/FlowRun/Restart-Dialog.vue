@@ -61,6 +61,19 @@ export default {
         // check whether it's one of the failed states
         let failedRunIds = this.failedTaskRuns.map(run => run.id)
 
+        if (!this.utilityDownstreamTasks) {
+          this.loading = false
+          this.cancel()
+
+          this.setAlert({
+            alertShow: true,
+            alertMessage:
+              'Sorry, we hit a problem trying to restart the run; please try again.',
+            alertType: 'error'
+          })
+
+          return
+        }
         const taskRunStates = this.utilityDownstreamTasks
           .map(task =>
             task.task.task_runs.map(run => {
@@ -79,7 +92,6 @@ export default {
           // but can return something like [undefined, {...}, undefined]
           // so we filter falsey values here
           .filter(x => !!x)
-
         let result
         if (taskRunStates?.length > 0) {
           result = await this.$apollo.mutate({
@@ -139,7 +151,7 @@ export default {
         mutation: require('@/graphql/Update/write-run-logs.gql'),
         variables: {
           flowRunId: this.flowRun.id,
-          name: this.name,
+          name: this.flowRun.name,
           message: this.restartMessage
         }
       })
