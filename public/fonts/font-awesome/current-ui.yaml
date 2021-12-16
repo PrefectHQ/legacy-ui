@@ -1,4 +1,4 @@
-projectName: Unsaved Project
+projectName: current-ui
 version: 5.15.4
 icons:
   - github:
@@ -214,4 +214,6 @@ icons:
   - badge-check:
       - duotone
   - dot-circle:
+      - duotone
+  - laptop-code:
       - duotone

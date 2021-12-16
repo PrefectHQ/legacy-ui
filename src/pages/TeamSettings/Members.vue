@@ -247,11 +247,7 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout
-    v-intersect="{ handler: onIntersect }"
-    :show="!isLoadingMembersTable"
-    control-show
-  >
+  <ManagementLayout :show="!isLoadingMembersTable" control-show>
     <template #title>Team Members</template>
 
     <template #subtitle>
@@ -291,8 +287,8 @@ export default {
         max-width="600"
       >
         <p>
-          Your team has no users available. You can add more from the
-          <router-link :to="'/admin/account'"> Account Page</router-link>
+          Your team has no users available. Contact sales@prefect.io to add
+          more.
         </p>
       </v-alert>
     </template>
