@@ -151,7 +151,7 @@ export default {
         mutation: require('@/graphql/Update/write-run-logs.gql'),
         variables: {
           flowRunId: this.flowRun.id,
-          name: this.flowRun.name,
+          name: this.name,
           message: this.restartMessage
         }
       })
