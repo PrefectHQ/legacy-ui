@@ -294,7 +294,7 @@ export default {
     <template #subtitle>
       Impose
       <ExternalLink
-        href="https://docs.prefect.io/cloud/concepts/task-concurrency-limiting.html"
+        href="https://docs.prefect.io/orchestration/flow-runs/concurrency-limits.html#task-run-limits"
         >concurrency limits</ExternalLink
       >
       on the number of tasks that are running at any given time
