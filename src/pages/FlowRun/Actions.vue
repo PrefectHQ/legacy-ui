@@ -143,7 +143,7 @@ export default {
           taskIds: `{${this.failedTaskRuns
             .map(task => task.task_id)
             .join(',')}}`,
-          flowRunId: this.flowRun.id + '1'
+          flowRunId: this.flowRun.id
         }
       },
       error(error) {
