@@ -18,6 +18,8 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
+      utilityDownstreamTasksError: '',
       runFlowNowClicked: false,
       runFlowNowLoading: false,
 
@@ -72,6 +74,14 @@ export default {
     ...mapActions('alert', ['setAlert']),
     deleteFlowRun() {},
     handleRestartClick() {
+      if (this.utilityDownstreamTasksError) {
+        this.setAlert({
+          alertShow: true,
+          alertMessage: this.utilityDownstreamTasksError,
+          alertType: 'error'
+        })
+        throw this.utilityDownstreamTasksError
+      }
       this.$apollo.queries.failedTaskRuns.refetch()
       this.restartDialog = true
     },
@@ -123,6 +133,29 @@ export default {
         }
       },
       update: data => data?.task_run
+    },
+    utilityDownstreamTasks: {
+      query: require('@/graphql/TaskRun/utility_downstream_tasks.gql'),
+      variables() {
+        return {
+          // the start_task_ids argument requires a postgres literal,
+          // which is why these are interpolated between {} brackets
+          taskIds: `{${this.failedTaskRuns
+            .map(task => task.task_id)
+            .join(',')}}`,
+          flowRunId: this.flowRun.id + '1'
+        }
+      },
+      error(error) {
+        this.utilityDownstreamTasksError = error
+      },
+      skip() {
+        return !this.failedTaskRuns
+      },
+      watchLoading(isLoading) {
+        this.isLoading = isLoading
+      },
+      update: data => data.utility_downstream_tasks
     }
   }
 }
@@ -184,7 +217,10 @@ export default {
             style="height: 46px;"
             small
             :disabled="
-              !hasPermission('update', 'run') || !canRestart || restartDialog
+              !hasPermission('update', 'run') ||
+                !canRestart ||
+                restartDialog ||
+                isLoading
             "
             color="info"
             @click="handleRestartClick"
@@ -212,6 +248,7 @@ export default {
         :flow-run="flowRun"
         :failed-task-runs="failedTaskRuns"
         :eligible-states="eligibleStates"
+        :utility-downstream-tasks="utilityDownstreamTasks"
         @cancel="restartDialog = false"
       />
     </v-dialog>

@@ -3,6 +3,10 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   props: {
+    utilityDownstreamTasks: {
+      required: true,
+      type: Array
+    },
     flowRun: {
       required: true,
       type: Object
@@ -61,19 +65,6 @@ export default {
         // check whether it's one of the failed states
         let failedRunIds = this.failedTaskRuns.map(run => run.id)
 
-        if (!this.utilityDownstreamTasks) {
-          this.loading = false
-          this.cancel()
-
-          this.setAlert({
-            alertShow: true,
-            alertMessage:
-              'Sorry, we hit a problem trying to restart the run; please try again.',
-            alertType: 'error'
-          })
-
-          return
-        }
         const taskRunStates = this.utilityDownstreamTasks
           .map(task =>
             task.task.task_runs.map(run => {
@@ -125,26 +116,19 @@ export default {
               alertMessage: 'Flow run restarted.',
               alertType: 'success'
             })
-          } else {
-            this.error = true
           }
-        } else {
-          this.error = true
         }
       } catch (error) {
-        this.error = true
+        if (error) {
+          this.loading = false
+          this.cancel()
+          this.setAlert({
+            alertShow: true,
+            alertMessage: error,
+            alertType: 'error'
+          })
+        }
         throw error
-      }
-
-      if (this.error === true) {
-        this.loading = false
-        this.cancel()
-        this.setAlert({
-          alertShow: true,
-          alertMessage:
-            'Sorry, we hit a problem trying to restart the run; please try again.',
-          alertType: 'error'
-        })
       }
     },
     async writeLogs() {
@@ -157,25 +141,6 @@ export default {
         }
       })
       return data?.write_run_logs?.success
-    }
-  },
-  apollo: {
-    utilityDownstreamTasks: {
-      query: require('@/graphql/TaskRun/utility_downstream_tasks.gql'),
-      variables() {
-        return {
-          // the start_task_ids argument requires a postgres literal,
-          // which is why these are interpolated between {} brackets
-          taskIds: `{${this.failedTaskRuns
-            .map(task => task.task_id)
-            .join(',')}}`,
-          flowRunId: this.flowRun.id
-        }
-      },
-      skip() {
-        return !this.failedTaskRuns
-      },
-      update: data => data.utility_downstream_tasks
     }
   }
 }
