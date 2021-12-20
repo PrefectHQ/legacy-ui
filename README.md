@@ -84,6 +84,12 @@ This repo comes with a Dockerfile for building a UI image; it's generally not re
 
 The Prefect UI requires a functional Prefect API to operate. For details on starting Prefect Server, visit the [docs](https://docs.prefect.io/api/latest/#ui-and-server).
 
+#### Submitting a PR
+PR Titles should include a prefix that sets out the purpose of the PR.  Most PRs will begin with the prefix Bugfix or Feature.  The title should describe the work and purpose of the PR clearly and succinctly and should be appropriate and safe for the Prefect community. 
+
+Example:
+Feature: Add create flow run method to automations
+
 ## License
 
 Prefect UI is lovingly made by the team at [Prefect](https://www.prefect.io) and licensed under the [Prefect Community License](https://www.prefect.io/legal/prefect-community-license/). For information on how you can use, extend, and depend on Prefect UI to automate your data, take a look at our [license](https://github.com/PrefectHQ/ui/blob/master/LICENSE) or [contact us](https://www.prefect.io/pricing#contact).
