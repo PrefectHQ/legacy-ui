@@ -87,7 +87,7 @@ The Prefect UI requires a functional Prefect API to operate. For details on star
 #### Submitting a PR
 PR Titles should include a prefix that sets out the purpose of the PR.  Most PRs will begin with the prefix Bugfix or Feature.  The title should describe the work and purpose of the PR clearly and succinctly and should be appropriate and safe for the Prefect community. 
 
-Example:
+###### Example
 Feature: Add create flow run method to automations
 
 ## License
