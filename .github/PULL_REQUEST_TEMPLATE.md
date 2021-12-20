@@ -12,5 +12,5 @@
  - [ ] No new packages are added or package size and performance considerations are discussed below
  - [ ] PR Title fits our [changelog format](https://github.com/PrefectHQ/ui#readme)
 
- ## Releases/Chamgelog cuts only
+ ## Releases/Changelog cuts only
  - [ ] Completed the [QA Checklist](https://www.notion.so/prefect/Cloud-UI-QA-Checklist-038a5a5d40a249d78232917ad1b923b9) in staging
