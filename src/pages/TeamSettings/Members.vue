@@ -224,9 +224,6 @@ export default {
         this.inviteError = null
         this.roleInput = this.roles.find(r => r.name == 'TENANT_ADMIN').id
       })
-    },
-    onIntersect([entry]) {
-      this.$apollo.queries.roles.skip = !entry.isIntersecting
     }
   },
   apollo: {
