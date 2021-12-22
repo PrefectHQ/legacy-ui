@@ -181,7 +181,7 @@ export default {
   <v-card tile :loading="queryLoading">
     <v-card-title> Restart? </v-card-title>
 
-    <v-card-text>
+    <v-card-text v-if="utilityDownstreamTasks">
       Click on confirm to restart this flow run. Restarting will restart all
       task runs in {{ reRunStates }} states and run any task runs in a Pending
       state. Task runs that rely on upstream results may require additional
@@ -191,6 +191,9 @@ export default {
         target="_blank"
         >in the Results docs</a
       >.
+    </v-card-text>
+    <v-card-text v-else>
+      Fetching downstream tasks...
     </v-card-text>
     <v-card-actions v-if="utilityDownstreamTasks">
       <v-spacer></v-spacer>
