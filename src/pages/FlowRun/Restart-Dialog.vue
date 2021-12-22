@@ -19,7 +19,8 @@ export default {
   data() {
     return {
       error: false,
-      loading: false
+      loading: false,
+      loadingKey: 0
     }
   },
   computed: {
@@ -27,6 +28,10 @@ export default {
     ...mapGetters('user', ['user']),
     restartMessage() {
       return `${this.user.username} restarted this flow run`
+    },
+    queryLoading() {
+      console.log('loadingKey', this.loadingKey)
+      return this.loadingKey > 0
     },
     isEligibleToRestart() {
       return (
@@ -59,6 +64,7 @@ export default {
         // So, first we collect all candidate run states and then filter:
         // if map_index is null, we can proceed normally - if not null, we explicitly
         // check whether it's one of the failed states
+        console.log(this.failedTaskRuns, this.utilityDownstreamTasks)
         let failedRunIds = this.failedTaskRuns.map(run => run.id)
 
         const taskRunStates = this.utilityDownstreamTasks
@@ -106,32 +112,35 @@ export default {
           if (data?.set_flow_run_states) {
             this.loading = false
             this.cancel()
-
+            this.$emit('update')
             this.setAlert({
               alertShow: true,
               alertMessage: 'Flow run restarted.',
               alertType: 'success'
             })
           } else {
+            console.log('in first else', data)
             this.error = true
           }
         } else {
+          console.log('in second else')
           this.error = true
         }
       } catch (error) {
+        console.log('in catch', error)
         this.error = true
         throw error
-      }
-
-      if (this.error === true) {
+      } finally {
+        if (this.error === true) {
+          this.cancel()
+          this.setAlert({
+            alertShow: true,
+            alertMessage:
+              'Sorry, we hit a problem trying to restart the run; please try again.',
+            alertType: 'error'
+          })
+        }
         this.loading = false
-        this.cancel()
-        this.setAlert({
-          alertShow: true,
-          alertMessage:
-            'Sorry, we hit a problem trying to restart the run; please try again.',
-          alertType: 'error'
-        })
       }
     },
     async writeLogs() {
@@ -159,6 +168,7 @@ export default {
           flowRunId: this.flowRun.id
         }
       },
+      loadingKey: 'loadingKey',
       skip() {
         return !this.failedTaskRuns
       },
@@ -169,7 +179,7 @@ export default {
 </script>
 
 <template>
-  <v-card tile>
+  <v-card tile :loading="queryLoading">
     <v-card-title> Restart? </v-card-title>
 
     <v-card-text>
@@ -183,7 +193,7 @@ export default {
         >in the Results docs</a
       >.
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions v-if="utilityDownstreamTasks">
       <v-spacer></v-spacer>
 
       <v-btn
