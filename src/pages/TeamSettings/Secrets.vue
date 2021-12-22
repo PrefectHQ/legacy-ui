@@ -418,6 +418,7 @@ export default {
         class="text-body-1"
         placeholder="Secret value"
         :editors="['text', 'json']"
+        data-private
       />
     </ConfirmDialog>
 
