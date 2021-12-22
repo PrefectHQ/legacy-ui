@@ -73,7 +73,6 @@ export default {
             agentId: this.agentDetails.id
           }
         })
-        this.setRefetch(true)
         if (data.delete_agent?.success) this.$router.push({ name: 'agents' })
       } catch (error) {
         this.setAlert({
