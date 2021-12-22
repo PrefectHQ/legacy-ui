@@ -20,7 +20,9 @@ export default {
     return {
       error: false,
       loading: false,
-      loadingKey: 0
+      loadingKey: 0,
+      errorMessage:
+        'Sorry, we hit a problem trying to restart the run; please try again.'
     }
   },
   computed: {
@@ -30,7 +32,6 @@ export default {
       return `${this.user.username} restarted this flow run`
     },
     queryLoading() {
-      console.log('loadingKey', this.loadingKey)
       return this.loadingKey > 0
     },
     isEligibleToRestart() {
@@ -64,7 +65,6 @@ export default {
         // So, first we collect all candidate run states and then filter:
         // if map_index is null, we can proceed normally - if not null, we explicitly
         // check whether it's one of the failed states
-        console.log(this.failedTaskRuns, this.utilityDownstreamTasks)
         let failedRunIds = this.failedTaskRuns.map(run => run.id)
 
         const taskRunStates = this.utilityDownstreamTasks
@@ -119,24 +119,23 @@ export default {
               alertType: 'success'
             })
           } else {
-            console.log('in first else', data)
             this.error = true
+            this.errorMessage = 'There was an error with the API call'
           }
         } else {
-          console.log('in second else')
           this.error = true
+          this.errorMessage = 'No eligible states to reset'
         }
       } catch (error) {
-        console.log('in catch', error)
         this.error = true
+        this.errorMessage = `${error}`
         throw error
       } finally {
         if (this.error === true) {
           this.cancel()
           this.setAlert({
             alertShow: true,
-            alertMessage:
-              'Sorry, we hit a problem trying to restart the run; please try again.',
+            alertMessage: this.errorMessage,
             alertType: 'error'
           })
         }
