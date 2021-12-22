@@ -1,5 +1,12 @@
 # Changelog
 
+#### 2021-12-22
+
+- BugFix: Add log rocket prop [`#1183`](https://github.com/PrefectHQ/ui/pull/1183)
+- BugFix: removed unused onIntersect methods [`#1166`](https://github.com/PrefectHQ/ui/pull/1166)
+- Security: Added http-security-headers to apollo graphql network traffic [`#1173`](https://github.com/PrefectHQ/ui/pull/1173)
+- BugFix: Replacing link to docs in task run concurrency page [`#1176`](https://github.com/PrefectHQ/ui/pull/1176)
+
 ## 2021-12-15
 
 - BugFix: added missing icon for help getting-started [`#1164`](https://github.com/PrefectHQ/ui/pull/1164)
