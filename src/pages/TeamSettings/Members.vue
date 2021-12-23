@@ -224,9 +224,6 @@ export default {
         this.inviteError = null
         this.roleInput = this.roles.find(r => r.name == 'TENANT_ADMIN').id
       })
-    },
-    onIntersect([entry]) {
-      this.$apollo.queries.roles.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -287,8 +284,8 @@ export default {
         max-width="600"
       >
         <p>
-          Your team has no users available. You can add more from the
-          <router-link :to="'/admin/account'"> Account Page</router-link>
+          Your team has no users available. Contact sales@prefect.io to add
+          more.
         </p>
       </v-alert>
     </template>
