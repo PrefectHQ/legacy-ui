@@ -136,6 +136,9 @@
 .fad.fa-laptop:after {
   content: "\10f109"; }
 
+.fad.fa-laptop-code:after {
+  content: "\10f5fc"; }
+
 .fad.fa-laptop-house:after {
   content: "\10e066"; }
 
