@@ -1,21 +1,23 @@
 # Changelog
 
-#### 2021-12-22
+#### [2021-12-22](https://github.com/PrefectHQ/ui/compare/2021-12-15...2021-12-22)
 
-- BugFix: Add log rocket prop [`#1183`](https://github.com/PrefectHQ/ui/pull/1183)
+- Changelog: Cut changelog ahead of 2021-12-22 release [`#1184`](https://github.com/PrefectHQ/ui/pull/1184)
+- Bugfix: Add log rocket prop [`#1183`](https://github.com/PrefectHQ/ui/pull/1183)
 - BugFix: removed unused onIntersect methods [`#1166`](https://github.com/PrefectHQ/ui/pull/1166)
-- Security: Added http-security-headers to apollo graphql network traffic [`#1173`](https://github.com/PrefectHQ/ui/pull/1173)
+- added http-security-headers to apollo graphql network traffic [`#1173`](https://github.com/PrefectHQ/ui/pull/1173)
 - BugFix: Replacing link to docs in task run concurrency page [`#1176`](https://github.com/PrefectHQ/ui/pull/1176)
+- Cut Changelog ahead of 2021-12-15 release [`#1175`](https://github.com/PrefectHQ/ui/pull/1175)
 
-## 2021-12-15
+#### [2021-12-15](https://github.com/PrefectHQ/ui/compare/2021-12-14a...2021-12-15)
 
 - BugFix: added missing icon for help getting-started [`#1164`](https://github.com/PrefectHQ/ui/pull/1164)
 - Bugfix: Check tenant is in route params tenant before calling setCurrentTenant [`#1174`](https://github.com/PrefectHQ/ui/pull/1174)
-- Bugfix: Send to sales for more users [`#1172`](https://github.com/PrefectHQ/ui/pull/1172)
+- Bugfix:  Send to sales for more users [`#1172`](https://github.com/PrefectHQ/ui/pull/1172)
 
-## 2021-12-14a
+#### [2021-12-14a](https://github.com/PrefectHQ/ui/compare/2021-12-14...2021-12-14a)
 
-- Changelog: Cut hotfix changelog [`#1165`](https://github.com/PrefectHQ/ui/pull/1165)
+- Changelog: Cut hotifx changelog [`#1165`](https://github.com/PrefectHQ/ui/pull/1165)
 - HOTFIX: Remove intersection observers from Members, Invitations-Table, Members-Table components [`#1162`](https://github.com/PrefectHQ/ui/pull/1162)
 - HOTFIX: Remove intersection observer on notifications group component [`#1163`](https://github.com/PrefectHQ/ui/pull/1163)
 - rolling back watcher change [`#1158`](https://github.com/PrefectHQ/ui/pull/1158)
