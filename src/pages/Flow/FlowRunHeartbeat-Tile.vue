@@ -78,6 +78,7 @@ export default {
   <v-card v-intersect="{ handler: onIntersect }" class="pa-2" tile>
     <CardTitle title="Activity" icon="show_chart" :icon-color="state">
       <v-select
+        data-publicß
         slot="action"
         v-model="state"
         class="state-interval-picker font-weight-regular"

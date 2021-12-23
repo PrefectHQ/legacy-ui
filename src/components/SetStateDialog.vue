@@ -82,6 +82,7 @@ export default {
             >
           </v-card-title>
           <v-select
+            data-publicP
             v-model="selectedState"
             outlined
             :menu-props="{ offsetY: true }"

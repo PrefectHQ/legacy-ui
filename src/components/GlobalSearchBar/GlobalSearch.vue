@@ -277,6 +277,7 @@ export default {
       :class="{ active: active, fixed: $vuetify.breakpoint.xsOnly }"
     >
       <v-autocomplete
+        data-public
         v-if="active"
         ref="global-search"
         v-model="model"
