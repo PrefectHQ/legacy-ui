@@ -68,6 +68,7 @@ export type IconName = 'aws' |
   'key' | 
   'key-skeleton' | 
   'laptop' | 
+  'laptop-code' | 
   'laptop-house' | 
   'life-ring' | 
   'lightbulb' | 

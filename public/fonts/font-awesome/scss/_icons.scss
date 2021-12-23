@@ -56,6 +56,7 @@ readers do not read off random characters that represent icons */
 .#{$fa-css-prefix}-key:before { content: fa-content($fa-var-key); }
 .#{$fa-css-prefix}-key-skeleton:before { content: fa-content($fa-var-key-skeleton); }
 .#{$fa-css-prefix}-laptop:before { content: fa-content($fa-var-laptop); }
+.#{$fa-css-prefix}-laptop-code:before { content: fa-content($fa-var-laptop-code); }
 .#{$fa-css-prefix}-laptop-house:before { content: fa-content($fa-var-laptop-house); }
 .#{$fa-css-prefix}-life-ring:before { content: fa-content($fa-var-life-ring); }
 .#{$fa-css-prefix}-lightbulb:before { content: fa-content($fa-var-lightbulb); }
