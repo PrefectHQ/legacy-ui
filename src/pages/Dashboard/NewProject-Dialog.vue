@@ -25,8 +25,7 @@ export default {
       projectLoading: false,
       projectError: false,
       projectId: null,
-      specificProjectErrorMessage: '',
-      routing: false
+      specificProjectErrorMessage: ''
     }
   },
   computed: {
@@ -165,7 +164,6 @@ export default {
           v-if="projectSuccess"
           color="primary"
           class="white--text"
-          :loading="routing"
           @click="goToProject"
         >
           Go to project
