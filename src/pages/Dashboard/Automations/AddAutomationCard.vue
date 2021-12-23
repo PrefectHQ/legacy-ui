@@ -613,6 +613,9 @@ export default {
           alertType: 'error'
         })
       } finally {
+        if (this.selectedAgentConfig.id === id) {
+          this.selectedAgentConfig = null
+        }
         this.deletingConfig = false
       }
     },
