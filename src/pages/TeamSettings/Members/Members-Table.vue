@@ -173,9 +173,6 @@ export default {
       this.isSettingRole = false
       this.dialogModifyRole = false
       this.selectedUser = null
-    },
-    onIntersect([entry]) {
-      this.$apollo.queries.tenantUsers.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -229,7 +226,7 @@ export default {
 </script>
 
 <template>
-  <div v-intersect="{ handler: onIntersect }">
+  <div>
     <v-data-table
       fixed-header
       :headers="headers"
