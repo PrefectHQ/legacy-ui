@@ -949,6 +949,26 @@ laptop:
     - duotone
   unicode: f109
   voted: false
+laptop-code:
+  changes:
+    - 5.2.0
+  label: Laptop Code
+  search:
+    terms:
+      - computer
+      - cpu
+      - dell
+      - demo
+      - develop
+      - device
+      - mac
+      - macbook
+      - machine
+      - pc
+  styles:
+    - duotone
+  unicode: f5fc
+  voted: false
 laptop-house:
   changes:
     - 5.13.0

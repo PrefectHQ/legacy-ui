@@ -385,6 +385,7 @@ export default {
       :title="isSecretUpdate ? 'Modify Secret' : 'Create New Secret'"
       @cancel="resetSelectedSecret"
       @confirm="validateAndSetSecret"
+      data-private
     >
       <span v-if="!isSecretUpdate">
         Add a secret that will allow your team to access sensitive data during
@@ -417,6 +418,7 @@ export default {
         class="text-body-1"
         placeholder="Secret value"
         :editors="['text', 'json']"
+        data-private
       />
     </ConfirmDialog>
 

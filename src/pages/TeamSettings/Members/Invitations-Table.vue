@@ -111,9 +111,6 @@ export default {
       this.isRevokingInvitation = false
       this.dialogRevokeInvite = false
       this.selectedUser = null
-    },
-    onIntersect([entry]) {
-      this.$apollo.queries.pendingInvitations.skip = !entry.isIntersecting
     }
   },
   apollo: {
