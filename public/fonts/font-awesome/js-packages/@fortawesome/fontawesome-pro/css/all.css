@@ -354,6 +354,9 @@ readers do not read off random characters that represent icons */
 .fa-laptop:before {
   content: "\f109"; }
 
+.fa-laptop-code:before {
+  content: "\f5fc"; }
+
 .fa-laptop-house:before {
   content: "\e066"; }
 
@@ -641,6 +644,9 @@ readers do not read off random characters that represent icons */
 
 .fad.fa-laptop:after {
   content: "\10f109"; }
+
+.fad.fa-laptop-code:after {
+  content: "\10f5fc"; }
 
 .fad.fa-laptop-house:after {
   content: "\10e066"; }
