@@ -1,5 +1,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { clearCache } from '@/vue-apollo'
 
 export default {
   props: {
@@ -24,7 +25,8 @@ export default {
       projectLoading: false,
       projectError: false,
       projectId: null,
-      specificProjectErrorMessage: ''
+      specificProjectErrorMessage: '',
+      routing: false
     }
   },
   computed: {
@@ -81,6 +83,7 @@ export default {
       }
     },
     async goToProject() {
+      clearCache()
       await this.activateProject(this.projectId)
       this.$emit('project-select', this.projectId)
       this.$router
@@ -90,6 +93,10 @@ export default {
           query: { ...this.$route.query }
         })
         .catch(e => e)
+      this.reset()
+    },
+    close() {
+      this.$emit('close')
       this.reset()
     },
     reset() {
@@ -158,6 +165,7 @@ export default {
           v-if="projectSuccess"
           color="primary"
           class="white--text"
+          :loading="routing"
           @click="goToProject"
         >
           Go to project
@@ -181,7 +189,7 @@ export default {
           id="close"
           text
           data-cy="project-select-cancel"
-          @click="reset"
+          @click="close"
           >Cancel</v-btn
         >
       </v-card-actions>

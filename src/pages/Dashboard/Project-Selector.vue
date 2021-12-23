@@ -84,6 +84,9 @@ export default {
       this.projectSelect = event
       this.$emit('project-select', event)
     },
+    handleClose() {
+      this.projectSelect = null
+    },
     projectSelectTitleClass(item) {
       return {
         'new-project': item.id == 'new_project',
@@ -132,6 +135,7 @@ export default {
 
     <NewProjectDialog
       @project-select="handleProjectSelect"
+      @close="handleClose"
       :show.sync="newProjectDialog"
     />
   </div>
