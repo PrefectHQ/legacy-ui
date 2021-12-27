@@ -177,7 +177,7 @@ export default {
 <template>
   <div>
     <BarChart
-      v-intersect="{ handler: onIntersect }"
+      v-intersect.once="onIntersect"
       :items="preppedFlowRuns"
       :loading="loadingKey > 0"
       :height="50"
