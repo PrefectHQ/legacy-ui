@@ -209,12 +209,6 @@ export const authorizationFeatures = [
     value: 2
   },
   {
-    name: 'RBAC',
-    description: 'Assign roles to users to control access',
-    plan: 'enterprise',
-    value: 3
-  },
-  {
     name: 'Custom Permissions',
     description: 'Assign granular permissions, including per-project limits',
     plan: 'enterprise',
