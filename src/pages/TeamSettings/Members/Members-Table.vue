@@ -339,6 +339,7 @@ export default {
       @confirm="updateRole(selectedUser.membershipId, roleInput)"
     >
       <v-select
+        data-public
         v-model="roleInput"
         class="mt-6"
         outlined

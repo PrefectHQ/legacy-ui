@@ -108,6 +108,7 @@ export default {
 <template>
   <v-card class="preview-tile" tile>
     <v-autocomplete
+      data-public
       v-model="searchInput"
       autocomplete="new-password"
       class="mx-0 py-0"

@@ -815,6 +815,7 @@ export default {
         </p>
 
         <v-autocomplete
+          data-public
           v-model="moveToProjectInput"
           :items="moveToProjectDropdownItems"
           :menu-props="{

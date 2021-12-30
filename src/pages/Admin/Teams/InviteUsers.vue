@@ -232,6 +232,7 @@ export default {
               />
 
               <v-autocomplete
+                data-public
                 v-model="invitation.role"
                 outlined
                 dense
@@ -335,6 +336,7 @@ export default {
 
                   <div class="actions d-flex align-center justify-end ml-auto">
                     <v-autocomplete
+                      data-public
                       v-model="u.role"
                       outlined
                       dense
