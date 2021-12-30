@@ -460,6 +460,7 @@ export default {
           validate-on-blur
         />
         <v-select
+          data-public
           v-model="roleInput"
           outlined
           :menu-props="{ offsetY: true }"

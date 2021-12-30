@@ -135,6 +135,7 @@ export default {
       </v-col>
       <v-col cols="12" md="6" xl="4" class="auto pa-0">
         <v-select
+          data-public
           v-model="selectedProjectId"
           :items="projects"
           class="mb-5"

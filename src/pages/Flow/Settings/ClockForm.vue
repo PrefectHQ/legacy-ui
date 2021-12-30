@@ -92,7 +92,7 @@ export default {
       checked: []
     }
   },
-  created(){
+  created() {
     const params = this.clock?.parameter_defaults ?? {}
 
     this.parameter = this.formatParams(this.allDefaultParameters, params)
@@ -133,14 +133,20 @@ export default {
     confirm() {
       const clockType =
         typeof this[this.clockToAdd] == 'string' ? 'CronClock' : 'IntervalClock'
-      const parameters = this.parameter != null && isValidJson(this.parameter) ? parseJson(this.parameter) : {}
-      const checked = Object.entries(parameters).reduce((result, [key, value]) => {
-        if(this.checked.includes(key)){
-          result[key] = value
-        }
+      const parameters =
+        this.parameter != null && isValidJson(this.parameter)
+          ? parseJson(this.parameter)
+          : {}
+      const checked = Object.entries(parameters).reduce(
+        (result, [key, value]) => {
+          if (this.checked.includes(key)) {
+            result[key] = value
+          }
 
-        return result
-      }, {})
+          return result
+        },
+        {}
+      )
       const clock = {
         type: clockType,
         [clockType == 'IntervalClock' ? 'interval' : 'cron']: this[
@@ -206,6 +212,7 @@ export default {
                   class="mt-2"
                 />
                 <v-autocomplete
+                  data-public
                   v-model="selectedTimezone"
                   :items="tzs"
                   outlined

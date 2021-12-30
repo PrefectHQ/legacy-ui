@@ -186,6 +186,7 @@ export default {
       />
 
       <v-select
+        data-public
         v-model="interval"
         :items="intervalOptions"
         class="text-h5 ml-2"
@@ -204,6 +205,7 @@ export default {
     >
       <div>...on the</div>
       <v-select
+        data-public
         v-model="minuteValue"
         :items="minutes"
         class="text-h5 ml-2 mr-1"
@@ -221,6 +223,7 @@ export default {
     >
       <div>...at the</div>
       <v-select
+        data-public
         v-model="hourValue"
         :items="hours"
         class="text-h5 ml-2 mr-1"

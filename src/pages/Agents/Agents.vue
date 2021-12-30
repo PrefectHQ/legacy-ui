@@ -306,6 +306,7 @@ export default {
           <v-card width="320">
             <v-card-text class="pb-6">
               <v-autocomplete
+                data-public
                 ref="agents"
                 v-model="labelInput"
                 :items="allLabels"
