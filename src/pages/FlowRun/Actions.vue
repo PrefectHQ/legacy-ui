@@ -213,6 +213,7 @@ export default {
         :failed-task-runs="failedTaskRuns"
         :eligible-states="eligibleStates"
         @cancel="restartDialog = false"
+        @update="$emit('update')"
       />
     </v-dialog>
 
