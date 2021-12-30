@@ -224,6 +224,7 @@ export default {
               <v-row>
                 <v-col cols="4">
                   <v-autocomplete
+                    data-public
                     v-model="timeHr"
                     hide-details
                     label="Hour"
@@ -234,6 +235,7 @@ export default {
                 </v-col>
                 <v-col cols="4">
                   <v-autocomplete
+                    data-public
                     v-model="timeMin"
                     hide-details
                     label="Minute"
@@ -244,6 +246,7 @@ export default {
                 </v-col>
                 <v-col cols="4">
                   <v-autocomplete
+                    data-public
                     v-model="timeAmPm"
                     hide-details
                     label="AM/PM"

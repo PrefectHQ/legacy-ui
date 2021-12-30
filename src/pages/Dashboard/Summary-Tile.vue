@@ -135,6 +135,7 @@ export default {
         <CardTitle title="Summary" icon="pi-flow-run">
           <div slot="action" v-on="on">
             <v-select
+              data-public
               v-model="selectedDateFilter"
               class="time-interval-picker"
               :items="dateFilters"

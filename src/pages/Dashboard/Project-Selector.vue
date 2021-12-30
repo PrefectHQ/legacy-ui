@@ -99,6 +99,7 @@ export default {
 <template>
   <div>
     <v-autocomplete
+      data-public
       id="project-dropdown"
       v-model="projectSelect"
       class="project-selector"
