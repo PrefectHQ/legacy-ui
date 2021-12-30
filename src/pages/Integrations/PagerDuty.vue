@@ -292,6 +292,7 @@ export default {
         >
           <v-col cols="12" md="3">
             <v-select
+              data-public
               v-model="key.severity"
               :items="severityLevels"
               outlined

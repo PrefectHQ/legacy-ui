@@ -12,6 +12,7 @@
     />
     <template v-if="showTypes && hasTypes">
       <v-select
+        data-public
         v-model="selectedType"
         :items="[emptyTypeOption, ...types]"
         label="Type"
