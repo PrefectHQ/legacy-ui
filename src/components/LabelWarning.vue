@@ -105,8 +105,8 @@ export default {
     labelMessage(message) {
       this.infoMessage = message
     },
-    async visibilityChanged(visible) {
-      if (visible) {
+    async onIntersect([entry]) {
+      if (entry.isIntersecting) {
         this.unsubscribeAgents = await this.$store.dispatch(
           'polling/subscribe',
           'agents'
@@ -120,78 +120,79 @@ export default {
 </script>
 
 <template>
-  <v-menu
-    v-if="!labelsAlign"
-    v-model="show"
-    :close-on-content-click="false"
-    offset-y
-    open-on-hover
-    @input="visibilityChanged"
-  >
-    <template #activator="{ on }">
-      <div text class="super-imposed-icon-set cursor-pointer" v-on="on">
-        <v-icon v-ripple color="red">label</v-icon>
-        <v-icon
-          x-small
-          color="white"
-          class="nudge-icon-left"
-          style="pointer-events: none;"
-        >
-          not_interested
-        </v-icon>
-      </div>
-    </template>
-    <v-card tile class="pa-0" max-width="320">
-      <v-card-title class="subtitle pb-1">{{ agentOrLabel }} </v-card-title>
-
-      <v-card-text class="pt-0">
-        <div class="font-weight-bold pb-4"> {{ infoMessage }}</div>
-        <div
-          >You can see your agent labels in the
-          <router-link
-            target="_blank"
-            :to="{
-              name: 'dashboard',
-              params: { tenant: tenant.slug },
-              query: { agents: '' }
-            }"
+  <span v-intersect="onIntersect">
+    <v-menu
+      v-if="!labelsAlign"
+      v-model="show"
+      :close-on-content-click="false"
+      offset-y
+      open-on-hover
+    >
+      <template #activator="{ on }">
+        <div text class="super-imposed-icon-set cursor-pointer" v-on="on">
+          <v-icon v-ripple color="red">label</v-icon>
+          <v-icon
+            x-small
+            color="white"
+            class="nudge-icon-left"
+            style="pointer-events: none;"
           >
-            <span>agents tab</span></router-link
-          >.</div
-        >
-        <div>
-          You can see and edit your
-          {{ flowOrFlowRun }} labels in the
-          <router-link
-            v-if="location !== 'flowPageDetails'"
-            :to="{
-              name: 'flow-run',
-              params: { id: flowRun.id, tenant: tenant.slug }
-            }"
-            >flow run details tile</router-link
-          ><span v-else>{{ flowOrFlowRun }} details tile</span>.</div
-        >
-        <div v-if="flow && flow.is_schedule_active" class="mt-4">
-          If you need to edit labels on many scheduled flow runs, you can pause
-          the schedule and update the flow labels on the
-          <router-link
-            v-if="location !== 'flowPageDetails'"
-            :to="{
-              name: 'flow',
-              params: { id: flow.id, tenant: tenant.slug }
-            }"
-            >flow details tile</router-link
-          >
-          and then turn your schedule back on.
+            not_interested
+          </v-icon>
         </div>
-        <div class="mt-4">
-          For more information check out the docs on
-          <a :href="docsLink" target="_blank">{{ docsName }}</a>
-          .</div
-        >
-      </v-card-text>
-    </v-card>
-  </v-menu>
+      </template>
+      <v-card tile class="pa-0" max-width="320">
+        <v-card-title class="subtitle pb-1">{{ agentOrLabel }} </v-card-title>
+
+        <v-card-text class="pt-0">
+          <div class="font-weight-bold pb-4"> {{ infoMessage }}</div>
+          <div
+            >You can see your agent labels in the
+            <router-link
+              target="_blank"
+              :to="{
+                name: 'dashboard',
+                params: { tenant: tenant.slug },
+                query: { agents: '' }
+              }"
+            >
+              <span>agents tab</span></router-link
+            >.</div
+          >
+          <div>
+            You can see and edit your
+            {{ flowOrFlowRun }} labels in the
+            <router-link
+              v-if="location !== 'flowPageDetails'"
+              :to="{
+                name: 'flow-run',
+                params: { id: flowRun.id, tenant: tenant.slug }
+              }"
+              >flow run details tile</router-link
+            ><span v-else>{{ flowOrFlowRun }} details tile</span>.</div
+          >
+          <div v-if="flow && flow.is_schedule_active" class="mt-4">
+            If you need to edit labels on many scheduled flow runs, you can
+            pause the schedule and update the flow labels on the
+            <router-link
+              v-if="location !== 'flowPageDetails'"
+              :to="{
+                name: 'flow',
+                params: { id: flow.id, tenant: tenant.slug }
+              }"
+              >flow details tile</router-link
+            >
+            and then turn your schedule back on.
+          </div>
+          <div class="mt-4">
+            For more information check out the docs on
+            <a :href="docsLink" target="_blank">{{ docsName }}</a>
+            .</div
+          >
+        </v-card-text>
+      </v-card>
+    </v-menu>
+  </span>
 </template>
 
 <style lang="scss" scoped>
