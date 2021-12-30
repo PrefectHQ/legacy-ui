@@ -124,6 +124,7 @@ export default {
         <CardTitle :title="tableTitle" icon="pi-task-run">
           <div slot="action" v-on="on">
             <v-select
+              data-public
               v-model="selectedDateFilter"
               class="time-interval-picker"
               :items="dateFilters"

@@ -126,6 +126,7 @@ export default {
               labelArray: newLabels
             }
           })
+          this.$emit('refetch')
         }
         if (result.data) {
           this.newLabels =
