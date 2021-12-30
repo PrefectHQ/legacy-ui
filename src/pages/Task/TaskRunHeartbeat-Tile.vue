@@ -53,6 +53,7 @@ export default {
   <v-card v-intersect="{ handler: onIntersect }" class="pa-2" tile>
     <CardTitle title="Activity in the last hour" icon="show_chart">
       <v-select
+        data-public
         slot="action"
         v-model="state"
         class="state-interval-picker font-weight-regular"

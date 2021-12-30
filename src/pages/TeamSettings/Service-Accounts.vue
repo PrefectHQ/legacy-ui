@@ -295,6 +295,7 @@ export default {
           @keydown.enter="addServiceAccount"
         />
         <v-select
+          data-public
           v-model="roleInput"
           outlined
           :menu-props="{ offsetY: true }"

@@ -306,6 +306,7 @@ export default {
                 <template #activator="{ on }">
                   <div v-on="on">
                     <v-select
+                      data-public
                       v-model="selected.projectId"
                       :items="sortedProjects"
                       item-value="id"

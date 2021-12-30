@@ -162,6 +162,7 @@ export default {
       >
         <v-select
           v-model="state"
+          data-public
           outlined
           class="state-filter"
           :style="[

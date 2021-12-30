@@ -15,6 +15,9 @@ const initializeLogrocket = () => {
   ) {
     LogRocket.init(process.env.VUE_APP_LOG_ROCKET_PUBLIC_ID, {
       release: process.env.VUE_APP_RELEASE_TIMESTAMP,
+      dom: {
+        inputSanitizer: true
+      },
       network: {
         // Requests in the blockedRequests list
         // will be sanitized from analytics
