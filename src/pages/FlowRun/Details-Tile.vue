@@ -79,6 +79,9 @@ export default {
         space_in_empty_paren: true,
         preserve_newlines: false
       })
+    },
+    handleRefetch() {
+      this.$emit('refetch')
     }
   }
 }
@@ -145,7 +148,11 @@ export default {
               </div>
             </v-list-item-content>
           </v-list-item>
-          <LabelEdit type="flowRun" :flow-run="flowRun" />
+          <LabelEdit
+            type="flowRun"
+            :flow-run="flowRun"
+            @refetch="handleRefetch"
+          />
           <v-list-item v-if="flowRun.state_message" dense>
             <v-list-item-content>
               <v-list-item-subtitle class="text-caption">

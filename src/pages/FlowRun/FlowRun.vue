@@ -169,6 +169,9 @@ export default {
     },
     onIntersect([entry]) {
       this.$apollo.queries.flowRun.skip = !entry.isIntersecting
+    },
+    handleRefetch() {
+      this.$apollo.queries.flowRun.refetch()
     }
   },
   apollo: {
@@ -318,7 +321,11 @@ export default {
             :flow-run-states="flowRun.states"
           />
 
-          <DetailsTile slot="row-2-col-1-row-1-tile-1" :flow-run="flowRun" />
+          <DetailsTile
+            slot="row-2-col-1-row-1-tile-1"
+            :flow-run="flowRun"
+            @refetch="handleRefetch"
+          />
 
           <TaskRunHeartbeatTile
             slot="row-2-col-1-row-2-tile-1"
