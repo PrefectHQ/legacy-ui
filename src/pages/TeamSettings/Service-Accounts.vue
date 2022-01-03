@@ -221,6 +221,7 @@ export default {
         color="primary"
         class="white--text"
         large
+        :disabled="!roles"
         data-cy="invite-service-account"
         @click="dialogAddServiceAccount = true"
       >
