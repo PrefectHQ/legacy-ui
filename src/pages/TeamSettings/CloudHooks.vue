@@ -354,6 +354,7 @@ export default {
           prevIcon: 'keyboard_arrow_left',
           nextIcon: 'keyboard_arrow_right'
         }"
+        :loading="!cloudHooks"
         no-data-text="No Cloud Hooks found."
         ><!-- HEADERS -->
         <template #header.name="{ header }">
