@@ -73,7 +73,8 @@ export default {
           sortable: false,
           width: '20%'
         }
-      ]
+      ],
+      hooksLoaded: false
     }
   },
   computed: {
@@ -255,7 +256,7 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout :show="!isLoadingTable" control-show>
+  <ManagementLayout show control-show>
     <template #title>Cloud Hooks</template>
     <template #subtitle>
       <div v-if="!hasPermission('update', 'cloud-hook')">
@@ -354,7 +355,7 @@ export default {
           prevIcon: 'keyboard_arrow_left',
           nextIcon: 'keyboard_arrow_right'
         }"
-        :loading="!cloudHooks"
+        :loading="!isLoadingTable"
         no-data-text="No Cloud Hooks found."
         ><!-- HEADERS -->
         <template #header.name="{ header }">
