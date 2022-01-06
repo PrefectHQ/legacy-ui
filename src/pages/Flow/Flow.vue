@@ -172,6 +172,11 @@ export default {
       set(value){
         this.$router.replace({query: { [value]: null }})
       }
+    },
+    flowTabs() {
+      return this.isCloud
+        ? this.tabs
+        : this.tabs.filter(tab => tab.name !== 'Automations')
     }
   },
   watch: {
@@ -299,7 +304,7 @@ export default {
         :versions="versions"
       />
       <span slot="tabs" style="width: 100%;"
-        ><NavTabBar :tabs="tabs" v-if="flowGroup" page="flow"
+        ><NavTabBar :tabs="flowTabs" v-if="flowGroup" page="flow"
       /></span>
     </SubPageNav>
 
