@@ -20,10 +20,7 @@ export default {
   computed: {
     ...mapGetters('api', ['isCloud']),
     showScheduleBanner() {
-      if (this.run.state === 'Scheduled' && this.active && this.isCloud) {
-        return true
-      }
-      return false
+      return this.run.state === 'Scheduled' && this.active && this.isCloud
     }
   },
   methods: {
