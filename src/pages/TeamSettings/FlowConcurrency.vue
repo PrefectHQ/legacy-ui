@@ -46,7 +46,7 @@ export default {
       headers: [
         {
           text: 'Label',
-          value: 'label',
+          value: 'name',
           width: '20%'
         },
         {
