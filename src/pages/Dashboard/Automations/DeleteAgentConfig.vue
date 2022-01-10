@@ -103,5 +103,5 @@ export default {
         </v-btn>
       </div>
     </v-card>
-  </v-menu></template
->
+  </v-menu>
+</template>
