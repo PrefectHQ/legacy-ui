@@ -12,6 +12,10 @@ export default {
       type: Number,
       required: true
     },
+    loading: {
+      type: Boolean,
+      required: false
+    },
     // Mapping between role & role color
     roleColorMap: {
       type: Object,
@@ -242,6 +246,7 @@ export default {
         prevIcon: 'keyboard_arrow_left',
         nextIcon: 'keyboard_arrow_right'
       }"
+      :loading="loading"
       :search="search"
       no-results-text="No members found. Try expanding your search?"
       no-data-text="This team does not have any members yet."
