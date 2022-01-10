@@ -408,6 +408,7 @@ export default {
             <v-row>
               <v-col cols="12" md="8" class="pb-0">
                 <v-autocomplete
+                  data-public
                   v-if="canEdit && !versionGroupIdProp"
                   id="item"
                   v-model="versionGroupIdSelect"

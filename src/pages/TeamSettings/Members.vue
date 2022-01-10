@@ -244,7 +244,7 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout :show="!isLoadingMembersTable" control-show>
+  <ManagementLayout>
     <template #title>Team Members</template>
 
     <template #subtitle>
@@ -258,7 +258,7 @@ export default {
 
     <template v-if="hasPermission('create', 'membership-invitation')" #cta>
       <v-btn
-        :disabled="insufficientUsers"
+        :disabled="insufficientUsers || !roles"
         color="primary"
         class="white--text"
         large
@@ -389,6 +389,7 @@ export default {
           :search="searchInput"
           :tenant="tenant"
           :user="user"
+          :loading="isLoadingMembersTable"
           :refetch-signal="membersSignal"
           @load-end="handleUpdateUsers($event)"
           @successful-action="handleAlert('success', $event)"
@@ -460,6 +461,7 @@ export default {
           validate-on-blur
         />
         <v-select
+          data-public
           v-model="roleInput"
           outlined
           :menu-props="{ offsetY: true }"

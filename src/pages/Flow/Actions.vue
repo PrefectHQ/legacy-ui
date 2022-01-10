@@ -259,6 +259,7 @@ export default {
   >
     <div class="version-selector">
       <v-select
+        data-public
         :value.sync="selectedVersion"
         :items="versions"
         dense

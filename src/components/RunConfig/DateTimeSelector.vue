@@ -356,6 +356,7 @@ export default {
               </v-fade-transition>
             </div>
             <v-autocomplete
+              data-public
               v-model="timezone_"
               :items="timezones"
               outlined
