@@ -113,6 +113,7 @@ export default {
         >
           <div slot="action" v-on="on">
             <v-select
+              data-public
               v-model="selectedDateFilter"
               class="time-interval-picker"
               :items="shortDateFilters"

@@ -538,6 +538,7 @@ export default {
             <v-col cols="12" md="9" class="mt-n4 mt-md-0">
               <resettable-wrapper v-model="loggingLevel">
                 <v-select
+                  data-public
                   v-model="loggingLevel"
                   outlined
                   :items="loggingLevels"

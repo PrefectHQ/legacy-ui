@@ -244,6 +244,7 @@ export default {
             <v-row v-if="dateFromInput" dense>
               <v-col cols="3">
                 <v-autocomplete
+                  data-public
                   v-model="timeFromInputHr"
                   class="ma-0"
                   dense
@@ -258,6 +259,7 @@ export default {
               </v-col>
               <v-col cols="3">
                 <v-autocomplete
+                  data-public
                   v-model="timeFromInputMin"
                   class="ma-0"
                   dense
@@ -272,6 +274,7 @@ export default {
               </v-col>
               <v-col cols="3">
                 <v-autocomplete
+                  data-public
                   v-model="timeFromInputSec"
                   class="ma-0"
                   dense
@@ -286,6 +289,7 @@ export default {
               </v-col>
               <v-col cols="3">
                 <v-autocomplete
+                  data-public
                   v-model="timeFromInputAmPm"
                   class="ma-0"
                   dense
@@ -332,6 +336,7 @@ export default {
             <v-row v-if="dateToInput" dense>
               <v-col cols="3">
                 <v-autocomplete
+                  data-public
                   v-model="timeToInputHr"
                   class="ma-0"
                   dense
@@ -346,6 +351,7 @@ export default {
               </v-col>
               <v-col cols="3">
                 <v-autocomplete
+                  data-public
                   v-model="timeToInputMin"
                   class="ma-0"
                   dense
@@ -360,6 +366,7 @@ export default {
               </v-col>
               <v-col cols="3">
                 <v-autocomplete
+                  data-public
                   v-model="timeToInputSec"
                   class="ma-0"
                   dense
@@ -374,6 +381,7 @@ export default {
               </v-col>
               <v-col cols="3">
                 <v-autocomplete
+                  data-public
                   v-model="timeToInputAmPm"
                   class="ma-0"
                   dense

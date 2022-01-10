@@ -151,6 +151,7 @@ export default {
         ></v-text-field>
 
         <v-autocomplete
+          data-public
           v-model="selectedTimezone"
           :items="tzs"
           label="Time Zone"

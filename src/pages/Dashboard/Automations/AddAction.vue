@@ -694,6 +694,7 @@ export default {
         <v-row class="mt-2">
           <v-col cols="12" md="4">
             <v-select
+              data-public
               v-model="apiToken"
               :items="secretNames"
               outlined
@@ -703,6 +704,7 @@ export default {
           </v-col>
           <v-col cols="12" md="4">
             <v-select
+              data-public
               v-model="severity"
               :items="severityLevels"
               outlined
@@ -802,6 +804,7 @@ export default {
       <v-row class="mt-4">
         <v-col cols="12" md="4">
           <v-select
+            data-public
             v-model="authToken"
             outlined
             :items="secretNames"

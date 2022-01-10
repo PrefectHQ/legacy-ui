@@ -214,6 +214,7 @@ export default {
         <template #activator="{ on }">
           <div v-on="on">
             <v-select
+              data-public
               v-model="defaultType"
               class="select mx-4"
               :items="[

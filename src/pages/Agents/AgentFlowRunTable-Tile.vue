@@ -148,6 +148,7 @@ export default {
         :class="{ 'd-flex': $vuetify.breakpoint.mdAndUp }"
       >
         <v-select
+          data-public
           v-model="state"
           outlined
           class="state-filter"
