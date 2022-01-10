@@ -46,7 +46,7 @@ export default {
       headers: [
         {
           text: 'Tag',
-          value: 'tag',
+          value: 'name',
           width: '20%'
         },
         {
