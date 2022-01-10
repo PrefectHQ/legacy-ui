@@ -102,7 +102,7 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :to="'/team/actions'">
+        <v-list-item :disabled="!isCloud" :to="'/team/actions'">
           <v-list-item-avatar>
             <span class="auto-icon">
               <i class="fad fa-random" style="width: 24px; height: 24px;"></i>
