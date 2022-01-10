@@ -10,6 +10,7 @@ import {
 } from '@/utils/automations'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import UpgradeBadge from '@/components/UpgradeBadge'
+import DeleteAgentConfig from './DeleteAgentConfig.vue'
 
 const systemActions = [
   'CancelFlowRunAction',
@@ -22,7 +23,8 @@ export default {
     AddAction,
     CreateAgentConfigForm,
     ConfirmDialog,
-    UpgradeBadge
+    UpgradeBadge,
+    DeleteAgentConfig
   },
   mixins: [pollsProjectsMixin],
   props: {
@@ -79,9 +81,7 @@ export default {
         notNull: val => val > 0 || 'Duration must be greater than 0 seconds'
       },
       animated: false,
-      agentConfigId: '',
-      copiedText: {},
-      deletingConfig: false
+      agentConfigId: ''
     }
   },
   computed: {
@@ -587,46 +587,6 @@ export default {
         this.deleting = false
       }
     },
-    copyToClipboard(value) {
-      this.copiedText = {}
-      this.copiedText[value] = true
-      navigator.clipboard.writeText(value)
-
-      setTimeout(() => {
-        this.copiedText = {}
-        this.copiedText[value] = false
-      }, 600)
-    },
-    async deleteConfig(id) {
-      this.deletingConfig = true
-      try {
-        await this.$apollo.mutate({
-          mutation: require('@/graphql/Automations/delete-agent-config.gql'),
-          variables: {
-            agentConfigInput: {
-              agent_config_id: id
-            }
-          }
-        })
-        this.$apollo.queries.agentConfigs.refetch()
-        this.setAlert({
-          alertShow: true,
-          alertMessage: 'Agent config deleted',
-          alertType: 'info'
-        })
-      } catch (error) {
-        this.setAlert({
-          alertShow: true,
-          alertMessage: `${error}`,
-          alertType: 'error'
-        })
-      } finally {
-        if (this.selectedAgentConfig.id === id) {
-          this.selectedAgentConfig = null
-        }
-        this.deletingConfig = false
-      }
-    },
     async createHook() {
       this.saving = true
 
@@ -774,6 +734,12 @@ export default {
           this.saving = false
           this.closeCard()
         }
+      }
+    },
+    handleDeletedAgentConfig(event) {
+      this.$apollo.queries.agentConfigs.refetch()
+      if (this.selectedAgentConfig.id === event) {
+        this.selectedAgentConfig = null
       }
     },
     onIntersect([entry]) {
@@ -1100,81 +1066,24 @@ export default {
                 <div
                   v-for="config in agentConfigs"
                   :key="config.id"
-                  class="d-inline-block agent-chip pa-2 my-2 mr-4 cursor-pointer text-body-1"
                   v-ripple
-                  @click="selectAgentConfig(config)"
+                  class="d-inline-block agent-chip pa-2 my-2 mr-4 cursor-pointer text-body-1"
                   :class="{
                     active:
                       selectedAgentConfig &&
                       selectedAgentConfig.id === config.id
                   }"
+                  @click="selectAgentConfig(config)"
                 >
                   <span>
                     <span v-if="config.name">{{ config.name }}</span>
                     <span v-else>{{ config.id }}</span>
                   </span>
                   <span>
-                    <v-menu :close-on-content-click="false" offset-y>
-                      <template #activator="{ on, attrs }">
-                        <v-btn
-                          class="px-2"
-                          text
-                          small
-                          fab
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          <v-icon>more_horiz</v-icon>
-                        </v-btn>
-                      </template>
-                      <v-card class="pa-4">
-                        <div>
-                          <v-btn
-                            text
-                            plain
-                            class="cursor-pointer show-icon-hover-focus-only pa-0 text-subtitle-1"
-                            role="button"
-                            @click="
-                              copyToClipboard(`--agent-config-id ${config.id}`)
-                            "
-                          >
-                            <v-icon color="primary" class="mr-2">
-                              {{
-                                copiedText[`--agent-config-id ${config.id}`]
-                                  ? 'check'
-                                  : 'file_copy'
-                              }}
-                            </v-icon>
-                            <span
-                              class="text-subtitle-1"
-                              style="text-transform: none;"
-                            >
-                              --agent-config-id {{ config.id }}
-                            </span>
-                          </v-btn>
-                        </div>
-                        <div class="mt-2">
-                          <v-btn
-                            text
-                            plain
-                            class="cursor-pointer show-icon-hover-focus-only pa-0 text-subtitle-1"
-                            role="button"
-                            @click="deleteConfig(config.id)"
-                            :loading="deletingConfig"
-                          >
-                            <v-icon color="red" class="mr-2">
-                              delete
-                            </v-icon>
-                            <span
-                              class="text-subtitle-1"
-                              style="text-transform: none;"
-                            >
-                              Delete
-                            </span>
-                          </v-btn>
-                        </div>
-                      </v-card>
-                    </v-menu>
+                    <DeleteAgentConfig
+                      :config="config"
+                      @refetch="handleDeletedAgentConfig"
+                    />
                   </span>
                 </div>
               </div>
