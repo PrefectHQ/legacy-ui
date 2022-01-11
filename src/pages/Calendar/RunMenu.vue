@@ -3,6 +3,7 @@ import DurationSpan from '@/components/DurationSpan'
 import { formatTime } from '@/mixins/formatTimeMixin'
 import FlowName from '@/pages/Calendar/FlowName'
 import ExternalLink from '@/components/ExternalLink'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -16,7 +17,12 @@ export default {
     type: { type: String, required: false, default: 'task-run' },
     active: { type: Boolean, required: true }
   },
-  computed: {},
+  computed: {
+    ...mapGetters('api', ['isCloud']),
+    showScheduleBanner() {
+      return this.run.state === 'Scheduled' && this.active && this.isCloud
+    }
+  },
   methods: {
     statusStyle(state) {
       return {
@@ -35,7 +41,7 @@ export default {
 <template>
   <v-card tile class="pointer">
     <v-alert
-      v-if="run.state === 'Scheduled' && active"
+      v-if="showScheduleBanner"
       class="mx-2 mt-2 mb-0 text-caption radius"
       type="warning"
       icon="announcement"
