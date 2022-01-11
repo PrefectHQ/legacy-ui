@@ -3,6 +3,7 @@
 import { artifact_parser } from '@/utils/markdownParser'
 import { mapActions } from 'vuex'
 import { codemirror } from 'vue-codemirror'
+import 'codemirror/lib/codemirror.css'
 
 export default {
   components: {
