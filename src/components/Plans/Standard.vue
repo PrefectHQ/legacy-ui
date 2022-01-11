@@ -177,15 +177,6 @@ export default {
           <div class="mt-3 d-flex align-center justify-center">
             <span class="rounded-circle plans-feature-icon">
               <v-icon small>
-                fad fa-user-shield
-              </v-icon>
-            </span>
-            <span class="ml-2">Role-based permissioning</span>
-          </div>
-
-          <div class="mt-3 d-flex align-center justify-center">
-            <span class="rounded-circle plans-feature-icon">
-              <v-icon small>
                 fad fa-siren-on
               </v-icon>
             </span>
