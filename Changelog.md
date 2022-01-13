@@ -1,5 +1,24 @@
 # Changelog
 
+#### 2022-01-13
+
+- Changelog: Cut changelog ahead of 2022-01-13 release [`#`]()
+- BugFix: Enable editing in readme [`#1202`](https://github.com/PrefectHQ/ui/pull/1202)
+- BugFix: Remove confusing reference to RBAC on plans page [`#1192`](https://github.com/PrefectHQ/ui/pull/1192)
+- BugFix: Hide calendar schedule banner on Server [`#1200`](https://github.com/PrefectHQ/ui/pull/1200)
+- BugFix: Update Flow/Task Concurrency header values [`#1201`](https://github.com/PrefectHQ/ui/pull/1201)
+- Feature:  Add create_flow_run system action to automations [`#1152`](https://github.com/PrefectHQ/ui/pull/1152)
+- BugFix: Disable add service account and invite buttons until roles are loaded [`#1195`](https://github.com/PrefectHQ/ui/pull/1195)
+- BugFix: Remove automations tab from flow page on Server [`#1199`](https://github.com/PrefectHQ/ui/pull/1199)
+- Bugfix: Add loading state to the cloud hooks table  [`#1197`](https://github.com/PrefectHQ/ui/pull/1197)
+- Bugfix:  Go to Project button on dashboard  [`#1155`](https://github.com/PrefectHQ/ui/pull/1155)
+- Admin: Update PR template [`#1157`](https://github.com/PrefectHQ/ui/pull/1157)
+- BugFix: Improve error handling on restart button and refetch state after restart [`#1181`](https://github.com/PrefectHQ/ui/pull/1181)
+- BugFix: Ensure label warning updates  [`#1188`](https://github.com/PrefectHQ/ui/pull/1188)
+- Admin: Add input sanitizer as default for log rocket [`#1186`](https://github.com/PrefectHQ/ui/pull/1186)
+- BugFix: Add once to intersect on lastTenRuns [`#1187`](https://github.com/PrefectHQ/ui/pull/1187)
+- Admin: adopting auto-changelog [`#1171`](https://github.com/PrefectHQ/ui/pull/1171)
+
 #### [2021-12-22](https://github.com/PrefectHQ/ui/compare/2021-12-15...2021-12-22)
 
 - Changelog: Cut changelog ahead of 2021-12-22 release [`#1184`](https://github.com/PrefectHQ/ui/pull/1184)
