@@ -2,7 +2,7 @@
 
 #### 2022-01-13
 
-- Changelog: Cut changelog ahead of 2022-01-13 release [`#`]()
+- Changelog: Cut changelog ahead of 2022-01-13 release [`#1207`](https://github.com/PrefectHQ/ui/pull/1207)
 - BugFix: Enable editing in readme [`#1202`](https://github.com/PrefectHQ/ui/pull/1202)
 - BugFix: Remove confusing reference to RBAC on plans page [`#1192`](https://github.com/PrefectHQ/ui/pull/1192)
 - BugFix: Hide calendar schedule banner on Server [`#1200`](https://github.com/PrefectHQ/ui/pull/1200)
