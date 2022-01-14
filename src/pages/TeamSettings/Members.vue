@@ -74,7 +74,15 @@ export default {
   computed: {
     ...mapGetters('tenant', ['tenant']),
     ...mapGetters('user', ['user']),
-    ...mapGetters('license', ['license', 'hasPermission', 'allowedUsers']),
+    ...mapGetters('license', [
+      'license',
+      'hasPermission',
+      'allowedUsers',
+      'planType'
+    ]),
+    isSelfServe() {
+      return this.planType('FREE') || this.planType('STARTER')
+    },
     totalAllowedUsers() {
       return this.allowedUsers() ?? Infinity
     },
@@ -283,7 +291,12 @@ export default {
         icon="lock"
         max-width="600"
       >
-        <p>
+        <p v-if="isSelfServe">
+          Your team has no users available;
+          <router-link :to="'/plans'">upgrade your plan</router-link> to get
+          more users and access to more features!
+        </p>
+        <p v-else>
           Your team has no users available. Contact sales@prefect.io to add
           more.
         </p>
