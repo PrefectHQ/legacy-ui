@@ -80,7 +80,7 @@ export default {
       'allowedUsers',
       'planType'
     ]),
-    isSelfServe() {
+    canUpgradeUsers() {
       return this.planType('FREE') || this.planType('STARTER')
     },
     totalAllowedUsers() {
@@ -291,7 +291,7 @@ export default {
         icon="lock"
         max-width="600"
       >
-        <p v-if="isSelfServe">
+        <p v-if="canUpgradeUsers">
           Your team has no users available;
           <router-link :to="'/plans'">upgrade your plan</router-link> to get
           more users and access to more features!
