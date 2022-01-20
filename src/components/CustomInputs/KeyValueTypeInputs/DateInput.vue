@@ -1,6 +1,7 @@
 <template>
   <date-time
     v-model="internalValue"
+    allow-past-date
     :disabled="disabled"
     :text-field-props="{
       label: 'Value',
