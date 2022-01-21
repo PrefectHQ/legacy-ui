@@ -99,6 +99,8 @@ export default {
 
 <template>
   <span class="duration-span">
-    {{ durationDifferenceString }}
+    <slot :duration="durationDifferenceString">{{
+      durationDifferenceString
+    }}</slot>
   </span>
 </template>

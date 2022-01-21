@@ -24,6 +24,11 @@ export default {
       type: String,
       required: false,
       default: () => ''
+    },
+    allowPastDate: {
+      type: Boolean,
+      required: false,
+      default: () => false
     }
   },
   data() {
@@ -48,7 +53,7 @@ export default {
     ...mapGetters('user', ['timezone']),
     // The current date in YYYY-MM-DD format
     currentDate() {
-      if (!this.currentDateTimeMoment) return null
+      if (!this.currentDateTimeMoment || this.allowPastDate) return null
       return this.currentDateTimeMoment.format('YYYY-MM-DD')
     },
     // Selected date and time value, as derived from date & time inputs.
@@ -273,7 +278,7 @@ export default {
                 <v-col cols="12" class="py-0">
                   <v-scroll-x-transition>
                     <v-alert
-                      v-if="timeInPast"
+                      v-if="!allowPastDate && timeInPast"
                       border="left"
                       colored-border
                       elevation="2"
