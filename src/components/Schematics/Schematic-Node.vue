@@ -46,6 +46,9 @@ export default {
     }
   },
   computed: {
+    mappedStates() {
+      return this.nodeData?.data?.serialized_state?.n_map_states ?? false
+    },
     appliedTransform() {
       return this.transform.apply([this.nodeData.x, this.nodeData.y])
     },
@@ -70,8 +73,8 @@ export default {
       }
     },
     durationStyle() {
-      let size = 48 * (1 / this.transform.k)
-      size = size < 48 ? 48 : size > 64 ? 64 : size
+      let size = 45 * (1 / this.transform.k)
+      size = size < 45 ? 45 : size > 64 ? 64 : size
       return {
         color: this.disabled ? 'var(--v-utilGrayLight-base)' : '',
         'font-size': `${size}px !important`,
@@ -223,14 +226,22 @@ export default {
       </div>
 
       <div v-if="mappedChildren" :style="durationStyle">
-        <div v-if="showDetails">
-          {{ finishedStates }}/{{ nodeData.data.serialized_state.n_map_states }}
-          {{ nodeData.data.serialized_state.n_map_states > 1 ? 'runs' : 'run' }}
-          complete
-        </div>
+        <div v-if="mappedStates" style="padding-bottom: 40px;">
+          <div v-if="showDetails">
+            {{ finishedStates }}/{{
+              nodeData.data.serialized_state.n_map_states
+            }}
+            {{
+              nodeData.data.serialized_state.n_map_states > 1 ? 'runs' : 'run'
+            }}
+            complete
+          </div>
 
-        <div v-else class="mt-2">
-          {{ finishedStates }}/{{ nodeData.data.serialized_state.n_map_states }}
+          <div v-else class="mt-2">
+            {{ finishedStates }}/{{
+              nodeData.data.serialized_state.n_map_states
+            }}
+          </div>
         </div>
       </div>
 
@@ -238,7 +249,6 @@ export default {
         v-if="showDetails && nodeData.data.start_time"
         :style="durationStyle"
       >
-        Duration:
         <DurationSpan
           :start-time="nodeData.data.start_time"
           :end-time="
@@ -248,7 +258,11 @@ export default {
               ? nodeData.data.start_time
               : null
           "
-        />
+        >
+          <template #default="{duration}">
+            <div v-show="duration.length > 0"> Duration: {{ duration }} </div>
+          </template>
+        </DurationSpan>
       </div>
     </div>
     <div
