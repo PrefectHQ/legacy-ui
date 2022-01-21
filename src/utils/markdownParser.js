@@ -21,7 +21,11 @@ export function parser(md) {
           value: '# '
         }
       })
-      .use(html)
+      .use(html, {
+        sanitize: {
+          clobberPrefix: ''
+        }
+      })
       .process(md, (err, file) => {
         result = String(file)
       })
