@@ -74,7 +74,11 @@ export default {
       />
     </v-dialog>
 
-    <SetStateDialog dialog-type="task run" :task-run="taskRun" />
+    <SetStateDialog
+      dialog-type="task run"
+      :task-run="taskRun"
+      :flow-run-id="taskRun.flow_run.id"
+    />
 
     <!-- Shouldn't we be able to cancel this? -->
     <!-- <CancelButton dialog-type="flow run" :flow-run="flowRun" /> -->

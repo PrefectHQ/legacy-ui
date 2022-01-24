@@ -17,7 +17,8 @@ export default {
   },
   methods: {
     onIntersect([entry]) {
-      this.$apollo.queries.taskRunIds.skip = !entry.isIntersecting
+      this.$apollo.queries.taskRunIds.skip =
+        !entry.isIntersecting || !this.flowRun
     }
   },
   apollo: {
@@ -29,9 +30,6 @@ export default {
           parentMapIndex: -1,
           childMapIndex: null
         }
-      },
-      skip() {
-        return !this.flowRun
       },
       pollInterval: 10000,
       update: data => data.task_run
