@@ -94,7 +94,6 @@ export default {
           if (!data?.set_flow_run_states) this.tasksSuccess = false
         }
       } catch (error) {
-        console.log('restart error', error)
         this.tasksSuccess = false
         throw error
       } finally {
