@@ -140,7 +140,7 @@ export default {
       update: data => {
         return data && data.task_run_aggregate
           ? data.task_run_aggregate.aggregate.count
-          : 5
+          : null
       }
     }
   }
