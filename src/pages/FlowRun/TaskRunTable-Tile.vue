@@ -116,6 +116,7 @@ export default {
           flowRunId: this.flowRunId,
           limit: this.itemsPerPage,
           name: this.searchFormatted,
+          run_name: this.searchFormatted,
           state: this.state.length === 0 ? null : this.state,
           offset: this.offset,
           orderBy
@@ -123,6 +124,7 @@ export default {
       },
       pollInterval: 5000,
       update: data => {
+        console.log('data', data)
         return data && data.flow_run ? data.flow_run[0] : null
       }
     },
@@ -139,7 +141,7 @@ export default {
       update: data => {
         return data && data.task_run_aggregate
           ? data.task_run_aggregate.aggregate.count
-          : null
+          : 5
       }
     }
   }
