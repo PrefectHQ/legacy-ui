@@ -124,7 +124,6 @@ export default {
       },
       pollInterval: 5000,
       update: data => {
-        console.log('data', data)
         return data && data.flow_run ? data.flow_run[0] : null
       }
     },

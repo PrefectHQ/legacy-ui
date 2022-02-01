@@ -1,29 +1,22 @@
 query TableTaskRuns(
   $flowRunId: uuid
-  $name: String
   $run_name: String
   $state: [String!]
   $limit: Int
   $offset: Int
   $orderBy: [task_run_order_by!]
 ) {
-  flow_run(
-    
-where: { id: { _eq: $flowRunId } }) {
+  flow_run(where: { id: { _eq: $flowRunId } }) {
     id
     name
     task_runs(
-      where: { 
+      where: {
         _or: [
-        {name: { _ilike: $run_name }}, 
-        {task: 
-         
-         {name: { _ilike: $name } 
-         }
-        }, 
-        {state: { _in: $state } }
+          { name: { _ilike: $run_name } }
+          { task: { name: { _ilike: $run_name } } }
         ]
-      },
+        state: { _in: $state }
+      }
       order_by: $orderBy
       limit: $limit
       offset: $offset
