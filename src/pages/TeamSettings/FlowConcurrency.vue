@@ -255,6 +255,9 @@ export default {
       query: require('@/graphql/FlowLabelLimit/flow-label-limit.gql'),
       pollInterval: 5000,
       loadingKey: 'loadingKey',
+      error(error) {
+        if (error) this.handleError(error)
+      },
       update: data => {
         return data.flow_concurrency_limit
       }
@@ -265,6 +268,9 @@ export default {
         return { labels: this.labels?.map(label => label.name) }
       },
       pollInterval: 5000,
+      error(error) {
+        if (error) this.handleError(error)
+      },
       skip() {
         return !this.labels?.length
       },
