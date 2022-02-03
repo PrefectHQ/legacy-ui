@@ -250,8 +250,8 @@ export default {
       this.addValid = this.newLimit ? true : false
     },
     onIntersect([entry]) {
-      this.$apollo.queries.tags.skip = !entry.isIntersecting && !this.tags
-      this.$apollo.queries.usage.skip = !entry.isIntersecting && !this.usage
+      this.$apollo.queries.tags.skip = !entry.isIntersecting
+      this.$apollo.queries.usage.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -288,327 +288,329 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout v-intersect="{ handler: onIntersect }">
-    <template #title>Task Concurrency</template>
+  <div v-intersect="{ handler: onIntersect }">
+    <ManagementLayout>
+      <template #title>Task Concurrency</template>
 
-    <template #subtitle>
-      Impose
-      <ExternalLink
-        href="https://docs.prefect.io/orchestration/flow-runs/concurrency-limits.html#task-run-limits"
-        >concurrency limits</ExternalLink
-      >
-      on the number of tasks that are running at any given time
-    </template>
-
-    <template v-if="isEligible && hasManagementPermission" #cta>
-      <v-btn
-        color="primary"
-        class="white--text"
-        data-cy="add-task-concurrency-limit"
-        large
-        @click="openAddDialog"
-      >
-        <v-icon left>
-          add
-        </v-icon>
-        Add Tag
-      </v-btn>
-    </template>
-
-    <template v-if="!isEligible" #alerts>
-      <v-alert
-        class="mx-auto"
-        border="left"
-        colored-border
-        elevation="2"
-        type="warning"
-        tile
-        icon="lock"
-        max-width="600"
-      >
-        Your plan doesn't include task concurrency limiting.
-        <ExternalLink href="/plans">Upgrade</ExternalLink> to get access to task
-        concurrency and lots of other cool features!
-      </v-alert>
-    </template>
-
-    <template v-else-if="!permissionsCheck" #alerts>
-      <v-alert
-        class="mx-auto"
-        border="left"
-        colored-border
-        elevation="2"
-        type="warning"
-        tile
-        icon="lock"
-        max-width="600"
-      >
-        Only team administrators can manage task concurrency limits.
-      </v-alert>
-    </template>
-
-    <v-text-field
-      v-if="isEligible && !$vuetify.breakpoint.mdAndUp"
-      v-model="search"
-      class="rounded-0 elevation-1 mb-1"
-      solo
-      dense
-      hide-details
-      single-line
-      placeholder="Search by tag name or limit"
-      prepend-inner-icon="search"
-      autocomplete="new-password"
-    ></v-text-field>
-
-    <v-card v-if="isEligible" tile>
-      <v-card-text class="pa-0">
-        <div v-if="$vuetify.breakpoint.mdAndUp" class="py-1 mr-2 flex">
-          <v-text-field
-            v-model="search"
-            class="rounded-0 elevation-1"
-            solo
-            dense
-            hide-details
-            single-line
-            placeholder="Search by tag name or limit"
-            prepend-inner-icon="search"
-            autocomplete="new-password"
-            :style="{
-              'max-width': $vuetify.breakpoint.mdAndUp ? '360px' : null
-            }"
-          ></v-text-field>
-        </div>
-
-        <v-data-table
-          fixed-header
-          data-cy="tag-table"
-          class="elevation-2 rounded-0 truncate-table"
-          :headers="headers"
-          :header-props="{ 'sort-icon': 'arrow_drop_up' }"
-          :items="tagsWithUsage"
-          :items-per-page="10"
-          :search="search"
-          :loading="loadingKey > 0"
-          :footer-props="{
-            showFirstLastPage: true,
-            itemsPerPageOptions: [10, 15, 20, -1],
-            firstIcon: 'first_page',
-            lastIcon: 'last_page',
-            prevIcon: 'keyboard_arrow_left',
-            nextIcon: 'keyboard_arrow_right'
-          }"
-          no-results-text="No concurrency limits found. Try expanding your search?"
-          no-data-text="This team has not set any task concurrency limits yet."
+      <template #subtitle>
+        Impose
+        <ExternalLink
+          href="https://docs.prefect.io/orchestration/flow-runs/concurrency-limits.html#task-run-limits"
+          >concurrency limits</ExternalLink
         >
-          <template #header.tag="{ header }">
-            <span class="text-subtitle-2">{{ header.text }}</span>
-          </template>
-          <template #header.usage="{ header }">
-            <v-tooltip bottom open-delay="500">
-              <template #activator="{ on }">
-                <div class="text-subtitle-2" v-on="on">
-                  {{ header.text }}
-                  <v-icon
-                    x-small
-                    class="material-icons-outlined"
-                    :style="{ 'margin-bottom': '2px' }"
-                    >info</v-icon
-                  >
-                </div>
-              </template>
-              Number of tasks that are running with the given tag
-            </v-tooltip>
-          </template>
-          <template #header.limit="{ header }">
-            <v-tooltip bottom open-delay="500">
-              <template #activator="{ on }">
-                <div class="text-subtitle-2" v-on="on">
-                  {{ header.text }}
-                  <v-icon
-                    x-small
-                    class="material-icons-outlined"
-                    :style="{ 'margin-bottom': '2px' }"
-                    >info</v-icon
-                  >
-                </div>
-              </template>
-              Maximum number of tasks that can simultaneously run with the given
-              tag
-            </v-tooltip>
-          </template>
+        on the number of tasks that are running at any given time
+      </template>
 
-          <template #item.tag="{ item }">
-            <div class="text-body-2">{{ item.name }}</div>
-          </template>
+      <template v-if="isEligible && hasManagementPermission" #cta>
+        <v-btn
+          color="primary"
+          class="white--text"
+          data-cy="add-task-concurrency-limit"
+          large
+          @click="openAddDialog"
+        >
+          <v-icon left>
+            add
+          </v-icon>
+          Add Tag
+        </v-btn>
+      </template>
 
-          <template #item.usage="{ item }">
-            <span>
-              {{ item.usage }} running
-              {{ item.usage === 1 ? 'task' : 'tasks' }} ({{
-                item.limit === 0
-                  ? 0
-                  : Math.ceil((item.usage / item.limit) * 100)
-              }}%)
-            </span>
-            <div class="mx-auto mt-1">
-              <v-progress-linear
-                height="8"
-                :value="
+      <template v-if="!isEligible" #alerts>
+        <v-alert
+          class="mx-auto"
+          border="left"
+          colored-border
+          elevation="2"
+          type="warning"
+          tile
+          icon="lock"
+          max-width="600"
+        >
+          Your plan doesn't include task concurrency limiting.
+          <ExternalLink href="/plans">Upgrade</ExternalLink> to get access to
+          task concurrency and lots of other cool features!
+        </v-alert>
+      </template>
+
+      <template v-else-if="!permissionsCheck" #alerts>
+        <v-alert
+          class="mx-auto"
+          border="left"
+          colored-border
+          elevation="2"
+          type="warning"
+          tile
+          icon="lock"
+          max-width="600"
+        >
+          Only team administrators can manage task concurrency limits.
+        </v-alert>
+      </template>
+
+      <v-text-field
+        v-if="isEligible && !$vuetify.breakpoint.mdAndUp"
+        v-model="search"
+        class="rounded-0 elevation-1 mb-1"
+        solo
+        dense
+        hide-details
+        single-line
+        placeholder="Search by tag name or limit"
+        prepend-inner-icon="search"
+        autocomplete="new-password"
+      ></v-text-field>
+
+      <v-card v-if="isEligible" tile>
+        <v-card-text class="pa-0">
+          <div v-if="$vuetify.breakpoint.mdAndUp" class="py-1 mr-2 flex">
+            <v-text-field
+              v-model="search"
+              class="rounded-0 elevation-1"
+              solo
+              dense
+              hide-details
+              single-line
+              placeholder="Search by tag name or limit"
+              prepend-inner-icon="search"
+              autocomplete="new-password"
+              :style="{
+                'max-width': $vuetify.breakpoint.mdAndUp ? '360px' : null
+              }"
+            ></v-text-field>
+          </div>
+
+          <v-data-table
+            fixed-header
+            data-cy="tag-table"
+            class="elevation-2 rounded-0 truncate-table"
+            :headers="headers"
+            :header-props="{ 'sort-icon': 'arrow_drop_up' }"
+            :items="tagsWithUsage"
+            :items-per-page="10"
+            :search="search"
+            :loading="loadingKey > 0"
+            :footer-props="{
+              showFirstLastPage: true,
+              itemsPerPageOptions: [10, 15, 20, -1],
+              firstIcon: 'first_page',
+              lastIcon: 'last_page',
+              prevIcon: 'keyboard_arrow_left',
+              nextIcon: 'keyboard_arrow_right'
+            }"
+            no-results-text="No concurrency limits found. Try expanding your search?"
+            no-data-text="This team has not set any task concurrency limits yet."
+          >
+            <template #header.tag="{ header }">
+              <span class="text-subtitle-2">{{ header.text }}</span>
+            </template>
+            <template #header.usage="{ header }">
+              <v-tooltip bottom open-delay="500">
+                <template #activator="{ on }">
+                  <div class="text-subtitle-2" v-on="on">
+                    {{ header.text }}
+                    <v-icon
+                      x-small
+                      class="material-icons-outlined"
+                      :style="{ 'margin-bottom': '2px' }"
+                      >info</v-icon
+                    >
+                  </div>
+                </template>
+                Number of tasks that are running with the given tag
+              </v-tooltip>
+            </template>
+            <template #header.limit="{ header }">
+              <v-tooltip bottom open-delay="500">
+                <template #activator="{ on }">
+                  <div class="text-subtitle-2" v-on="on">
+                    {{ header.text }}
+                    <v-icon
+                      x-small
+                      class="material-icons-outlined"
+                      :style="{ 'margin-bottom': '2px' }"
+                      >info</v-icon
+                    >
+                  </div>
+                </template>
+                Maximum number of tasks that can simultaneously run with the
+                given tag
+              </v-tooltip>
+            </template>
+
+            <template #item.tag="{ item }">
+              <div class="text-body-2">{{ item.name }}</div>
+            </template>
+
+            <template #item.usage="{ item }">
+              <span>
+                {{ item.usage }} running
+                {{ item.usage === 1 ? 'task' : 'tasks' }} ({{
                   item.limit === 0
                     ? 0
                     : Math.ceil((item.usage / item.limit) * 100)
-                "
-              ></v-progress-linear>
-            </div>
-          </template>
-
-          <template #item.limit="{ item }">
-            <div class="text-subtitle-1 position-relative">
-              <v-tooltip v-if="item.limit === 0" bottom open-delay="500">
-                <template #activator="{ on }">
-                  <div v-on="on">
-                    {{ item.limit }}
-                    <v-icon
-                      x-small
-                      class="position-absolute material-icons-outlined ml-1"
-                      :style="{
-                        top: '6px'
-                      }"
-                    >
-                      info
-                    </v-icon>
-                  </div>
-                </template>
-                A concurrency limit of 0 means that tasks with this tag will
-                never run.
-              </v-tooltip>
-              <span v-else>
-                {{ item.limit }}
+                }}%)
               </span>
-            </div>
-          </template>
+              <div class="mx-auto mt-1">
+                <v-progress-linear
+                  height="8"
+                  :value="
+                    item.limit === 0
+                      ? 0
+                      : Math.ceil((item.usage / item.limit) * 100)
+                  "
+                ></v-progress-linear>
+              </div>
+            </template>
 
-          <template #item.actions="{ item }">
-            <v-tooltip bottom>
-              <template #activator="{ on }">
-                <v-btn
-                  v-if="hasManagementPermission"
-                  color="primary"
-                  text
-                  fab
-                  x-small
-                  v-on="on"
-                  @click="openEditDialog(item)"
-                >
-                  <v-icon>edit</v-icon>
-                </v-btn>
-              </template>
-              Edit the limit for this tag
-            </v-tooltip>
+            <template #item.limit="{ item }">
+              <div class="text-subtitle-1 position-relative">
+                <v-tooltip v-if="item.limit === 0" bottom open-delay="500">
+                  <template #activator="{ on }">
+                    <div v-on="on">
+                      {{ item.limit }}
+                      <v-icon
+                        x-small
+                        class="position-absolute material-icons-outlined ml-1"
+                        :style="{
+                          top: '6px'
+                        }"
+                      >
+                        info
+                      </v-icon>
+                    </div>
+                  </template>
+                  A concurrency limit of 0 means that tasks with this tag will
+                  never run.
+                </v-tooltip>
+                <span v-else>
+                  {{ item.limit }}
+                </span>
+              </div>
+            </template>
 
-            <v-tooltip bottom>
-              <template #activator="{ on }">
-                <v-btn
-                  v-if="hasManagementPermission"
-                  color="red"
-                  text
-                  fab
-                  x-small
-                  v-on="on"
-                  @click="openDeleteDialog(item)"
-                >
-                  <v-progress-circular
-                    v-if="deletingLimitId === item.id"
-                    indeterminate
-                  />
-                  <v-icon v-else>delete</v-icon>
-                </v-btn>
-              </template>
-              Remove concurrency limits for tasks with this tag
-            </v-tooltip>
-          </template>
-        </v-data-table>
-      </v-card-text>
-    </v-card>
+            <template #item.actions="{ item }">
+              <v-tooltip bottom>
+                <template #activator="{ on }">
+                  <v-btn
+                    v-if="hasManagementPermission"
+                    color="primary"
+                    text
+                    fab
+                    x-small
+                    v-on="on"
+                    @click="openEditDialog(item)"
+                  >
+                    <v-icon>edit</v-icon>
+                  </v-btn>
+                </template>
+                Edit the limit for this tag
+              </v-tooltip>
 
-    <ConfirmDialog
-      v-model="showAddDialog"
-      :dialog-props="{ maxWidth: '440' }"
-      title="Add a new concurrency-limiting tag"
-      :disabled="!addValid"
-      @confirm="addTaskTagLimit"
-    >
-      <v-form v-model="addValid">
-        <v-text-field
-          v-model="newTag"
-          outlined
-          dense
-          data-cy="tag-name"
-          validate-on-blur
-          :rules="[rules.required]"
-          label="Tag"
-          autofocus
-        ></v-text-field>
-        <v-text-field
-          v-model="newLimit"
-          min="0"
-          type="number"
-          data-cy="tag-limit"
-          outlined
-          validate-on-blur
-          dense
-          :rules="[rules.required, rules.positiveOnly]"
-          label="Limit"
-          @input="checkValid"
-        ></v-text-field>
-      </v-form>
-    </ConfirmDialog>
+              <v-tooltip bottom>
+                <template #activator="{ on }">
+                  <v-btn
+                    v-if="hasManagementPermission"
+                    color="red"
+                    text
+                    fab
+                    x-small
+                    v-on="on"
+                    @click="openDeleteDialog(item)"
+                  >
+                    <v-progress-circular
+                      v-if="deletingLimitId === item.id"
+                      indeterminate
+                    />
+                    <v-icon v-else>delete</v-icon>
+                  </v-btn>
+                </template>
+                Remove concurrency limits for tasks with this tag
+              </v-tooltip>
+            </template>
+          </v-data-table>
+        </v-card-text>
+      </v-card>
 
-    <ConfirmDialog
-      v-if="selectedTag"
-      v-model="showEditDialog"
-      :dialog-props="{ maxWidth: '540' }"
-      :title="
-        `Edit the concurrency limit for tasks with the tag ${selectedTag.name}`
-      "
-      :disabled="!editValid"
-      @confirm="updateTaskTagLimit"
-    >
-      <v-form v-model="editValid">
-        <v-text-field
-          v-model="newLimit"
-          min="0"
-          type="number"
-          outlined
-          dense
-          label="Limit"
-          autofocus
-          :rules="[rules.required, rules.positiveOnly]"
-          persistent-hint
-        ></v-text-field>
-      </v-form>
-    </ConfirmDialog>
+      <ConfirmDialog
+        v-model="showAddDialog"
+        :dialog-props="{ maxWidth: '440' }"
+        title="Add a new concurrency-limiting tag"
+        :disabled="!addValid"
+        @confirm="addTaskTagLimit"
+      >
+        <v-form v-model="addValid">
+          <v-text-field
+            v-model="newTag"
+            outlined
+            dense
+            data-cy="tag-name"
+            validate-on-blur
+            :rules="[rules.required]"
+            label="Tag"
+            autofocus
+          ></v-text-field>
+          <v-text-field
+            v-model="newLimit"
+            min="0"
+            type="number"
+            data-cy="tag-limit"
+            outlined
+            validate-on-blur
+            dense
+            :rules="[rules.required, rules.positiveOnly]"
+            label="Limit"
+            @input="checkValid"
+          ></v-text-field>
+        </v-form>
+      </ConfirmDialog>
 
-    <ConfirmDialog
-      v-if="selectedTag"
-      v-model="showDeleteDialog"
-      :dialog-props="{ maxWidth: '440' }"
-      :title="
-        `Are you sure you want to remove concurrency limits for tasks with the
+      <ConfirmDialog
+        v-if="selectedTag"
+        v-model="showEditDialog"
+        :dialog-props="{ maxWidth: '540' }"
+        :title="
+          `Edit the concurrency limit for tasks with the tag ${selectedTag.name}`
+        "
+        :disabled="!editValid"
+        @confirm="updateTaskTagLimit"
+      >
+        <v-form v-model="editValid">
+          <v-text-field
+            v-model="newLimit"
+            min="0"
+            type="number"
+            outlined
+            dense
+            label="Limit"
+            autofocus
+            :rules="[rules.required, rules.positiveOnly]"
+            persistent-hint
+          ></v-text-field>
+        </v-form>
+      </ConfirmDialog>
+
+      <ConfirmDialog
+        v-if="selectedTag"
+        v-model="showDeleteDialog"
+        :dialog-props="{ maxWidth: '440' }"
+        :title="
+          `Are you sure you want to remove concurrency limits for tasks with the
           tag ${selectedTag.name}?`
-      "
-      type="error"
-      @confirm="deleteTaskTagLimit"
-    >
-    </ConfirmDialog>
+        "
+        type="error"
+        @confirm="deleteTaskTagLimit"
+      >
+      </ConfirmDialog>
 
-    <Alert
-      v-model="alertShow"
-      :type="alertType"
-      :message="alertMessage"
-      :offset-x="56"
-    ></Alert>
-  </ManagementLayout>
+      <Alert
+        v-model="alertShow"
+        :type="alertType"
+        :message="alertMessage"
+        :offset-x="56"
+      ></Alert>
+    </ManagementLayout>
+  </div>
 </template>
 
 <style lang="scss" scoped>
