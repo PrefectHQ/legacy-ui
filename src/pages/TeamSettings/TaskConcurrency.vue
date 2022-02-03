@@ -250,8 +250,8 @@ export default {
       this.addValid = this.newLimit ? true : false
     },
     onIntersect([entry]) {
-      this.$apollo.queries.tags.skip = !entry.isIntersecting
-      this.$apollo.queries.usage.skip = !entry.isIntersecting
+      this.$apollo.queries.tags.skip = !entry.isIntersecting && !this.tags
+      this.$apollo.queries.usage.skip = !entry.isIntersecting && !this.usage
     }
   },
   apollo: {
