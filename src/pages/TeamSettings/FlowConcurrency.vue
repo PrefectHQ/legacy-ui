@@ -282,323 +282,325 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout v-intersect="{ handler: onIntersect }">
-    <template #title>Flow Concurrency</template>
+  <div v-intersect="{ handler: onIntersect }">
+    <ManagementLayout>
+      <template #title>Flow Concurrency</template>
 
-    <template #subtitle>
-      Impose concurrency limits on the number of flows that are running at any
-      given time
-    </template>
+      <template #subtitle>
+        Impose concurrency limits on the number of flows that are running at any
+        given time
+      </template>
 
-    <template v-if="isEligible && hasManagementPermission" #cta>
-      <v-btn
-        color="primary"
-        class="white--text"
-        data-cy="add-flow-concurrency-limit"
-        large
-        @click="openAddDialog"
-      >
-        <v-icon left>
-          add
-        </v-icon>
-        Add Label
-      </v-btn>
-    </template>
-
-    <template v-if="!isEligible" #alerts>
-      <v-alert
-        class="mx-auto"
-        border="left"
-        colored-border
-        elevation="2"
-        type="warning"
-        tile
-        icon="lock"
-        max-width="600"
-      >
-        Your plan doesn't include flow concurrency limiting.
-        <ExternalLink href="/plans">Upgrade</ExternalLink> to get access to flow
-        concurrency and lots of other cool features!
-      </v-alert>
-    </template>
-
-    <template v-else-if="!permissionsCheck" #alerts>
-      <v-alert
-        class="mx-auto"
-        border="left"
-        colored-border
-        elevation="2"
-        type="warning"
-        tile
-        icon="lock"
-        max-width="600"
-      >
-        Only team administrators can manage flow concurrency limits.
-      </v-alert>
-    </template>
-
-    <v-text-field
-      v-if="!$vuetify.breakpoint.mdAndUp"
-      v-model="search"
-      class="rounded-0 elevation-1 mb-1"
-      solo
-      dense
-      hide-details
-      single-line
-      placeholder="Search by flow label or limit"
-      prepend-inner-icon="search"
-      autocomplete="new-password"
-    ></v-text-field>
-
-    <v-card v-if="isEligible" tile>
-      <v-card-text class="pa-0">
-        <div v-if="$vuetify.breakpoint.mdAndUp" class="py-1 mr-2 flex">
-          <v-text-field
-            v-model="search"
-            class="rounded-0 elevation-1"
-            solo
-            dense
-            hide-details
-            single-line
-            placeholder="Search by flow label or limit"
-            prepend-inner-icon="search"
-            autocomplete="new-password"
-            :style="{
-              'max-width': $vuetify.breakpoint.mdAndUp ? '360px' : null
-            }"
-          ></v-text-field>
-        </div>
-
-        <v-data-table
-          fixed-header
-          data-cy="label-table"
-          class="elevation-2 rounded-0 truncate-table"
-          :headers="headers"
-          :header-props="{ 'sort-icon': 'arrow_drop_up' }"
-          :items="labelsWithUsage"
-          :items-per-page="10"
-          :search="search"
-          :loading="loadingKey > 0"
-          :footer-props="{
-            showFirstLastPage: true,
-            itemsPerPageOptions: [10, 15, 20, -1],
-            firstIcon: 'first_page',
-            lastIcon: 'last_page',
-            prevIcon: 'keyboard_arrow_left',
-            nextIcon: 'keyboard_arrow_right'
-          }"
-          no-results-text="No concurrency limits found. Try expanding your search?"
-          no-data-text="This team has not set any flow concurrency limits yet."
+      <template v-if="isEligible && hasManagementPermission" #cta>
+        <v-btn
+          color="primary"
+          class="white--text"
+          data-cy="add-flow-concurrency-limit"
+          large
+          @click="openAddDialog"
         >
-          <template #header.tag="{ header }">
-            <span class="text-subtitle-2">{{ header.text }}</span>
-          </template>
-          <template #header.usage="{ header }">
-            <v-tooltip bottom open-delay="500">
-              <template #activator="{ on }">
-                <div class="text-subtitle-2" v-on="on">
-                  {{ header.text }}
-                  <v-icon
-                    x-small
-                    class="material-icons-outlined"
-                    :style="{ 'margin-bottom': '2px' }"
-                    >info</v-icon
-                  >
-                </div>
-              </template>
-              Number of flows that are running with the given label
-            </v-tooltip>
-          </template>
-          <template #header.limit="{ header }">
-            <v-tooltip bottom open-delay="500">
-              <template #activator="{ on }">
-                <div class="text-subtitle-2" v-on="on">
-                  {{ header.text }}
-                  <v-icon
-                    x-small
-                    class="material-icons-outlined"
-                    :style="{ 'margin-bottom': '2px' }"
-                    >info</v-icon
-                  >
-                </div>
-              </template>
-              Maximum number of flows that can simultaneously run with the given
-              label
-            </v-tooltip>
-          </template>
+          <v-icon left>
+            add
+          </v-icon>
+          Add Label
+        </v-btn>
+      </template>
 
-          <template #item.label="{ item }">
-            <div class="text-body-2">{{ item.name }}</div>
-          </template>
+      <template v-if="!isEligible" #alerts>
+        <v-alert
+          class="mx-auto"
+          border="left"
+          colored-border
+          elevation="2"
+          type="warning"
+          tile
+          icon="lock"
+          max-width="600"
+        >
+          Your plan doesn't include flow concurrency limiting.
+          <ExternalLink href="/plans">Upgrade</ExternalLink> to get access to
+          flow concurrency and lots of other cool features!
+        </v-alert>
+      </template>
 
-          <template #item.usage="{ item }">
-            <span>
-              {{ item.usage }} running
-              {{ item.usage === 1 ? 'flow' : 'flows' }} ({{
-                item.limit === 0
-                  ? 0
-                  : Math.ceil((item.usage / item.limit) * 100)
-              }}%)
-            </span>
-            <div class="mx-auto mt-1">
-              <v-progress-linear
-                height="8"
-                :value="
+      <template v-else-if="!permissionsCheck" #alerts>
+        <v-alert
+          class="mx-auto"
+          border="left"
+          colored-border
+          elevation="2"
+          type="warning"
+          tile
+          icon="lock"
+          max-width="600"
+        >
+          Only team administrators can manage flow concurrency limits.
+        </v-alert>
+      </template>
+
+      <v-text-field
+        v-if="!$vuetify.breakpoint.mdAndUp"
+        v-model="search"
+        class="rounded-0 elevation-1 mb-1"
+        solo
+        dense
+        hide-details
+        single-line
+        placeholder="Search by flow label or limit"
+        prepend-inner-icon="search"
+        autocomplete="new-password"
+      ></v-text-field>
+
+      <v-card v-if="isEligible" tile>
+        <v-card-text class="pa-0">
+          <div v-if="$vuetify.breakpoint.mdAndUp" class="py-1 mr-2 flex">
+            <v-text-field
+              v-model="search"
+              class="rounded-0 elevation-1"
+              solo
+              dense
+              hide-details
+              single-line
+              placeholder="Search by flow label or limit"
+              prepend-inner-icon="search"
+              autocomplete="new-password"
+              :style="{
+                'max-width': $vuetify.breakpoint.mdAndUp ? '360px' : null
+              }"
+            ></v-text-field>
+          </div>
+
+          <v-data-table
+            fixed-header
+            data-cy="label-table"
+            class="elevation-2 rounded-0 truncate-table"
+            :headers="headers"
+            :header-props="{ 'sort-icon': 'arrow_drop_up' }"
+            :items="labelsWithUsage"
+            :items-per-page="10"
+            :search="search"
+            :loading="loadingKey > 0"
+            :footer-props="{
+              showFirstLastPage: true,
+              itemsPerPageOptions: [10, 15, 20, -1],
+              firstIcon: 'first_page',
+              lastIcon: 'last_page',
+              prevIcon: 'keyboard_arrow_left',
+              nextIcon: 'keyboard_arrow_right'
+            }"
+            no-results-text="No concurrency limits found. Try expanding your search?"
+            no-data-text="This team has not set any flow concurrency limits yet."
+          >
+            <template #header.tag="{ header }">
+              <span class="text-subtitle-2">{{ header.text }}</span>
+            </template>
+            <template #header.usage="{ header }">
+              <v-tooltip bottom open-delay="500">
+                <template #activator="{ on }">
+                  <div class="text-subtitle-2" v-on="on">
+                    {{ header.text }}
+                    <v-icon
+                      x-small
+                      class="material-icons-outlined"
+                      :style="{ 'margin-bottom': '2px' }"
+                      >info</v-icon
+                    >
+                  </div>
+                </template>
+                Number of flows that are running with the given label
+              </v-tooltip>
+            </template>
+            <template #header.limit="{ header }">
+              <v-tooltip bottom open-delay="500">
+                <template #activator="{ on }">
+                  <div class="text-subtitle-2" v-on="on">
+                    {{ header.text }}
+                    <v-icon
+                      x-small
+                      class="material-icons-outlined"
+                      :style="{ 'margin-bottom': '2px' }"
+                      >info</v-icon
+                    >
+                  </div>
+                </template>
+                Maximum number of flows that can simultaneously run with the
+                given label
+              </v-tooltip>
+            </template>
+
+            <template #item.label="{ item }">
+              <div class="text-body-2">{{ item.name }}</div>
+            </template>
+
+            <template #item.usage="{ item }">
+              <span>
+                {{ item.usage }} running
+                {{ item.usage === 1 ? 'flow' : 'flows' }} ({{
                   item.limit === 0
                     ? 0
                     : Math.ceil((item.usage / item.limit) * 100)
-                "
-              ></v-progress-linear>
-            </div>
-          </template>
-
-          <template #item.limit="{ item }">
-            <div class="text-subtitle-1 position-relative">
-              <v-tooltip v-if="item.limit === 0" bottom open-delay="500">
-                <template #activator="{ on }">
-                  <div v-on="on">
-                    {{ item.limit }}
-                    <v-icon
-                      x-small
-                      class="position-absolute material-icons-outlined ml-1"
-                      :style="{
-                        top: '6px'
-                      }"
-                    >
-                      info
-                    </v-icon>
-                  </div>
-                </template>
-                A concurrency limit of 0 means that flows with this label will
-                never run.
-              </v-tooltip>
-              <span v-else>
-                {{ item.limit }}
+                }}%)
               </span>
-            </div>
-          </template>
+              <div class="mx-auto mt-1">
+                <v-progress-linear
+                  height="8"
+                  :value="
+                    item.limit === 0
+                      ? 0
+                      : Math.ceil((item.usage / item.limit) * 100)
+                  "
+                ></v-progress-linear>
+              </div>
+            </template>
 
-          <template #item.actions="{ item }">
-            <v-tooltip bottom>
-              <template #activator="{ on }">
-                <v-btn
-                  v-if="hasManagementPermission"
-                  color="primary"
-                  text
-                  fab
-                  x-small
-                  v-on="on"
-                  @click="openEditDialog(item)"
-                >
-                  <v-icon>edit</v-icon>
-                </v-btn>
-              </template>
-              Edit the limit for this label
-            </v-tooltip>
+            <template #item.limit="{ item }">
+              <div class="text-subtitle-1 position-relative">
+                <v-tooltip v-if="item.limit === 0" bottom open-delay="500">
+                  <template #activator="{ on }">
+                    <div v-on="on">
+                      {{ item.limit }}
+                      <v-icon
+                        x-small
+                        class="position-absolute material-icons-outlined ml-1"
+                        :style="{
+                          top: '6px'
+                        }"
+                      >
+                        info
+                      </v-icon>
+                    </div>
+                  </template>
+                  A concurrency limit of 0 means that flows with this label will
+                  never run.
+                </v-tooltip>
+                <span v-else>
+                  {{ item.limit }}
+                </span>
+              </div>
+            </template>
 
-            <v-tooltip bottom>
-              <template #activator="{ on }">
-                <v-btn
-                  v-if="hasManagementPermission"
-                  color="red"
-                  text
-                  fab
-                  x-small
-                  v-on="on"
-                  @click="openDeleteDialog(item)"
-                >
-                  <v-progress-circular
-                    v-if="deletingLimitId === item.id"
-                    indeterminate
-                  />
-                  <v-icon v-else>delete</v-icon>
-                </v-btn>
-              </template>
-              Remove concurrency limits for flows with this label
-            </v-tooltip>
-          </template>
-        </v-data-table>
-      </v-card-text>
-    </v-card>
+            <template #item.actions="{ item }">
+              <v-tooltip bottom>
+                <template #activator="{ on }">
+                  <v-btn
+                    v-if="hasManagementPermission"
+                    color="primary"
+                    text
+                    fab
+                    x-small
+                    v-on="on"
+                    @click="openEditDialog(item)"
+                  >
+                    <v-icon>edit</v-icon>
+                  </v-btn>
+                </template>
+                Edit the limit for this label
+              </v-tooltip>
 
-    <ConfirmDialog
-      v-model="showAddDialog"
-      :dialog-props="{ maxWidth: '440' }"
-      title="Add a new concurrency-limiting label"
-      :disabled="!addValid"
-      @confirm="addFlowLabelLimit"
-    >
-      <v-form v-model="addValid">
-        <v-text-field
-          v-model="newLabel"
-          outlined
-          dense
-          data-cy="label-name"
-          validate-on-blur
-          :rules="[rules.required]"
-          label="Label"
-          autofocus
-        ></v-text-field>
-        <v-text-field
-          v-model="newLimit"
-          min="0"
-          type="number"
-          data-cy="label-limit"
-          outlined
-          validate-on-blur
-          dense
-          :rules="[rules.required, rules.positiveOnly]"
-          label="Limit"
-          @input="checkValid"
-        ></v-text-field>
-      </v-form>
-    </ConfirmDialog>
+              <v-tooltip bottom>
+                <template #activator="{ on }">
+                  <v-btn
+                    v-if="hasManagementPermission"
+                    color="red"
+                    text
+                    fab
+                    x-small
+                    v-on="on"
+                    @click="openDeleteDialog(item)"
+                  >
+                    <v-progress-circular
+                      v-if="deletingLimitId === item.id"
+                      indeterminate
+                    />
+                    <v-icon v-else>delete</v-icon>
+                  </v-btn>
+                </template>
+                Remove concurrency limits for flows with this label
+              </v-tooltip>
+            </template>
+          </v-data-table>
+        </v-card-text>
+      </v-card>
 
-    <ConfirmDialog
-      v-if="selectedLabel"
-      v-model="showEditDialog"
-      :dialog-props="{ maxWidth: '540' }"
-      :title="
-        `Edit the concurrency limit for flows with the label ${selectedLabel.name}`
-      "
-      :disabled="!editValid"
-      @confirm="updateFlowLabelLimit"
-    >
-      <v-form v-model="editValid">
-        <v-text-field
-          v-model="newLimit"
-          min="0"
-          type="number"
-          outlined
-          dense
-          label="Limit"
-          autofocus
-          :rules="[rules.required, rules.positiveOnly]"
-          persistent-hint
-        ></v-text-field>
-      </v-form>
-    </ConfirmDialog>
+      <ConfirmDialog
+        v-model="showAddDialog"
+        :dialog-props="{ maxWidth: '440' }"
+        title="Add a new concurrency-limiting label"
+        :disabled="!addValid"
+        @confirm="addFlowLabelLimit"
+      >
+        <v-form v-model="addValid">
+          <v-text-field
+            v-model="newLabel"
+            outlined
+            dense
+            data-cy="label-name"
+            validate-on-blur
+            :rules="[rules.required]"
+            label="Label"
+            autofocus
+          ></v-text-field>
+          <v-text-field
+            v-model="newLimit"
+            min="0"
+            type="number"
+            data-cy="label-limit"
+            outlined
+            validate-on-blur
+            dense
+            :rules="[rules.required, rules.positiveOnly]"
+            label="Limit"
+            @input="checkValid"
+          ></v-text-field>
+        </v-form>
+      </ConfirmDialog>
 
-    <ConfirmDialog
-      v-if="selectedLabel"
-      v-model="showDeleteDialog"
-      :dialog-props="{ maxWidth: '440' }"
-      :title="
-        `Are you sure you want to remove concurrency limits for flows with the
+      <ConfirmDialog
+        v-if="selectedLabel"
+        v-model="showEditDialog"
+        :dialog-props="{ maxWidth: '540' }"
+        :title="
+          `Edit the concurrency limit for flows with the label ${selectedLabel.name}`
+        "
+        :disabled="!editValid"
+        @confirm="updateFlowLabelLimit"
+      >
+        <v-form v-model="editValid">
+          <v-text-field
+            v-model="newLimit"
+            min="0"
+            type="number"
+            outlined
+            dense
+            label="Limit"
+            autofocus
+            :rules="[rules.required, rules.positiveOnly]"
+            persistent-hint
+          ></v-text-field>
+        </v-form>
+      </ConfirmDialog>
+
+      <ConfirmDialog
+        v-if="selectedLabel"
+        v-model="showDeleteDialog"
+        :dialog-props="{ maxWidth: '440' }"
+        :title="
+          `Are you sure you want to remove concurrency limits for flows with the
           label ${selectedLabel.name}?`
-      "
-      type="error"
-      @confirm="deleteFlowLabelLimit"
-    >
-    </ConfirmDialog>
+        "
+        type="error"
+        @confirm="deleteFlowLabelLimit"
+      >
+      </ConfirmDialog>
 
-    <Alert
-      v-model="alertShow"
-      :type="alertType"
-      :message="alertMessage"
-      :offset-x="56"
-    ></Alert>
-  </ManagementLayout>
+      <Alert
+        v-model="alertShow"
+        :type="alertType"
+        :message="alertMessage"
+        :offset-x="56"
+      ></Alert>
+    </ManagementLayout>
+  </div>
 </template>
 
 <style lang="scss" scoped>
