@@ -83,7 +83,7 @@ export default {
 </script>
 
 <template>
-  <v-row v-intersect="{ handler: onIntersect }" no-gutters>
+  <v-row no-gutters>
     <v-col>
       <div
         v-if="artifacts && artifacts.length > 0"
