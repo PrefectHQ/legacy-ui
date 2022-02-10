@@ -107,7 +107,6 @@ export default {
     },
     async onIntersect([entry]) {
       if (entry.isIntersecting) {
-        console.log('setting')
         this.unsubscribeAgents = await this.$store.dispatch(
           'polling/subscribe',
           'agents'
