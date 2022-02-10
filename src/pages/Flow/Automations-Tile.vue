@@ -51,7 +51,6 @@ export default {
         (a, b) => new Date(b.created) - new Date(a.created)
       )
       this.sortedHooks = sorted
-      console.log('end of load', sorted)
       this.loadCards = false
     }
   },
