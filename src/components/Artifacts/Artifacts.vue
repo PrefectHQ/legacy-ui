@@ -38,9 +38,6 @@ export default {
     },
     increment() {
       this.artifact++
-    },
-    onIntersect([entry]) {
-      this.$apollo.queries.artifacts.skip = !entry.isIntersecting
     }
   },
   apollo: {
