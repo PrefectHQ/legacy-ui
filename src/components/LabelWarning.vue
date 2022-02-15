@@ -112,7 +112,7 @@ export default {
           'agents'
         )
       } else {
-        this.unsubscribeAgents()
+        if (this.unsubscribeAgents) this.unsubscribeAgents()
       }
     }
   }
