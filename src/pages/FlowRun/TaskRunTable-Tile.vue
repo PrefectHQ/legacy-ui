@@ -116,7 +116,6 @@ export default {
           flowRunId: this.flowRunId,
           limit: this.itemsPerPage,
           name: this.searchFormatted,
-          run_name: this.searchFormatted,
           state: this.state.length === 0 ? null : this.state,
           offset: this.offset,
           orderBy

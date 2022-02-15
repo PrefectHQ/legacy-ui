@@ -18,7 +18,7 @@ export default {
   methods: {
     onIntersect([entry]) {
       this.$apollo.queries.taskRunIds.skip =
-        !entry.isIntersecting || !this.flowRun
+        !this.flowRun || !entry.isIntersecting
     }
   },
   apollo: {
