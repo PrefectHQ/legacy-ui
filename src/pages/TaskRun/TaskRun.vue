@@ -86,19 +86,12 @@ export default {
           name: 'Mapped Runs',
           target: 'mapped-runs',
           icon: 'device_hub',
-          badgeColor: 'primary',
-          badgeText: 'New!',
           hidden: !this.mappedParent && !this.mappedChild
         },
         {
           name: 'Artifacts',
           target: 'artifacts',
-          icon: 'fas fa-fingerprint',
-          badgeText: 'Beta',
-          cardText:
-            'The Artifacts API is a beta feature currently under development. Task mapping with artifacts may have unexpected results... for more information on artifacts, check out the',
-          cardLink: 'https://docs.prefect.io/api/latest/backend/artifacts.html',
-          cardLinkText: 'Artifacts API Docs'
+          icon: 'fas fa-fingerprint'
         }
       ]
     },
