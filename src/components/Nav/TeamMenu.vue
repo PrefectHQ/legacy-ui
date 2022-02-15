@@ -42,6 +42,48 @@ export default {
 
     <v-sheet width="400" class="white">
       <v-list>
+        <v-list-item :disabled="!isCloud" :to="'/team/tokens'">
+          <v-list-item-avatar tile>
+            <i class="o-100 fad fa-exchange-alt fa-2x" />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">
+              API Tokens
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Manage your team's API tokens
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item :disabled="!isCloud" :to="'/team/actions'">
+          <v-list-item-avatar>
+            <span class="auto-icon">
+              <i class="fad fa-random" style="width: 24px; height: 24px;"></i>
+            </span>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title>Automation Actions</v-list-item-title>
+            <v-list-item-subtitle>
+              View and manage automation actions
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item :to="'/team/cloud-hooks'">
+          <v-list-item-avatar tile>
+            <i class="o-100 fad fa-clouds fa-2x" />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">
+              Cloud Hooks
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Create and modify team-wide Cloud Hooks
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
         <v-list-item :disabled="!isCloud" :to="'/team/flow-concurrency'">
           <v-list-item-avatar tile>
             <v-icon large color="navIcons">
@@ -74,16 +116,18 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :disabled="!isCloud" :to="'/team/actions'">
-          <v-list-item-avatar>
-            <span class="auto-icon">
-              <i class="fad fa-random" style="width: 24px; height: 24px;"></i>
+        <v-list-item :disabled="!isCloud" :to="'/team/kv'">
+          <v-list-item-avatar tile>
+            <span style="color: Dodgerblue;">
+              <i class="fad fa-brackets-curly fa-2x"></i>
             </span>
           </v-list-item-avatar>
           <v-list-item-content>
-            <v-list-item-title>Automation Actions</v-list-item-title>
+            <v-list-item-title class="text-subtitle-1">
+              KV Store
+            </v-list-item-title>
             <v-list-item-subtitle>
-              View and manage automation actions
+              Manage your team's key/value store
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -98,6 +142,22 @@ export default {
             </v-list-item-title>
             <v-list-item-subtitle>
               Invite people to your team and manage permissions
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item :to="'/team/projects'">
+          <v-list-item-avatar tile>
+            <v-icon large color="navIcons">
+              pi-project
+            </v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">
+              Projects
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Create and modify your team's projects
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -127,22 +187,6 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :to="'/team/projects'">
-          <v-list-item-avatar tile>
-            <v-icon large color="navIcons">
-              pi-project
-            </v-icon>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1">
-              Projects
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              Create and modify your team's projects
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
         <v-list-item :disabled="!isCloud" :to="'/team/secrets'">
           <v-list-item-avatar tile>
             <i class="o-100 fad fa-key-skeleton fa-2x" />
@@ -153,22 +197,6 @@ export default {
             </v-list-item-title>
             <v-list-item-subtitle>
               Create and manage team-wide Secrets used by your flows
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item :disabled="!isCloud" :to="'/team/kv'">
-          <v-list-item-avatar tile>
-            <span style="color: Dodgerblue;">
-              <i class="fad fa-brackets-curly fa-2x"></i>
-            </span>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1">
-              KV Store
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              Manage your team's key/value store
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -199,32 +227,6 @@ export default {
             </v-list-item-title>
             <v-list-item-subtitle>
               Manage task run concurrency
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item :to="'/team/cloud-hooks'">
-          <v-list-item-avatar tile>
-            <i class="o-100 fad fa-clouds fa-2x" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1">
-              Cloud Hooks
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              Create and modify team-wide Cloud Hooks
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item :disabled="!isCloud" :to="'/team/tokens'">
-          <v-list-item-avatar tile>
-            <i class="o-100 fad fa-exchange-alt fa-2x" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1">
-              API Tokens
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              Manage your team's API tokens
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
