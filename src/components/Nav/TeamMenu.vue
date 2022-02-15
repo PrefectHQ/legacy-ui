@@ -42,34 +42,6 @@ export default {
 
     <v-sheet width="400" class="white">
       <v-list>
-        <v-list-item :disabled="!isCloud" :to="'/team/tokens'">
-          <v-list-item-avatar tile>
-            <i class="o-100 fad fa-exchange-alt fa-2x" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1">
-              API Tokens
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              Manage your team's API tokens
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item :to="'/team/cloud-hooks'">
-          <v-list-item-avatar tile>
-            <i class="o-100 fad fa-clouds fa-2x" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="text-subtitle-1">
-              Cloud Hooks
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              Create and modify team-wide Cloud Hooks
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
         <v-list-item :disabled="!isCloud" :to="'/team/flow-concurrency'">
           <v-list-item-avatar tile>
             <v-icon large color="navIcons">
@@ -227,6 +199,32 @@ export default {
             </v-list-item-title>
             <v-list-item-subtitle>
               Manage task run concurrency
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item :to="'/team/cloud-hooks'">
+          <v-list-item-avatar tile>
+            <i class="o-100 fad fa-clouds fa-2x" />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">
+              Cloud Hooks
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Create and modify team-wide Cloud Hooks
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item :disabled="!isCloud" :to="'/team/tokens'">
+          <v-list-item-avatar tile>
+            <i class="o-100 fad fa-exchange-alt fa-2x" />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">
+              API Tokens
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Manage your team's API tokens
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>

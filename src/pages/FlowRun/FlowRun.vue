@@ -77,7 +77,6 @@ export default {
           name: 'Artifacts',
           target: 'artifacts',
           icon: 'fas fa-fingerprint',
-          badgeText: 'Beta',
           cardText:
             'The Artifacts API is a beta feature currently under development. Task mapping with artifacts may have unexpected results... for more information on artifacts, check out the',
           cardLink: 'https://docs.prefect.io/api/latest/backend/artifacts.html',
