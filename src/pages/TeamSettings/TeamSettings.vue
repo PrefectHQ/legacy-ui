@@ -127,6 +127,20 @@ export default {
         </v-list-item>
 
         <v-list-item
+          :disabled="!isCloud"
+          :to="{ name: 'actions', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+        >
+          <v-list-item-action>
+            <i class="fad fa-random" style="width: 24px; height: 24px;"></i>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Automation Actions</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
           :to="{ name: 'cloud-hooks', params: { tenant: tenant.slug } }"
           ripple
           exact
@@ -170,6 +184,23 @@ export default {
 
         <v-list-item
           :disabled="!isCloud"
+          :to="{ name: 'kv', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+        >
+          <v-list-item-action>
+            <i
+              class="fad fa-brackets-curly"
+              style="width: 24px; height: 24px;"
+            ></i>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>KV Store</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          :disabled="!isCloud"
           :to="{ name: 'members', params: { tenant: tenant.slug } }"
           ripple
           exact
@@ -180,6 +211,19 @@ export default {
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Members</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          :to="{ name: 'projects', params: { tenant: tenant.slug } }"
+          ripple
+          exact
+        >
+          <v-list-item-action>
+            <v-icon>pi-project</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Projects</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 
@@ -208,33 +252,6 @@ export default {
         </v-list-item>
 
         <v-list-item
-          :to="{ name: 'projects', params: { tenant: tenant.slug } }"
-          ripple
-          exact
-        >
-          <v-list-item-action>
-            <v-icon>pi-project</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Projects</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item
-          :disabled="!isCloud"
-          :to="{ name: 'actions', params: { tenant: tenant.slug } }"
-          ripple
-          exact
-        >
-          <v-list-item-action>
-            <i class="fad fa-random" style="width: 24px; height: 24px;"></i>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Automation Actions</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item
           :disabled="!isCloud"
           :to="{ name: 'secrets', params: { tenant: tenant.slug } }"
           ripple
@@ -245,23 +262,6 @@ export default {
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Secrets</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item
-          :disabled="!isCloud"
-          :to="{ name: 'kv', params: { tenant: tenant.slug } }"
-          ripple
-          exact
-        >
-          <v-list-item-action>
-            <i
-              class="fad fa-brackets-curly"
-              style="width: 24px; height: 24px;"
-            ></i>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>KV Store</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 

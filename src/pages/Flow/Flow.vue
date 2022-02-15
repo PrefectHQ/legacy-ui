@@ -70,12 +70,7 @@ export default {
         {
           name: 'ReadMe',
           target: 'description',
-          icon: 'far fa-file-code',
-          badgeText: 'New!',
-          cardText:
-            'A Flow ReadMe can now be added in the UI. For more information check out the',
-          cardLink: 'https://docs.prefect.io/orchestration/ui/flow.html#readme',
-          cardLinkText: 'UI Flow Docs'
+          icon: 'far fa-file-code'
         },
         {
           name: 'Tasks',
