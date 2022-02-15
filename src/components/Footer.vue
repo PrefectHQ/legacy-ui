@@ -28,7 +28,8 @@ const links = [
   },
   {
     text: 'Legal',
-    link: 'https://www.prefect.io/legal/cloud-saas-license'
+    link:
+      'https://www.prefect.io/legal/prefect-cloud-software-as-a-service-saas-agreement'
   },
   {
     text: 'Community',
