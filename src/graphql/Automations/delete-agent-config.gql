@@ -1,0 +1,8 @@
+mutation deleteAgentConfig($agentConfigInput: delete_agent_config_input!){
+  delete_agent_config(
+    input: $agentConfigInput
+  ) {
+    error
+    success
+  }
+}

@@ -10,6 +10,7 @@ import {
 } from '@/utils/automations'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import UpgradeBadge from '@/components/UpgradeBadge'
+import DeleteAgentConfig from './DeleteAgentConfig.vue'
 
 const systemActions = [
   'CancelFlowRunAction',
@@ -22,7 +23,8 @@ export default {
     AddAction,
     CreateAgentConfigForm,
     ConfirmDialog,
-    UpgradeBadge
+    UpgradeBadge,
+    DeleteAgentConfig
   },
   mixins: [pollsProjectsMixin],
   props: {
@@ -734,6 +736,12 @@ export default {
         }
       }
     },
+    handleDeletedAgentConfig(event) {
+      this.$apollo.queries.agentConfigs.refetch()
+      if (this.selectedAgentConfig.id === event) {
+        this.selectedAgentConfig = null
+      }
+    },
     onIntersect([entry]) {
       this.$apollo.queries.flows.skip = !entry.isIntersecting
     }
@@ -1059,21 +1067,35 @@ export default {
                   v-for="config in agentConfigs"
                   :key="config.id"
                   v-ripple
-                  class="d-inline-block chip-small pa-2 my-2 mr-4 cursor-pointer text-body-1"
+                  class="d-inline-block agent-chip pa-2 my-2 mr-4 cursor-pointer text-body-1"
                   :class="{
                     active:
                       selectedAgentConfig &&
-                      selectedAgentConfig.id === config.id,
-                    flash: animated
+                      selectedAgentConfig.id === config.id
                   }"
                   @click="selectAgentConfig(config)"
                 >
-                  <span v-if="config.name">{{ config.name }}</span>
-                  <span v-else class="text--disabled"
-                    >Unnamed agent config</span
-                  >
+                  <span>
+                    <span v-if="config.name">{{ config.name }}</span>
+                    <span v-else>{{ config.id }}</span>
+                  </span>
+                  <span>
+                    <DeleteAgentConfig
+                      :config="config"
+                      @refetch="handleDeletedAgentConfig"
+                    />
+                  </span>
                 </div>
               </div>
+            </v-col>
+            <v-col cols="12" class="mt-2">
+              <span class="text-subtitle-1 font-weight-light"
+                >To set up an agent automation you need to add the
+                agent-config-id flag at agent registration. If you attach the
+                same id to multiple agents,</span
+              ><span class="mb-2 text-subtitle-1 font-weight-medium">
+                Prefect will only notify you if all agents are unhealthy.</span
+              >
             </v-col>
           </v-row>
 
@@ -1516,6 +1538,16 @@ export default {
   &:hover,
   &:focus {
     background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+.agent-chip {
+  border-radius: 5px;
+  max-width: fit-content;
+  border: 1px solid var(--v-utilGrayLight-base);
+
+  &.active {
+    border: 2px solid;
+    border-color: var(--v-accentPink-base) !important;
   }
 }
 
