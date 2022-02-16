@@ -202,7 +202,7 @@ export default {
           solo
           prepend-inner-icon="search"
           hide-details
-          placeholder="Search by Task or Run Name"
+          placeholder="Search by Task Name"
           style="min-width: 210px;"
         >
         </v-text-field>
