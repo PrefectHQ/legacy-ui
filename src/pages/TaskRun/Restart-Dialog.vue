@@ -58,7 +58,7 @@ export default {
         this.dialog = false
         await this.writeLogs()
         let taskStates = []
-        if (this.utilityDownstreamTasks.length) {
+        if (this.utilityDownstreamTasks?.length) {
           taskStates = this.utilityDownstreamTasks.map(task => {
             return {
               version: task.task.task_runs[0].version,
