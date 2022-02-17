@@ -1,5 +1,28 @@
 # Changelog
 
+#### [2022-02-17](https://github.com/PrefectHQ/ui/compare/2022-01-14...2022-02-17)
+
+- BugFix: Update placeholder text on task search [`#1234`](https://github.com/PrefectHQ/ui/pull/1234)
+- BugFix: Fix Skip on SetStateDialog [`#1235`](https://github.com/PrefectHQ/ui/pull/1235)
+- Feature: Enable deletion of agent configs in automations [`#1153`](https://github.com/PrefectHQ/ui/pull/1153)
+- BugFix: Update link to legal page on website [`#1219`](https://github.com/PrefectHQ/ui/pull/1219)
+- BugFix: Improve loading logic for automation tab on Flow Page [`#1223`](https://github.com/PrefectHQ/ui/pull/1223)
+- Admin: Remove new and beta badges [`#1230`](https://github.com/PrefectHQ/ui/pull/1230)
+- BugFix: Remove v-intersect as it was causing odd behavior [`#1224`](https://github.com/PrefectHQ/ui/pull/1224)
+- BugFix: Do not call unsubscribe agents if it is not a function [`#1225`](https://github.com/PrefectHQ/ui/pull/1225)
+- Bump follow-redirects from 1.14.7 to 1.14.8 [`#1228`](https://github.com/PrefectHQ/ui/pull/1228)
+- Bump node-sass from 5.0.0 to 7.0.0 [`#1226`](https://github.com/PrefectHQ/ui/pull/1226)
+- BugFix: Flow Concurrency and Task Concurrency browser refresh [`#1220`](https://github.com/PrefectHQ/ui/pull/1220)
+- Update: Change the wording on the teams page to redirect users based on their license [`#1210`](https://github.com/PrefectHQ/ui/pull/1210)
+- BugFix: Web hook URL validation [`#1212`](https://github.com/PrefectHQ/ui/pull/1212)
+- Bump follow-redirects from 1.14.0 to 1.14.7 [`#1211`](https://github.com/PrefectHQ/ui/pull/1211)
+- Bump nanoid from 3.1.23 to 3.2.0 [`#1214`](https://github.com/PrefectHQ/ui/pull/1214)
+- Bump markdown-it from 12.2.0 to 12.3.2 [`#1203`](https://github.com/PrefectHQ/ui/pull/1203)
+- Feature: Allow dates in the past to be used as parameter values when using date picker [`#1213`](https://github.com/PrefectHQ/ui/pull/1213)
+- BugFix: Remove "user content" from each heading in the tutorial menu [`#1209`](https://github.com/PrefectHQ/ui/pull/1209)
+- BugFix: Schematic node view issues [`#1204`](https://github.com/PrefectHQ/ui/pull/1204)
+- Changelog: Cut changelog ahead of 2022-01-14 release [`#1207`](https://github.com/PrefectHQ/ui/pull/1207)
+
 #### [2022-01-14](https://github.com/PrefectHQ/ui/compare/2021-12-22...2022-01-14)
 
 - BugFix: Enable editing in readme [`#1202`](https://github.com/PrefectHQ/ui/pull/1202)
