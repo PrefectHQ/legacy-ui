@@ -512,6 +512,17 @@ desktop:
     - regular
   unicode: f108
   voted: false
+discourse:
+  changes:
+    - 5.0.0
+    - 5.0.3
+  label: Discourse
+  search:
+    terms: []
+  styles:
+    - brands
+  unicode: f393
+  voted: false
 docker:
   changes:
     - 5.0.0
