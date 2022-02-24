@@ -191,24 +191,30 @@ export default {
     async removeAccount(id) {
       this.isRemovingUser = true
 
-      const res = await this.$apollo.mutate({
-        mutation: require('@/graphql/User/delete-service-account.gql'),
-        variables: { id }
-      })
+      try {
+        const res = await this.$apollo.mutate({
+          mutation: require('@/graphql/User/delete-service-account.gql'),
+          variables: { id }
+        })
 
-      if (res?.data?.delete_service_account?.success) {
-        this.$emit('successful-action', 'The service account has been removed.')
-        this.$apollo.queries.tenantUsers.refetch()
-      } else {
+        if (res?.data?.delete_service_account?.success) {
+          this.$emit(
+            'successful-action',
+            'The service account has been removed.'
+          )
+          this.$apollo.queries.tenantUsers.refetch()
+        }
+      } catch (error) {
         this.$emit(
           'failed-action',
           'Something went wrong while trying to remove this service account. Please try again.'
         )
+        throw error
+      } finally {
+        this.isRemovingUser = false
+        this.dialogRemoveUser = false
+        this.selectedUser = null
       }
-
-      this.isRemovingUser = false
-      this.dialogRemoveUser = false
-      this.selectedUser = null
     },
     updateRole(account) {
       this.$emit('update', account)
