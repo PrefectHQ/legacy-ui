@@ -9,6 +9,7 @@ export const faCcMastercard: IconDefinition;
 export const faCcPaypal: IconDefinition;
 export const faCcStripe: IconDefinition;
 export const faCcVisa: IconDefinition;
+export const faDiscourse: IconDefinition;
 export const faDocker: IconDefinition;
 export const faGithub: IconDefinition;
 export const faInstagram: IconDefinition;

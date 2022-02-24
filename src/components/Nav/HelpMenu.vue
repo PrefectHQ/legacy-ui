@@ -75,6 +75,25 @@ export default {
           </v-list-item-content>
         </v-list-item>
 
+        <v-list-item href="https://discourse.prefect.io" target="_blank">
+          <v-list-item-avatar tile class="d-flex justify-center align-center">
+            <i class="o-100 fab fa-discourse fa-2x primaryDark--text" />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="text-subtitle-1">
+              Have a question?
+              <sup>
+                <v-icon x-small>
+                  open_in_new
+                </v-icon>
+              </sup>
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Start a discussion on our Discourse!
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
         <v-list-item :to="'/tutorial'">
           <v-list-item-avatar tile class="d-flex justify-center align-center">
             <i class="o-100 fad fa-graduation-cap fa-2x fa-flip-horizontal" />

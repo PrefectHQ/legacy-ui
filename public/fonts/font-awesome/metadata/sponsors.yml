@@ -3,6 +3,11 @@ amazon-web-services:
     - aws
   label: Amazon Web Services
   url: 'https://aws.amazon.com'
+discourse:
+  icons:
+    - discourse
+  label: Discourse
+  url: 'https://discourse.org'
 harvard-medical-school:
   icons:
     - plus

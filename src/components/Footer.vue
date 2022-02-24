@@ -16,9 +16,9 @@ const socialIcons = [
     icon: 'fab fa-twitter'
   },
   {
-    alt: 'Instagram',
-    link: 'https://www.instagram.com/prefect.io',
-    icon: 'fab fa-instagram'
+    alt: 'Discourse',
+    link: 'https://discourse.prefect.io',
+    icon: 'fab fa-discourse'
   }
 ]
 const links = [
@@ -44,8 +44,8 @@ const links = [
     link: 'https://www.prefect.io/about/company#careers'
   },
   {
-    text: 'Changelog',
-    link: 'https://www.prefect.io/public-changelog/'
+    text: 'Discourse',
+    link: 'https://discourse.prefect.io'
   }
 ]
 

@@ -32,6 +32,7 @@ export type IconName = 'aws' |
   'cc-paypal' | 
   'cc-stripe' | 
   'cc-visa' | 
+  'discourse' | 
   'docker' | 
   'github' | 
   'instagram' | 
