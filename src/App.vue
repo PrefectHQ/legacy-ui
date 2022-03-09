@@ -1,7 +1,6 @@
 <script>
 import Alert from '@/components/Alert'
 import Footer from '@/components/Footer'
-import store from '@/store'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { clearCache } from '@/vue-apollo'
 import moment from 'moment'
@@ -367,94 +366,6 @@ export default {
         return data.pendingInvitations
       }
     })
-
-    const license = store.getters['license/license']
-    const urlContainsNetlify = window.location.host.includes('netlify')
-    const nodeEnv = process.env.NODE_ENV
-
-    const {
-      sfcid,
-      team,
-      url1,
-      url2,
-      baseLiveAgentContentURL,
-      deploymentId,
-      buttonId,
-      baseLiveAgentURL
-    } =
-      nodeEnv == 'development' || nodeEnv == 'staging' || urlContainsNetlify
-        ? {
-            sfcid: '00D1F000000dUsx',
-            team: 'Chat_Service_Team',
-            url1: 'https://prefect--partial.my.salesforce.com',
-            url2: 'https://partial-prefect.cs90.force.com/partners',
-            baseLiveAgentContentURL:
-              'https://c.la4-c1cs-phx.salesforceliveagent.com/content',
-            deploymentId: '5721F0000008czv',
-            buttonId: '5731F0000008daD',
-            baseLiveAgentURL:
-              'https://d.la4-c1cs-phx.salesforceliveagent.com/chat'
-          }
-        : nodeEnv == 'production' && !urlContainsNetlify
-        ? {
-            sfcid: '00D2E000000o3Ut',
-            team: 'Chat_Service_Team',
-            url1: 'https://prefect.my.salesforce.com',
-            url2: 'https://prefect.force.com/partners',
-            baseLiveAgentContentURL:
-              'https://c.la1-c2-ia2.salesforceliveagent.com/content',
-            deploymentId: '5722E0000000dd5',
-            buttonId: '5732E0000000eF1',
-            baseLiveAgentURL:
-              'https://d.la1-c2-ia2.salesforceliveagent.com/chat'
-          }
-        : {
-            sfcid: '',
-            team: '',
-            url1: '',
-            url2: '',
-            baseLiveAgentContentURL: '',
-            deploymentId: '',
-            buttonId: '',
-            baseLiveAgentURL: ''
-          }
-
-    var initESW = function(gslbBaseURL) {
-      window.embedded_svc.settings.displayHelpButton = true //Or false
-      window.embedded_svc.settings.language = '' //For example, enter 'en' or 'en-US'
-      window.embedded_svc.settings.defaultMinimizedText = 'Chat With Us'
-      window.embedded_svc.settings.enabledFeatures = ['LiveAgent']
-      window.embedded_svc.settings.entryFeature = 'LiveAgent'
-      window.embedded_svc.settings.extraPrechatFormDetails = [
-        {
-          label: 'Account Name',
-          transcriptFields: ['AccountId'],
-          value: license.terms.salesforce_account_id || ''
-        }
-      ]
-      window.embedded_svc.init(url1, url2, gslbBaseURL, sfcid, team, {
-        baseLiveAgentContentURL: baseLiveAgentContentURL,
-        deploymentId: deploymentId,
-        buttonId: buttonId,
-        baseLiveAgentURL: baseLiveAgentURL,
-        eswLiveAgentDevName: team,
-        isOfflineSupportEnabled: false
-      })
-    }
-
-    if (!window.embedded_svc) {
-      var s = document.createElement('script')
-      s.setAttribute(
-        'src',
-        'https://prefect.my.salesforce.com/embeddedservice/5.0/esw.min.js'
-      )
-      s.onload = function() {
-        initESW(null)
-      }
-      document.body.appendChild(s)
-    } else {
-      initESW('https://service.force.com')
-    }
   },
   async beforeMount() {
     window.addEventListener('offline', this.handleOffline)
