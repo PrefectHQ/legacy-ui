@@ -134,6 +134,12 @@ jobs:
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__DEV}
           VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__DEV}
           VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__DEV}
+      - run:
+          name: Load salesforce_env file
+          command: |
+            cat .salesforce_env_dev | while read line; do
+              export $line
+            done
       - persist_to_workspace:
           root: /root/project
           paths:
@@ -162,6 +168,12 @@ jobs:
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__STAGING}
           VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__STAGING}
           VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__STAGING}
+      - run:
+          name: Load salesforce_env file
+          command: |
+            cat .salesforce_env_dev | while read line; do
+              export $line
+            done
       - persist_to_workspace:
           root: /root/project
           paths:
@@ -190,6 +202,12 @@ jobs:
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__PROD}
           VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__PROD}
           VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__PROD}
+      - run:
+          name: Load salesforce_env file
+          command: |
+            cat .salesforce_env_prod | while read line; do
+              export $line
+            done
       - persist_to_workspace:
           root: /root/project
           paths:
