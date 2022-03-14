@@ -46,6 +46,22 @@ commands:
         type: string
       VUE_APP_BASE_URL:
         type: string
+      VUE_APP_SF_SFCID:
+        type: string
+      VUE_APP_SF_TEAM:
+        type: string
+      VUE_APP_SF_URL1:
+        type: string
+      VUE_APP_SF_URL2:
+        type: string
+      VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL:
+        type: string
+      VUE_APP_SF_DEPLOYMENT_ID:
+        type: string
+      VUE_APP_SF_BUTTON_ID:
+        type: string
+      VUE_APP_SF_BASE_LIVE_AGENT_URL:
+        type: string
     steps:
       - prep
       - run:
