@@ -169,6 +169,7 @@ jobs:
           paths:
             - dist
             - package.json
+            - .salesforce_env_dev
   deploy-dev:
     docker:
       - image: google/cloud-sdk
@@ -211,6 +212,7 @@ jobs:
           paths:
             - dist
             - package.json
+            - .salesforce_env_dev
   deploy-staging:
     docker:
       - image: google/cloud-sdk
@@ -253,6 +255,7 @@ jobs:
           paths:
             - dist
             - package.json
+            - .salesforce_env_prod
   deploy-prod:
     docker:
       - image: google/cloud-sdk
