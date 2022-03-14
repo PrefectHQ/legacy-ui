@@ -141,6 +141,7 @@ jobs:
     docker:
       - image: node:14.7
     steps:
+      - checkout
       - run:
           name: Load salesforce_env file
           command: |
@@ -169,7 +170,6 @@ jobs:
           paths:
             - dist
             - package.json
-            - .salesforce_env_dev
   deploy-dev:
     docker:
       - image: google/cloud-sdk
@@ -184,6 +184,7 @@ jobs:
     docker:
       - image: node:14.7
     steps:
+      - checkout
       - run:
           name: Load salesforce_env file
           command: |
@@ -212,7 +213,6 @@ jobs:
           paths:
             - dist
             - package.json
-            - .salesforce_env_dev
   deploy-staging:
     docker:
       - image: google/cloud-sdk
@@ -227,6 +227,7 @@ jobs:
     docker:
       - image: node:14.7
     steps:
+      - checkout
       - run:
           name: Load salesforce_env file
           command: |
@@ -255,7 +256,6 @@ jobs:
           paths:
             - dist
             - package.json
-            - .salesforce_env_prod
   deploy-prod:
     docker:
       - image: google/cloud-sdk
