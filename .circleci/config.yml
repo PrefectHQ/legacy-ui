@@ -125,6 +125,12 @@ jobs:
     docker:
       - image: node:14.7
     steps:
+      - run:
+          name: Load salesforce_env file
+          command: |
+            cat .salesforce_env_dev | while read line; do
+              export $line
+            done
       - build:
           VUE_APP_OKTA_DOMAIN: ${VUE_APP_OKTA_DOMAIN__DEV}
           VUE_APP_PUBLIC_CLIENT_ID: ${VUE_APP_PUBLIC_CLIENT_ID__DEV}
@@ -134,12 +140,14 @@ jobs:
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__DEV}
           VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__DEV}
           VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__DEV}
-      - run:
-          name: Load salesforce_env file
-          command: |
-            cat .salesforce_env_dev | while read line; do
-              export $line
-            done
+          VUE_APP_SF_SFCID: ${VUE_APP_SF_SFCID}
+          VUE_APP_SF_TEAM: ${VUE_APP_SF_TEAM}
+          VUE_APP_SF_URL1: ${VUE_APP_SF_URL1}
+          VUE_APP_SF_URL2: ${VUE_APP_SF_URL2}
+          VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL: ${VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL}
+          VUE_APP_SF_DEPLOYMENT_ID: ${VUE_APP_SF_DEPLOYMENT_ID}
+          VUE_APP_SF_BUTTON_ID: ${VUE_APP_SF_BUTTON_ID}
+          VUE_APP_SF_BASE_LIVE_AGENT_URL: ${VUE_APP_SF_BASE_LIVE_AGENT_URL}
       - persist_to_workspace:
           root: /root/project
           paths:
@@ -159,6 +167,12 @@ jobs:
     docker:
       - image: node:14.7
     steps:
+      - run:
+          name: Load salesforce_env file
+          command: |
+            cat .salesforce_env_dev | while read line; do
+              export $line
+            done
       - build:
           VUE_APP_OKTA_DOMAIN: ${VUE_APP_OKTA_DOMAIN__STAGING}
           VUE_APP_PUBLIC_CLIENT_ID: ${VUE_APP_PUBLIC_CLIENT_ID__STAGING}
@@ -168,12 +182,14 @@ jobs:
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__STAGING}
           VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__STAGING}
           VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__STAGING}
-      - run:
-          name: Load salesforce_env file
-          command: |
-            cat .salesforce_env_dev | while read line; do
-              export $line
-            done
+          VUE_APP_SF_SFCID: ${VUE_APP_SF_SFCID}
+          VUE_APP_SF_TEAM: ${VUE_APP_SF_TEAM}
+          VUE_APP_SF_URL1: ${VUE_APP_SF_URL1}
+          VUE_APP_SF_URL2: ${VUE_APP_SF_URL2}
+          VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL: ${VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL}
+          VUE_APP_SF_DEPLOYMENT_ID: ${VUE_APP_SF_DEPLOYMENT_ID}
+          VUE_APP_SF_BUTTON_ID: ${VUE_APP_SF_BUTTON_ID}
+          VUE_APP_SF_BASE_LIVE_AGENT_URL: ${VUE_APP_SF_BASE_LIVE_AGENT_URL}
       - persist_to_workspace:
           root: /root/project
           paths:
@@ -193,6 +209,12 @@ jobs:
     docker:
       - image: node:14.7
     steps:
+      - run:
+          name: Load salesforce_env file
+          command: |
+            cat .salesforce_env_prod | while read line; do
+              export $line
+            done
       - build:
           VUE_APP_OKTA_DOMAIN: ${VUE_APP_OKTA_DOMAIN__PROD}
           VUE_APP_PUBLIC_CLIENT_ID: ${VUE_APP_PUBLIC_CLIENT_ID__PROD}
@@ -202,12 +224,14 @@ jobs:
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__PROD}
           VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__PROD}
           VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__PROD}
-      - run:
-          name: Load salesforce_env file
-          command: |
-            cat .salesforce_env_prod | while read line; do
-              export $line
-            done
+          VUE_APP_SF_SFCID: ${VUE_APP_SF_SFCID}
+          VUE_APP_SF_TEAM: ${VUE_APP_SF_TEAM}
+          VUE_APP_SF_URL1: ${VUE_APP_SF_URL1}
+          VUE_APP_SF_URL2: ${VUE_APP_SF_URL2}
+          VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL: ${VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL}
+          VUE_APP_SF_DEPLOYMENT_ID: ${VUE_APP_SF_DEPLOYMENT_ID}
+          VUE_APP_SF_BUTTON_ID: ${VUE_APP_SF_BUTTON_ID}
+          VUE_APP_SF_BASE_LIVE_AGENT_URL: ${VUE_APP_SF_BASE_LIVE_AGENT_URL}
       - persist_to_workspace:
           root: /root/project
           paths:
