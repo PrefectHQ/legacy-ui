@@ -46,22 +46,6 @@ commands:
         type: string
       VUE_APP_BASE_URL:
         type: string
-      VUE_APP_SF_SFCID:
-        type: string
-      VUE_APP_SF_TEAM:
-        type: string
-      VUE_APP_SF_URL1:
-        type: string
-      VUE_APP_SF_URL2:
-        type: string
-      VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL:
-        type: string
-      VUE_APP_SF_DEPLOYMENT_ID:
-        type: string
-      VUE_APP_SF_BUTTON_ID:
-        type: string
-      VUE_APP_SF_BASE_LIVE_AGENT_URL:
-        type: string
     steps:
       - prep
       - run:
@@ -154,14 +138,6 @@ jobs:
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__DEV}
           VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__DEV}
           VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__DEV}
-          VUE_APP_SF_SFCID: ${VUE_APP_SF_SFCID}
-          VUE_APP_SF_TEAM: ${VUE_APP_SF_TEAM}
-          VUE_APP_SF_URL1: ${VUE_APP_SF_URL1}
-          VUE_APP_SF_URL2: ${VUE_APP_SF_URL2}
-          VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL: ${VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL}
-          VUE_APP_SF_DEPLOYMENT_ID: ${VUE_APP_SF_DEPLOYMENT_ID}
-          VUE_APP_SF_BUTTON_ID: ${VUE_APP_SF_BUTTON_ID}
-          VUE_APP_SF_BASE_LIVE_AGENT_URL: ${VUE_APP_SF_BASE_LIVE_AGENT_URL}
       - persist_to_workspace:
           root: /root/project
           paths:
@@ -191,14 +167,6 @@ jobs:
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__STAGING}
           VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__STAGING}
           VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__STAGING}
-          VUE_APP_SF_SFCID: ${VUE_APP_SF_SFCID}
-          VUE_APP_SF_TEAM: ${VUE_APP_SF_TEAM}
-          VUE_APP_SF_URL1: ${VUE_APP_SF_URL1}
-          VUE_APP_SF_URL2: ${VUE_APP_SF_URL2}
-          VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL: ${VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL}
-          VUE_APP_SF_DEPLOYMENT_ID: ${VUE_APP_SF_DEPLOYMENT_ID}
-          VUE_APP_SF_BUTTON_ID: ${VUE_APP_SF_BUTTON_ID}
-          VUE_APP_SF_BASE_LIVE_AGENT_URL: ${VUE_APP_SF_BASE_LIVE_AGENT_URL}
       - persist_to_workspace:
           root: /root/project
           paths:
@@ -228,14 +196,6 @@ jobs:
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__PROD}
           VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__PROD}
           VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__PROD}
-          VUE_APP_SF_SFCID: ${VUE_APP_SF_SFCID}
-          VUE_APP_SF_TEAM: ${VUE_APP_SF_TEAM}
-          VUE_APP_SF_URL1: ${VUE_APP_SF_URL1}
-          VUE_APP_SF_URL2: ${VUE_APP_SF_URL2}
-          VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL: ${VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL}
-          VUE_APP_SF_DEPLOYMENT_ID: ${VUE_APP_SF_DEPLOYMENT_ID}
-          VUE_APP_SF_BUTTON_ID: ${VUE_APP_SF_BUTTON_ID}
-          VUE_APP_SF_BASE_LIVE_AGENT_URL: ${VUE_APP_SF_BASE_LIVE_AGENT_URL}
       - persist_to_workspace:
           root: /root/project
           paths:
