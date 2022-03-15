@@ -1,5 +1,5 @@
 import store from '@/store'
-
+/* eslint-disable no-console */
 const {
   VUE_APP_SF_SFCID,
   VUE_APP_SF_TEAM,
@@ -60,3 +60,5 @@ export const initializeSalesforceChat = () => {
     initESW('https://service.force.com')
   }
 }
+
+/* eslint-enable no-console */
