@@ -61,9 +61,7 @@ commands:
             export VUE_APP_ENVIRONMENT=production
             export VUE_APP_CLOUD_URL=<< parameters.VUE_APP_CLOUD_URL >>
             export VUE_APP_BACKEND=CLOUD
-            cat .salesforce_env_dev | while read line; do
-              export $line
-            done
+            bash ./export.sh
             npm run build
   deploy_env:
     parameters:
@@ -128,7 +126,6 @@ jobs:
     docker:
       - image: node:14.7
     steps:
-      - checkout
       - build:
           VUE_APP_OKTA_DOMAIN: ${VUE_APP_OKTA_DOMAIN__DEV}
           VUE_APP_PUBLIC_CLIENT_ID: ${VUE_APP_PUBLIC_CLIENT_ID__DEV}
@@ -157,7 +154,6 @@ jobs:
     docker:
       - image: node:14.7
     steps:
-      - checkout
       - build:
           VUE_APP_OKTA_DOMAIN: ${VUE_APP_OKTA_DOMAIN__STAGING}
           VUE_APP_PUBLIC_CLIENT_ID: ${VUE_APP_PUBLIC_CLIENT_ID__STAGING}
@@ -186,7 +182,6 @@ jobs:
     docker:
       - image: node:14.7
     steps:
-      - checkout
       - build:
           VUE_APP_OKTA_DOMAIN: ${VUE_APP_OKTA_DOMAIN__PROD}
           VUE_APP_PUBLIC_CLIENT_ID: ${VUE_APP_PUBLIC_CLIENT_ID__PROD}
