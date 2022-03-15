@@ -46,6 +46,8 @@ commands:
         type: string
       VUE_APP_BASE_URL:
         type: string
+      VUE_APP_ENVIRONMENT:
+        type: string
     steps:
       - prep
       - run:
