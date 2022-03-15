@@ -1,18 +1,20 @@
 import store from '@/store'
 
+const {
+  VUE_APP_SF_SFCID,
+  VUE_APP_SF_TEAM,
+  VUE_APP_SF_URL1,
+  VUE_APP_SF_URL2,
+  VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL,
+  VUE_APP_SF_DEPLOYMENT_ID,
+  VUE_APP_SF_BUTTON_ID,
+  VUE_APP_SF_BASE_LIVE_AGENT_URL
+} = process.env
+
+console.log(process.env)
+
 export const initializeSalesforceChat = () => {
   const license = store.getters['license/license']
-
-  const {
-    VUE_APP_SF_SFCID,
-    VUE_APP_SF_TEAM,
-    VUE_APP_SF_URL1,
-    VUE_APP_SF_URL2,
-    VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL,
-    VUE_APP_SF_DEPLOYMENT_ID,
-    VUE_APP_SF_BUTTON_ID,
-    VUE_APP_SF_BASE_LIVE_AGENT_URL
-  } = process.env
 
   const initESW = function(gslbBaseURL) {
     window.embedded_svc.settings.displayHelpButton = true //Or false
