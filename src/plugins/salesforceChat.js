@@ -14,9 +14,9 @@ const {
 export const initializeSalesforceChat = () => {
   const license = store.getters['license/license']
 
-  const initESW = function (gslbBaseURL) {
-    window.embedded_svc.settings.displayHelpButton = true //Or false
-    window.embedded_svc.settings.language = '' //For example, enter 'en' or 'en-US'
+  const initESW = function(gslbBaseURL) {
+    window.embedded_svc.settings.displayHelpButton = true // Or false
+    window.embedded_svc.settings.language = '' // For example, enter 'en' or 'en-US'
     window.embedded_svc.settings.defaultMinimizedText = 'Chat With Us'
     window.embedded_svc.settings.enabledFeatures = ['LiveAgent']
     window.embedded_svc.settings.entryFeature = 'LiveAgent'
@@ -50,7 +50,7 @@ export const initializeSalesforceChat = () => {
       'src',
       'https://prefect.my.salesforce.com/embeddedservice/5.0/esw.min.js'
     )
-    s.onload = function () {
+    s.onload = function() {
       initESW(null)
     }
     document.body.appendChild(s)
