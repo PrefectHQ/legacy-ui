@@ -715,6 +715,7 @@ $fa-cc-visa: #0157a2;
   .embeddedServiceLiveAgentStateChatItem.chatMessage button:hover, 
   .embeddedServiceLiveAgentStateChatItem.chatMessage button:hover:focus {
     background: var(--v-primary-base) !important;
+    color: var(--v-secondaryGrayLight-base) !important;
   }
 }
 
