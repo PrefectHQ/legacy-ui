@@ -1,5 +1,5 @@
 import store from '@/store'
-/* eslint-disable no-console */
+
 const {
   VUE_APP_SF_SFCID,
   VUE_APP_SF_TEAM,
@@ -11,12 +11,10 @@ const {
   VUE_APP_SF_BASE_LIVE_AGENT_URL
 } = process.env
 
-console.log(process.env)
-
 export const initializeSalesforceChat = () => {
   const license = store.getters['license/license']
 
-  const initESW = function(gslbBaseURL) {
+  const initESW = function (gslbBaseURL) {
     window.embedded_svc.settings.displayHelpButton = true //Or false
     window.embedded_svc.settings.language = '' //For example, enter 'en' or 'en-US'
     window.embedded_svc.settings.defaultMinimizedText = 'Chat With Us'
@@ -52,7 +50,7 @@ export const initializeSalesforceChat = () => {
       'src',
       'https://prefect.my.salesforce.com/embeddedservice/5.0/esw.min.js'
     )
-    s.onload = function() {
+    s.onload = function () {
       initESW(null)
     }
     document.body.appendChild(s)
@@ -60,5 +58,3 @@ export const initializeSalesforceChat = () => {
     initESW('https://service.force.com')
   }
 }
-
-/* eslint-enable no-console */
