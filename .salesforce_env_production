@@ -1,0 +1,8 @@
+VUE_APP_SF_SFCID=00D2E000000o3Ut
+VUE_APP_SF_TEAM=Chat_Service_Team
+VUE_APP_SF_URL1=https://prefect.my.salesforce.com
+VUE_APP_SF_URL2=https://prefect.force.com/partners
+VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL=https://c.la1-c2-ia2.salesforceliveagent.com/content
+VUE_APP_SF_DEPLOYMENT_ID=5722E0000000dd5
+VUE_APP_SF_BUTTON_ID=5732E0000000eF1
+VUE_APP_SF_BASE_LIVE_AGENT_URL=https://d.la1-c2-ia2.salesforceliveagent.com/chat

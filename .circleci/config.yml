@@ -46,6 +46,8 @@ commands:
         type: string
       VUE_APP_BASE_URL:
         type: string
+      VUE_APP_ENVIRONMENT:
+        type: string
     steps:
       - prep
       - run:
@@ -58,9 +60,10 @@ commands:
             export VUE_APP_AUTH0_PUBLIC_CLIENT_ID=<< parameters.VUE_APP_AUTH0_PUBLIC_CLIENT_ID >>
             export VUE_APP_STRIPE_PUBLIC_TOKEN=<< parameters.VUE_APP_STRIPE_PUBLIC_TOKEN >>
             export VUE_APP_RELEASE_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-            export VUE_APP_ENVIRONMENT=production
+            export VUE_APP_ENVIRONMENT=<< parameters.VUE_APP_ENVIRONMENT >>
             export VUE_APP_CLOUD_URL=<< parameters.VUE_APP_CLOUD_URL >>
             export VUE_APP_BACKEND=CLOUD
+            bash ./export.sh
             npm run build
   deploy_env:
     parameters:
@@ -134,6 +137,7 @@ jobs:
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__DEV}
           VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__DEV}
           VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__DEV}
+          VUE_APP_ENVIRONMENT: development
       - persist_to_workspace:
           root: /root/project
           paths:
@@ -162,6 +166,7 @@ jobs:
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__STAGING}
           VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__STAGING}
           VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__STAGING}
+          VUE_APP_ENVIRONMENT: production
       - persist_to_workspace:
           root: /root/project
           paths:
@@ -190,6 +195,7 @@ jobs:
           VUE_APP_STRIPE_PUBLIC_TOKEN: ${VUE_APP_STRIPE_PK__PROD}
           VUE_APP_CLOUD_URL: ${VUE_APP_CLOUD_URL__PROD}
           VUE_APP_BASE_URL: ${VUE_APP_BASE_URL__PROD}
+          VUE_APP_ENVIRONMENT: production
       - persist_to_workspace:
           root: /root/project
           paths:

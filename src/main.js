@@ -4,6 +4,7 @@ import { CreatePrefectUI } from '@/app.js'
 import store from '@/store'
 import jwt_decode from 'jwt-decode'
 import LogRocket from 'logrocket'
+import { initializeSalesforceChat } from '@/plugins/salesforceChat.js'
 
 export const setStartupTenant = async () => {
   const path = window.location.pathname
@@ -64,6 +65,7 @@ export const setStartupTenant = async () => {
 
   if (process.env.VUE_APP_BACKEND === 'CLOUD') {
     await store.dispatch('license/getLicense')
+    initializeSalesforceChat()
   }
 }
 
