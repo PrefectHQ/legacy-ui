@@ -81,6 +81,7 @@
     "jest-canvas-mock": "^2.3.1",
     "jest-fetch-mock": ">=3.0.1",
     "jest-localstorage-mock": "^2.4.8",
+    "node-fetch": "2.6.7",
     "node-sass": "^7.0.0",
     "postcss-scss": "^3.0.5",
     "sass": "^1.32.8",
@@ -104,5 +105,8 @@
   },
   "peerDependencies": {
     "postcss": "^8.0.0"
+  },
+  "overrides": {
+    "node-fetch": ">=2.6.7"
   }
 }
