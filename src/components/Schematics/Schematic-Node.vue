@@ -4,6 +4,7 @@ import DurationSpan from '@/components/DurationSpan'
 import StackedLineChart from '@/components/Visualizations/StackedLineChart'
 import { STATE_COLORS } from '@/utils/states'
 import { FINISHED_STATES } from '@/utils/states'
+import { calculateDuration } from '@/utils/states'
 
 export default {
   filters: {
@@ -164,7 +165,8 @@ export default {
     },
     onIntersect([entry]) {
       this.$apollo.queries.mappedChildren.skip = !entry.isIntersecting
-    }
+    },
+    calculateDuration
   },
   apollo: {
     mappedChildren: {
@@ -252,12 +254,13 @@ export default {
         <DurationSpan
           :start-time="nodeData.data.start_time"
           :end-time="
-            nodeData.data.end_time
-              ? nodeData.data.end_time
-              : isFinished(nodeData.data.state)
-              ? nodeData.data.start_time
-              : null
+            calculateDuration(
+              nodeData.data.start_time,
+              nodeData.data.end_time,
+              nodeData.data.state
+            )
           "
+          :state="nodeData.data.state"
         >
           <template #default="{duration}">
             <div v-show="duration.length > 0"> Duration: {{ duration }} </div>

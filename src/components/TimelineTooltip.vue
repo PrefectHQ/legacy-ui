@@ -1,5 +1,6 @@
 <script>
 import DurationSpan from '@/components/DurationSpan'
+import { calculateDuration } from '@/utils/states'
 
 export default {
   components: {
@@ -9,6 +10,9 @@ export default {
     tooltip: { type: Object, required: true },
     loading: { type: Boolean, required: false, default: false },
     showProjectName: { type: Boolean, required: false, default: false }
+  },
+  methods: {
+    calculateDuration
   }
 }
 </script>

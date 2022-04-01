@@ -2,6 +2,7 @@
 import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
 import SchematicFlow from '@/components/Schematics/Schematic-Flow'
+import { calculateDuration } from '@/utils/states'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -27,7 +28,8 @@ export default {
   methods: {
     onIntersect([entry]) {
       this.$apollo.queries.flowRun.skip = !entry.isIntersecting
-    }
+    },
+    calculateDuration
   },
   apollo: {
     flowRun: {
@@ -80,7 +82,13 @@ export default {
             v-if="flowRun.start_time"
             class="font-weight-black"
             :start-time="flowRun.start_time"
-            :end-time="flowRun.end_time"
+            :end-time="
+              calculateDuration(
+                flowRun.start_time,
+                flowRun.end_time,
+                flowRun.state
+              )
+            "
           />
         </span>
       </div>

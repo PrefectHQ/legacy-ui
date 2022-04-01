@@ -4,6 +4,7 @@ import { formatTime } from '@/mixins/formatTimeMixin'
 import FlowName from '@/pages/Calendar/FlowName'
 import ExternalLink from '@/components/ExternalLink'
 import { mapGetters } from 'vuex'
+import { calculateDuration } from '@/utils/states'
 
 export default {
   components: {
@@ -32,7 +33,8 @@ export default {
         height: '1rem',
         width: '1rem'
       }
-    }
+    },
+    calculateDuration
   },
   apollo: {}
 }
@@ -78,7 +80,7 @@ export default {
         <DurationSpan
           class="font-weight-bold"
           :start-time="run.start_time"
-          :end-time="run.end_time"
+          :end-time="calculateDuration(run.start_time, run.end_time, run.state)"
         />
       </div>
       <div v-if="run.start_time" class="subtitle">

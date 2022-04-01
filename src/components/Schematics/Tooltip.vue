@@ -1,5 +1,6 @@
 <script>
 import DurationSpan from '@/components/DurationSpan'
+import { calculateDuration } from '@/utils/states'
 export default {
   components: { DurationSpan },
   props: {
@@ -9,6 +10,9 @@ export default {
     isParameter() {
       return this.data?.type?.split('.').pop() == 'Parameter'
     }
+  },
+  methods: {
+    calculateDuration
   }
 }
 </script>
@@ -26,7 +30,9 @@ export default {
           Duration:
           <DurationSpan
             :start-time="data.start_time"
-            :end-time="data.end_time"
+            :end-time="
+              calculateDuration(data.start_time, data.end_time, data.state)
+            "
           />
         </div>
       </div>

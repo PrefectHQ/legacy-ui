@@ -108,17 +108,17 @@ export const flowRunHistoryMixin = {
           d.duration = now - start
         }
 
-        // We add a filler end_time for instances where a finished
-        // state has been set but the PG trigger to populate end_time
-        // hasn't run yet
-        if (
-          !d.end_time &&
-          d.start_time &&
-          !notPastRunStates.includes(d.state) &&
-          d.state !== 'Skipped'
-        ) {
-          d.end_time = new Date()
-        }
+        // // We add a filler end_time for instances where a finished
+        // // state has been set but the PG trigger to populate end_time
+        // // hasn't run yet
+        // if (
+        //   !d.end_time &&
+        //   d.start_time &&
+        //   !notPastRunStates.includes(d.state) &&
+        //   d.state !== 'Skipped'
+        // ) {
+        //   d.end_time = d.start_time
+        // }
 
         d.finished = !notPastRunStates.includes(d.state)
 

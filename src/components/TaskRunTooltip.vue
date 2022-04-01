@@ -1,6 +1,7 @@
 <script>
 import DurationSpan from '@/components/DurationSpan'
 import { formatTime } from '@/mixins/formatTimeMixin'
+import { calculateDuration } from '@/utils/states'
 
 export default {
   components: {
@@ -47,7 +48,8 @@ export default {
         height: '1rem',
         width: '1rem'
       }
-    }
+    },
+    calculateDuration
   }
 }
 </script>
@@ -88,7 +90,13 @@ export default {
         <DurationSpan
           class="font-weight-bold"
           :start-time="taskRun.start_time"
-          :end-time="taskRun.end_time"
+          :end-time="
+            calculateDuration(
+              taskRun.start_time,
+              taskRun.end_time,
+              taskRun.state
+            )
+          "
         />
       </div>
 

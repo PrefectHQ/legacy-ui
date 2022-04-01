@@ -6,6 +6,7 @@ import CardTitle from '@/components/Card-Title'
 import DurationSpan from '@/components/DurationSpan'
 import LabelEdit from '@/components/LabelEdit'
 import { FINISHED_STATES } from '@/utils/states'
+import { calculateDuration } from '@/utils/states'
 
 export default {
   components: {
@@ -82,7 +83,8 @@ export default {
     },
     handleRefetch() {
       this.$emit('refetch')
-    }
+    },
+    calculateDuration
   }
 }
 </script>
@@ -268,9 +270,11 @@ export default {
                       v-if="flowRun.start_time"
                       :start-time="flowRun.start_time"
                       :end-time="
-                        isFinished && flowRun.start_time
-                          ? flowRun.end_time
-                          : null
+                        calculateDuration(
+                          flowRun.start_time,
+                          flowRun.end_time,
+                          flowRun.state
+                        )
                       "
                     />
                     <span v-else>
