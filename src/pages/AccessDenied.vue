@@ -8,6 +8,11 @@ export default {
       origin: window.location.origin
     }
   },
+  computed: {
+    invalidSSOMethod() {
+      return this.$route.query?.reason == 'invalid_sso'
+    }
+  },
   methods: {
     ...mapActions('auth', ['login']),
     async logOut() {
@@ -28,32 +33,47 @@ export default {
   >
     <div class="text py-16 px-8 rounded">
       <h1>Oops!</h1>
-      <p>
-        It looks like you don't have access to this application. If you believe
-        this is an error, contact us at help@prefect.io
-      </p>
 
-      <v-btn
-        v-if="origin !== 'cloud.prefect.io'"
-        color="white"
-        class="primary--text"
-        depressed
-        href="https://cloud.prefect.io"
-      >
-        <v-icon class="mr-4">cloud</v-icon>
-        Take me to Prefect Cloud
-      </v-btn>
+      <div v-if="invalidSSOMethod">
+        <p>
+          It looks like you're attempting to sign in with a method unsupported
+          by your organization.
+        </p>
 
-      <v-btn
-        v-else
-        color="white"
-        class="primary--text"
-        depressed
-        @click="logOut"
-      >
-        <v-icon>arrow_back_ios</v-icon>
-        Sign out
-      </v-btn>
+        <v-btn color="white" class="primary--text" depressed @click="logOut">
+          <v-icon>arrow_back_ios</v-icon>
+          Back to sign in
+        </v-btn>
+      </div>
+
+      <div v-else>
+        <p>
+          It looks like you don't have access to this application. If you
+          believe this is an error, contact us at help@prefect.io
+        </p>
+
+        <v-btn
+          v-if="origin !== 'cloud.prefect.io'"
+          color="white"
+          class="primary--text"
+          depressed
+          href="https://cloud.prefect.io"
+        >
+          <v-icon class="mr-4">cloud</v-icon>
+          Take me to Prefect Cloud
+        </v-btn>
+
+        <v-btn
+          v-else
+          color="white"
+          class="primary--text"
+          depressed
+          @click="logOut"
+        >
+          <v-icon>arrow_back_ios</v-icon>
+          Sign out
+        </v-btn>
+      </div>
     </div>
   </div>
 </template>

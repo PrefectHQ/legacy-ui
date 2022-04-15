@@ -26,7 +26,7 @@ if (typeof window.SharedWorker !== 'undefined') {
 }
 
 if (TokenWorker?.port) {
-  TokenWorker.port.onmessage = e => {
+  TokenWorker.port.onmessage = async e => {
     const type = e.data?.type
     const payload = e.data?.payload
 
@@ -60,6 +60,15 @@ if (TokenWorker?.port) {
             store.dispatch('license/getLicense')
           }
         }
+        break
+      case 'accessDenied':
+        console.log(payload)
+        await authClient.signOut({
+          clientId: process.env.VUE_APP_PUBLIC_CLIENT_ID,
+          idToken: payload,
+          postLogoutRedirectUri:
+            window.location.origin + '/access-denied?reason=invalid_sso'
+        })
         break
       case 'console':
         // This should only be used for debugging
