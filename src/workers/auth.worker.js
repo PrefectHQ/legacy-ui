@@ -154,11 +154,16 @@ const handleAuthorize = async idToken => {
   authorizing = true
   if (
     !state.authorizationToken ||
-    new Date(state.authorizationToken.expires_at) <= Date.now()
+    (state.authorizationToken &&
+      new Date(state.authorizationToken.expires_at) <= Date.now())
   ) {
     const authorizationResponse = await authorize(idToken)
 
-    setAuthorizationToken(authorizationResponse)
+    if (authorizationResponse && authorizationResponse.access_token) {
+      setAuthorizationToken(authorizationResponse)
+    } else {
+      postToConnections({ type: 'accessDenied', payload: state.idToken })
+    }
   }
 
   postToChannelPorts({ payload: state.authorizationToken })
