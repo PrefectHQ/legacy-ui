@@ -62,7 +62,6 @@ if (TokenWorker?.port) {
         }
         break
       case 'accessDenied':
-        console.log(payload)
         await authClient.signOut({
           clientId: process.env.VUE_APP_PUBLIC_CLIENT_ID,
           idToken: payload,
