@@ -1,13 +1,33 @@
 # Changelog
 
+#### [2022-04-21](https://github.com/PrefectHQ/ui/compare/2022-02-24...2022-04-21)
+
+- Improve access-denied checks [`#1266`](https://github.com/PrefectHQ/ui/pull/1266)
+- Disable salesforce plugin in production environments [`#1267`](https://github.com/PrefectHQ/ui/pull/1267)
+- copies salesforce related URLS to script-src policy [`#1259`](https://github.com/PrefectHQ/ui/pull/1259)
+- add override [`#1258`](https://github.com/PrefectHQ/ui/pull/1258)
+- remove conflict detection [`#1257`](https://github.com/PrefectHQ/ui/pull/1257)
+- Audit fix [`#1256`](https://github.com/PrefectHQ/ui/pull/1256)
+- Bump minimist from 1.2.5 to 1.2.6 [`#1255`](https://github.com/PrefectHQ/ui/pull/1255)
+- Bump trim-newlines from 3.0.0 to 3.0.1 [`#1254`](https://github.com/PrefectHQ/ui/pull/1254)
+- Feature: Adds Salesforce Chat Bot [`#1250`](https://github.com/PrefectHQ/ui/pull/1250)
+- Bump url-parse from 1.5.7 to 1.5.10 [`#1246`](https://github.com/PrefectHQ/ui/pull/1246)
+- Cut changelog ahead of 2022-02-24 release [`#1245`](https://github.com/PrefectHQ/ui/pull/1245)
+
 #### [2022-02-24](https://github.com/PrefectHQ/ui/compare/2022-02-17...2022-02-24)
 
 - Bump url-parse from 1.5.1 to 1.5.7 [`#1240`](https://github.com/PrefectHQ/ui/pull/1240)
 - BugFix: Add error handling to the delete-service-account mutation [`#1243`](https://github.com/PrefectHQ/ui/pull/1243)
 - Feature: Expose discourse links [`#1244`](https://github.com/PrefectHQ/ui/pull/1244)
 
-#### [2022-02-17](https://github.com/PrefectHQ/ui/compare/2022-01-14...2022-02-17)
+#### [2022-02-17](https://github.com/PrefectHQ/ui/compare/2022-02-04...2022-02-17)
 
+#### [2022-02-04](https://github.com/PrefectHQ/ui/compare/2022-01-14...2022-02-04)
+
+- Cut changelog ahead of 2022-02-24 release [`#1245`](https://github.com/PrefectHQ/ui/pull/1245)
+- Bump url-parse from 1.5.1 to 1.5.7 [`#1240`](https://github.com/PrefectHQ/ui/pull/1240)
+- BugFix: Add error handling to the delete-service-account mutation [`#1243`](https://github.com/PrefectHQ/ui/pull/1243)
+- Feature: Expose discourse links [`#1244`](https://github.com/PrefectHQ/ui/pull/1244)
 - Changelog: Cut changelog ahead of 2022-02-17 release [`#1237`](https://github.com/PrefectHQ/ui/pull/1237)
 - BugFix: Update placeholder text on task search [`#1234`](https://github.com/PrefectHQ/ui/pull/1234)
 - BugFix: Fix Skip on SetStateDialog [`#1235`](https://github.com/PrefectHQ/ui/pull/1235)
