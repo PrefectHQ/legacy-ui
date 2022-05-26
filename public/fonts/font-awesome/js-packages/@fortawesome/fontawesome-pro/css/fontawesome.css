@@ -276,6 +276,9 @@ readers do not read off random characters that represent icons */
 .fa-cogs:before {
   content: "\f085"; }
 
+.fa-comment-dots:before {
+  content: "\f4ad"; }
+
 .fa-concierge-bell:before {
   content: "\f562"; }
 

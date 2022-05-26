@@ -61,6 +61,7 @@ charity:
   label: Charity
 chat:
   icons:
+    - comment-dots
     - quote-left
     - smile
   label: Chat

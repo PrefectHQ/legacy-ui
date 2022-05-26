@@ -30,6 +30,7 @@ readers do not read off random characters that represent icons */
 .#{$fa-css-prefix}-cloud:before { content: fa-content($fa-var-cloud); }
 .#{$fa-css-prefix}-clouds:before { content: fa-content($fa-var-clouds); }
 .#{$fa-css-prefix}-cogs:before { content: fa-content($fa-var-cogs); }
+.#{$fa-css-prefix}-comment-dots:before { content: fa-content($fa-var-comment-dots); }
 .#{$fa-css-prefix}-concierge-bell:before { content: fa-content($fa-var-concierge-bell); }
 .#{$fa-css-prefix}-credit-card:before { content: fa-content($fa-var-credit-card); }
 .#{$fa-css-prefix}-desktop:before { content: fa-content($fa-var-desktop); }

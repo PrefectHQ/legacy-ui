@@ -11,6 +11,7 @@ export const faCheck: IconDefinition;
 export const faCircle: IconDefinition;
 export const faClouds: IconDefinition;
 export const faCogs: IconDefinition;
+export const faCommentDots: IconDefinition;
 export const faConciergeBell: IconDefinition;
 export const faDotCircle: IconDefinition;
 export const faEnvelope: IconDefinition;
