@@ -110,11 +110,11 @@ export default {
 
     <HelpMenu />
 
+    <ChatLauncher />
+
     <NotificationMenu v-if="isServer || isAuthorized" />
 
     <ConnectionMenu />
-
-    <ChatLauncher />
 
     <UserMenu v-if="isCloud" />
   </v-app-bar>
