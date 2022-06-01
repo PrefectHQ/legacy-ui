@@ -110,7 +110,7 @@ export default {
 
     <HelpMenu />
 
-    <ChatLauncher />
+    <ChatLauncher v-if="isCloud" />
 
     <NotificationMenu v-if="isServer || isAuthorized" />
 
