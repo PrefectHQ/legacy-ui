@@ -276,6 +276,9 @@ readers do not read off random characters that represent icons */
 .fa-cogs:before {
   content: "\f085"; }
 
+.fa-comment-dots:before {
+  content: "\f4ad"; }
+
 .fa-concierge-bell:before {
   content: "\f562"; }
 
@@ -599,6 +602,9 @@ readers do not read off random characters that represent icons */
 
 .fad.fa-cogs:after {
   content: "\10f085"; }
+
+.fad.fa-comment-dots:after {
+  content: "\10f4ad"; }
 
 .fad.fa-concierge-bell:after {
   content: "\10f562"; }

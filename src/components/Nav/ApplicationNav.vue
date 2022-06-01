@@ -7,6 +7,7 @@ import NotificationMenu from '@/components/Nav/NotificationMenu'
 import Links from '@/components/Nav/Links'
 import TeamSideNavButton from '@/components/Nav/TeamSideNavButton'
 import UserMenu from '@/components/Nav/UserMenu'
+import ChatLauncher from '@/components/Nav/ChatLauncher'
 
 export default {
   components: {
@@ -16,7 +17,8 @@ export default {
     Links,
     NotificationMenu,
     TeamSideNavButton,
-    UserMenu
+    UserMenu,
+    ChatLauncher
   },
   data() {
     return {
@@ -107,6 +109,8 @@ export default {
     />
 
     <HelpMenu />
+
+    <ChatLauncher v-if="isCloud" />
 
     <NotificationMenu v-if="isServer || isAuthorized" />
 

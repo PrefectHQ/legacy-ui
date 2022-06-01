@@ -1,7 +1,3 @@
-/*!
- * Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com
- * License - https://fontawesome.com/license (Commercial License)
- */
 @import 'variables';
 
 @font-face {
@@ -76,6 +72,7 @@
 .fad.#{$fa-css-prefix}-circle:after { content: fa-content(\10f111); }
 .fad.#{$fa-css-prefix}-clouds:after { content: fa-content(\10f744); }
 .fad.#{$fa-css-prefix}-cogs:after { content: fa-content(\10f085); }
+.fad.#{$fa-css-prefix}-comment-dots:after { content: fa-content(\10f4ad); }
 .fad.#{$fa-css-prefix}-concierge-bell:after { content: fa-content(\10f562); }
 .fad.#{$fa-css-prefix}-dot-circle:after { content: fa-content(\10f192); }
 .fad.#{$fa-css-prefix}-envelope:after { content: fa-content(\10f0e0); }

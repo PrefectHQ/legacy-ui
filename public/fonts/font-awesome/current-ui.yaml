@@ -219,3 +219,5 @@ icons:
       - duotone
   - discourse:
       - brands
+  - comment-dots:
+      - duotone
