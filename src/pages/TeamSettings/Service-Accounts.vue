@@ -197,7 +197,10 @@ export default {
         return {}
       },
       pollInterval: 10000,
-      update: data => data.auth_role
+      update(data) {
+        if (!data) return
+        return data.auth_role
+      }
     }
   }
 }
