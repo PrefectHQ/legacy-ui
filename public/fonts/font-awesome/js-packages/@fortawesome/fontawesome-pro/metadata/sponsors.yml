@@ -25,6 +25,7 @@ rev-io:
   url: 'https://rev.io'
 rocket-chat:
   icons:
+    - comment-dots
     - quote-left
     - smile
   label: Rocket.Chat

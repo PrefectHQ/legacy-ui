@@ -53,6 +53,7 @@ export type IconName = 'aws' |
   'circle' | 
   'clouds' | 
   'cogs' | 
+  'comment-dots' | 
   'concierge-bell' | 
   'dot-circle' | 
   'envelope' | 

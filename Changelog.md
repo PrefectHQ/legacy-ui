@@ -1,5 +1,17 @@
 # Changelog
 
+#### [2022-06-02](https://github.com/PrefectHQ/ui/compare/2022-05-17...2022-06-02)
+
+- Bugfix: Chat launcher icon added nav bar, previous launch button hidden [`#1287`](https://github.com/PrefectHQ/ui/pull/1287)
+- Bugfix: replaces env variables and CSP URLs related to Salesforce partial environment [`#1286`](https://github.com/PrefectHQ/ui/pull/1286)
+- 2022-05-17 [`#1283`](https://github.com/PrefectHQ/ui/pull/1283)
+
+#### [2022-05-17](https://github.com/PrefectHQ/ui/compare/2022-04-21...2022-05-17)
+
+- Enable sf chat plugin in Cloud production environments [`#1282`](https://github.com/PrefectHQ/ui/pull/1282)
+- Bugfix: adds new Salesforce URL to script-src Content Security Policy [`#1281`](https://github.com/PrefectHQ/ui/pull/1281)
+- Cut changelog ahead of 2022-04-21 release [`#1270`](https://github.com/PrefectHQ/ui/pull/1270)
+
 #### [2022-04-21](https://github.com/PrefectHQ/ui/compare/2022-02-24...2022-04-21)
 
 - Improve access-denied checks [`#1266`](https://github.com/PrefectHQ/ui/pull/1266)
