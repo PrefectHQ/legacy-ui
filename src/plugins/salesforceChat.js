@@ -15,7 +15,7 @@ export const initializeSalesforceChat = () => {
   const license = store.getters['license/license']
 
   const initESW = function(gslbBaseURL) {
-    window.embedded_svc.settings.displayHelpButton = true // Or false
+    window.embedded_svc.settings.displayHelpButton = false
     window.embedded_svc.settings.language = '' // For example, enter 'en' or 'en-US'
     window.embedded_svc.settings.defaultMinimizedText = 'Chat With Us'
     window.embedded_svc.settings.enabledFeatures = ['LiveAgent']
