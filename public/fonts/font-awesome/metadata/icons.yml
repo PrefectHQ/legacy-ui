@@ -457,6 +457,29 @@ cogs:
     - duotone
   unicode: f085
   voted: false
+comment-dots:
+  changes:
+    - 5.0.9
+  label: Comment Dots
+  search:
+    terms:
+      - bubble
+      - chat
+      - commenting
+      - conversation
+      - feedback
+      - message
+      - more
+      - note
+      - notification
+      - reply
+      - sms
+      - speech
+      - texting
+  styles:
+    - duotone
+  unicode: f4ad
+  voted: false
 concierge-bell:
   changes:
     - 5.1.0
