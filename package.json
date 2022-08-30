@@ -107,6 +107,7 @@
     "postcss": "^8.0.0"
   },
   "resolutions": {
-    "node-fetch": "2.6.7"
+    "node-fetch": "2.6.7",
+    "ejs": "3.1.7"
   }
 }
