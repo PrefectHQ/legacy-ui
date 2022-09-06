@@ -7,7 +7,7 @@
     "build": "node file-downloader.js && export VUE_APP_RELEASE_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ') && vue-cli-service build",
     "lint": "vue-cli-service lint",
     "lint:ci": "vue-cli-service lint --no-fix",
-    "preinstall": "npx npm-force-resolutions",
+   
     "test:e2e": "vue-cli-service test:e2e",
     "test:integration": "vue-cli-service test:e2e --headless --mode development",
     "test:snapshots": "vue-cli-service test:unit -u",
