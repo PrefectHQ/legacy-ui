@@ -4,7 +4,7 @@ const fs = require('fs')
 const downloads = [
   {
     filePath: './src/styles/graphiql.css',
-    url: 'https://unpkg.com/graphiql/graphiql.min.css'
+    url: 'https://unpkg.com/graphiql@1.4.7/graphiql.min.css'
   },
   {
     filePath: './public/fonts/material-icons.ttf',
