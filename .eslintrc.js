@@ -14,7 +14,7 @@ module.exports = {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'prettier/prettier': [
-      'warning',
+      'warn',
       {
         singleQuote: true,
         semi: false,
@@ -23,8 +23,8 @@ module.exports = {
         htmlWhitespaceSensitivity: 'strict'
       }
     ],
-    quotes: ['warning', 'single', { avoidEscape: true }],
-    semi: ['warning', 'never'],
+    quotes: ['warn', 'single', { avoidEscape: true }],
+    semi: ['warn', 'never'],
     'vuetify/grid-unknown-attributes': 'error',
     'vuetify/no-deprecated-classes': 'error',
     'vue/valid-v-slot': 'off'
