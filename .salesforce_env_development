@@ -1,8 +1,8 @@
-VUE_APP_SF_SFCID=00DS0000003nEkX
+VUE_APP_SF_SFCID=00D7h0000009q6r
 VUE_APP_SF_TEAM=Chat_Service_Team
-VUE_APP_SF_URL1=https://prefect--partial.my.salesforce.com
-VUE_APP_SF_URL2=https://partial-prefect.cs1.force.com/partners
-VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL=https://c.la1-c1cs-ph2.salesforceliveagent.com/content
+VUE_APP_SF_URL1=https://prefect--partial.sandbox.my.salesforce.com
+VUE_APP_SF_URL2=https://prefect--partial.sandbox.my.site.com/partners
+VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL=https://c.la3-c1cs-ia5.salesforceliveagent.com/content
 VUE_APP_SF_DEPLOYMENT_ID=5722E0000000dd5
 VUE_APP_SF_BUTTON_ID=5732E0000000eF1
-VUE_APP_SF_BASE_LIVE_AGENT_URL=https://d.la1-c1cs-ph2.salesforceliveagent.com/chat
+VUE_APP_SF_BASE_LIVE_AGENT_URL=https://d.la3-c1cs-ia5.salesforceliveagent.com/chat
