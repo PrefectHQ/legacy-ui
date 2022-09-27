@@ -1,19 +1,35 @@
 # Changelog
 
+#### [2022-09-14](https://github.com/PrefectHQ/ui/compare/2022-06-02...2022-09-14)
+
+- Security:  Update vue cli related packages [`#1328`](https://github.com/PrefectHQ/ui/pull/1328)
+- BugFix: Add version to graphiql css and re-update fully to node-fetch 2.6.7 [`#1327`](https://github.com/PrefectHQ/ui/pull/1327)
+- BugFix: Upgrade from Python 3.7 to 3.8 [`#1331`](https://github.com/PrefectHQ/ui/pull/1331)
+- Security: Force EJS update [`#1315`](https://github.com/PrefectHQ/ui/pull/1315)
+- Bump terser from 4.8.0 to 4.8.1 [`#1308`](https://github.com/PrefectHQ/ui/pull/1308)
+- Security: Remove Font Awesome Conflict Detection [`#1314`](https://github.com/PrefectHQ/ui/pull/1314)
+- Bump shell-quote from 1.7.2 to 1.7.3 [`#1292`](https://github.com/PrefectHQ/ui/pull/1292)
+- Bump parse-url from 6.0.0 to 6.0.2 [`#1294`](https://github.com/PrefectHQ/ui/pull/1294)
+- Bump eventsource from 1.1.0 to 1.1.1 [`#1288`](https://github.com/PrefectHQ/ui/pull/1288)
+- Bump dset from 3.1.1 to 3.1.2 [`#1284`](https://github.com/PrefectHQ/ui/pull/1284)
+- Bump async from 2.6.3 to 2.6.4 [`#1274`](https://github.com/PrefectHQ/ui/pull/1274)
+- Bugfix: Service account roles [`#1313`](https://github.com/PrefectHQ/ui/pull/1313)
+
 #### [2022-06-02](https://github.com/PrefectHQ/ui/compare/2022-05-17...2022-06-02)
 
+- Cut changelog ahead of 2022-06-02 release [`#1289`](https://github.com/PrefectHQ/ui/pull/1289)
 - Bugfix: Chat launcher icon added nav bar, previous launch button hidden [`#1287`](https://github.com/PrefectHQ/ui/pull/1287)
 - Bugfix: replaces env variables and CSP URLs related to Salesforce partial environment [`#1286`](https://github.com/PrefectHQ/ui/pull/1286)
-- 2022-05-17 [`#1283`](https://github.com/PrefectHQ/ui/pull/1283)
 
 #### [2022-05-17](https://github.com/PrefectHQ/ui/compare/2022-04-21...2022-05-17)
 
+- 2022-05-17 [`#1283`](https://github.com/PrefectHQ/ui/pull/1283)
 - Enable sf chat plugin in Cloud production environments [`#1282`](https://github.com/PrefectHQ/ui/pull/1282)
 - Bugfix: adds new Salesforce URL to script-src Content Security Policy [`#1281`](https://github.com/PrefectHQ/ui/pull/1281)
+
+#### [2022-04-21](https://github.com/PrefectHQ/ui/compare/2022-02-17...2022-04-21)
+
 - Cut changelog ahead of 2022-04-21 release [`#1270`](https://github.com/PrefectHQ/ui/pull/1270)
-
-#### [2022-04-21](https://github.com/PrefectHQ/ui/compare/2022-02-24...2022-04-21)
-
 - Improve access-denied checks [`#1266`](https://github.com/PrefectHQ/ui/pull/1266)
 - Disable salesforce plugin in production environments [`#1267`](https://github.com/PrefectHQ/ui/pull/1267)
 - copies salesforce related URLS to script-src policy [`#1259`](https://github.com/PrefectHQ/ui/pull/1259)
@@ -25,12 +41,10 @@
 - Feature: Adds Salesforce Chat Bot [`#1250`](https://github.com/PrefectHQ/ui/pull/1250)
 - Bump url-parse from 1.5.7 to 1.5.10 [`#1246`](https://github.com/PrefectHQ/ui/pull/1246)
 - Cut changelog ahead of 2022-02-24 release [`#1245`](https://github.com/PrefectHQ/ui/pull/1245)
-
-#### [2022-02-24](https://github.com/PrefectHQ/ui/compare/2022-02-17...2022-02-24)
-
 - Bump url-parse from 1.5.1 to 1.5.7 [`#1240`](https://github.com/PrefectHQ/ui/pull/1240)
 - BugFix: Add error handling to the delete-service-account mutation [`#1243`](https://github.com/PrefectHQ/ui/pull/1243)
 - Feature: Expose discourse links [`#1244`](https://github.com/PrefectHQ/ui/pull/1244)
+- Changelog: Cut changelog ahead of 2022-02-17 release [`#1237`](https://github.com/PrefectHQ/ui/pull/1237)
 
 #### [2022-02-17](https://github.com/PrefectHQ/ui/compare/2022-02-04...2022-02-17)
 
@@ -60,10 +74,10 @@
 - Feature: Allow dates in the past to be used as parameter values when using date picker [`#1213`](https://github.com/PrefectHQ/ui/pull/1213)
 - BugFix: Remove "user content" from each heading in the tutorial menu [`#1209`](https://github.com/PrefectHQ/ui/pull/1209)
 - BugFix: Schematic node view issues [`#1204`](https://github.com/PrefectHQ/ui/pull/1204)
+- Changelog: Cut changelog ahead of 2022-01-14 release [`#1207`](https://github.com/PrefectHQ/ui/pull/1207)
 
 #### [2022-01-14](https://github.com/PrefectHQ/ui/compare/2021-12-22...2022-01-14)
 
-- Changelog: Cut changelog ahead of 2022-01-14 release [`#1207`](https://github.com/PrefectHQ/ui/pull/1207)
 - BugFix: Enable editing in readme [`#1202`](https://github.com/PrefectHQ/ui/pull/1202)
 - BugFix: Remove confusing reference to RBAC on plans page [`#1192`](https://github.com/PrefectHQ/ui/pull/1192)
 - BugFix: Hide calendar schedule banner on Server [`#1200`](https://github.com/PrefectHQ/ui/pull/1200)
