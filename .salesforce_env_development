@@ -6,3 +6,4 @@ VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL=https://c.la3-c1cs-ia5.salesforceliveagen
 VUE_APP_SF_DEPLOYMENT_ID=5722E0000000dd5
 VUE_APP_SF_BUTTON_ID=5732E0000000eF1
 VUE_APP_SF_BASE_LIVE_AGENT_URL=https://d.la3-c1cs-ia5.salesforceliveagent.com/chat
+VUE_APP_SF_URL3=https://prefect--partial.sandbox.my.salesforce.com/embeddedservice/5.0/esw.min.js

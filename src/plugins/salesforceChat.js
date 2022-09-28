@@ -8,7 +8,8 @@ const {
   VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL,
   VUE_APP_SF_DEPLOYMENT_ID,
   VUE_APP_SF_BUTTON_ID,
-  VUE_APP_SF_BASE_LIVE_AGENT_URL
+  VUE_APP_SF_BASE_LIVE_AGENT_URL,
+  VUE_APP_SF_URL3
 } = process.env
 
 export const initializeSalesforceChat = () => {
@@ -46,10 +47,7 @@ export const initializeSalesforceChat = () => {
 
   if (!window.embedded_svc) {
     const s = document.createElement('script')
-    s.setAttribute(
-      'src',
-      'https://prefect.my.salesforce.com/embeddedservice/5.0/esw.min.js'
-    )
+    s.setAttribute('src', VUE_APP_SF_URL3)
     s.onload = function () {
       initESW(null)
     }
