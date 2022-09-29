@@ -8,13 +8,14 @@ const {
   VUE_APP_SF_BASE_LIVE_AGENT_CONTENT_URL,
   VUE_APP_SF_DEPLOYMENT_ID,
   VUE_APP_SF_BUTTON_ID,
-  VUE_APP_SF_BASE_LIVE_AGENT_URL
+  VUE_APP_SF_BASE_LIVE_AGENT_URL,
+  VUE_APP_SF_URL3
 } = process.env
 
 export const initializeSalesforceChat = () => {
-  const license = store.getters['license/license']
+  const user = store.getters['user/user']
 
-  const initESW = function(gslbBaseURL) {
+  const initESW = function (gslbBaseURL) {
     window.embedded_svc.settings.displayHelpButton = false
     window.embedded_svc.settings.language = '' // For example, enter 'en' or 'en-US'
     window.embedded_svc.settings.defaultMinimizedText = 'Chat With Us'
@@ -22,9 +23,9 @@ export const initializeSalesforceChat = () => {
     window.embedded_svc.settings.entryFeature = 'LiveAgent'
     window.embedded_svc.settings.extraPrechatFormDetails = [
       {
-        label: 'Account Name',
-        transcriptFields: ['AccountId'],
-        value: license.terms.salesforce_account_id || ''
+        label: 'User ID',
+        transcriptFields: ['Cloud1_User_External_Id__c'],
+        value: user?.id || ''
       }
     ]
     window.embedded_svc.init(
@@ -46,11 +47,8 @@ export const initializeSalesforceChat = () => {
 
   if (!window.embedded_svc) {
     const s = document.createElement('script')
-    s.setAttribute(
-      'src',
-      'https://prefect.my.salesforce.com/embeddedservice/5.0/esw.min.js'
-    )
-    s.onload = function() {
+    s.setAttribute('src', VUE_APP_SF_URL3)
+    s.onload = function () {
       initESW(null)
     }
     document.body.appendChild(s)
