@@ -226,13 +226,13 @@ workflows:
 
   'Build and publish development UI artifacts':
     jobs:
-      - build-docker:
-          # filters:
-          #   branches:
-          #     only:
-          #       - master
-          #   tags:
-          #     only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
+      - build-docker
+        # filters:
+        #   branches:
+        #     only:
+        #       - master
+        #   tags:
+        #     only: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])).*/
   'Deploy dev':
     jobs:
       - build-dev:
