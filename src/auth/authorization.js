@@ -73,7 +73,7 @@ export const authorizeTenant = async (accessToken, tenantId) => {
 
 export const revokeToken = async accessToken => {
   if (!accessToken) {
-    throw new Error('No access token passed to revokeTokens')
+    throw new Error('No access token passed to revokeToken')
   }
 
   const res = await client.mutate({
