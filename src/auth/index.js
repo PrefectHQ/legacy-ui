@@ -4,7 +4,7 @@ import {
   authorize,
   authorizeTenant,
   refreshTokens,
-  revokeToken
+  revokeTokens
 } from '@/auth/authorization.js'
 
 import store from '@/store'
@@ -250,7 +250,10 @@ export const switchTenant = async tenantId => {
 }
 
 export const logout = async () => {
-  await revokeToken(store.getters['auth/authorizationToken'])
+  await revokeTokens(
+    store.getters['auth/authorizationToken'],
+    store.getters['auth/refreshToken']
+  )
 
   if (TokenWorker) {
     TokenWorker.port.postMessage({

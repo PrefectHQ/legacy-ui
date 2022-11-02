@@ -71,7 +71,7 @@ export const authorizeTenant = async (accessToken, tenantId) => {
   return res?.data?.switch_tenant
 }
 
-export const revokeToken = async accessToken => {
+export const revokeTokens = async (accessToken, refreshToken) => {
   if (!accessToken) {
     throw new Error('No access token passed to revokeToken')
   }
@@ -81,9 +81,17 @@ export const revokeToken = async accessToken => {
     variables: {
       input: { access_token: accessToken }
     },
+    context: {
+      headers: {
+        ...headers,
+        authorization: `Bearer ${refreshToken}`
+      }
+    },
     errorPolicy: 'all',
     fetchPolicy: 'no-cache'
   })
+
+  console.log(res)
 
   return res?.data?.success
 }
