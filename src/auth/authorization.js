@@ -91,7 +91,5 @@ export const revokeTokens = async (accessToken, refreshToken) => {
     fetchPolicy: 'no-cache'
   })
 
-  console.log(res)
-
   return res?.data?.success
 }
