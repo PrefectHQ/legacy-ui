@@ -152,7 +152,7 @@ export default {
   methods: {
     ...mapActions('alert', ['setAlert']),
     handleInviteDialog() {
-      this.roleInput = this.roles?.find(r => r.name == 'TENANT_ADMIN').id
+      this.roleInput = this.roles?.find(r => r.name == 'USER').id
       this.dialogInviteUser = true
     },
     handleAlert(type, message) {
@@ -215,13 +215,13 @@ export default {
         this.inviteSignal++
         this.dialogInviteUser = false
         this.inviteEmailInput = null
-        this.roleInput = this.roles.find(r => r.name == 'TENANT_ADMIN').id
+        this.roleInput = this.roles.find(r => r.name == 'USER').id
         this.tab = 'pending'
       } else if (res?.errors) {
         this.handleAlert('error', res?.errors[0]?.message)
         this.dialogInviteUser = false
         this.inviteEmailInput = null
-        this.roleInput = this.roles.find(r => r.name == 'TENANT_ADMIN').id
+        this.roleInput = this.roles.find(r => r.name == 'USER').id
       }
       this.isInvitingUser = false
     },
@@ -230,7 +230,7 @@ export default {
       this.$nextTick(() => {
         this.inviteEmailInput = null
         this.inviteError = null
-        this.roleInput = this.roles.find(r => r.name == 'TENANT_ADMIN').id
+        this.roleInput = this.roles.find(r => r.name == 'USER').id
       })
     }
   },
