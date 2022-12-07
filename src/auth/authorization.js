@@ -70,3 +70,26 @@ export const authorizeTenant = async (accessToken, tenantId) => {
 
   return res?.data?.switch_tenant
 }
+
+export const revokeTokens = async (accessToken, refreshToken) => {
+  if (!accessToken) {
+    throw new Error('No access token passed to revokeToken')
+  }
+
+  const res = await client.mutate({
+    mutation: require('@/graphql/log-out.gql'),
+    variables: {
+      input: { access_token: accessToken }
+    },
+    context: {
+      headers: {
+        ...headers,
+        authorization: `Bearer ${refreshToken}`
+      }
+    },
+    errorPolicy: 'all',
+    fetchPolicy: 'no-cache'
+  })
+
+  return res?.data?.success
+}

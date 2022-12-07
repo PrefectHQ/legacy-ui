@@ -1,0 +1,5 @@
+mutation LogOut($input: log_out_input!) {
+  log_out(input: $input) {
+    success
+  }
+}
