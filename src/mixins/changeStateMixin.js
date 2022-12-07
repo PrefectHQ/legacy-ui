@@ -41,7 +41,6 @@ export const changeStateMixin = {
         'Success',
         'Cancelled',
         'Finished',
-        'Skipped',
         'TimedOut',
         { header: 'Scheduled States - To Re-run Task Run' },
         { divider: '...' },
@@ -58,7 +57,6 @@ export const changeStateMixin = {
         'Success',
         'Cancelled',
         'Finished',
-        'Skipped',
         { header: 'Scheduled - To Re-run Flow Run' },
         { divider: '...' },
         'Scheduled'
