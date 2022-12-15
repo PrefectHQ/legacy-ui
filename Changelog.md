@@ -1,5 +1,23 @@
 # Changelog
 
+#### [2022-12-15](https://github.com/PrefectHQ/ui/compare/2022-10-03...2022-12-15)
+
+- BugFix: Remove skipped state from the change state mixin [`#1352`](https://github.com/PrefectHQ/ui/pull/1352)
+- Enhancement: Switch default to user from admin [`#1355`](https://github.com/PrefectHQ/ui/pull/1355)
+- Bump decode-uri-component from 0.2.0 to 0.2.2 [`#1351`](https://github.com/PrefectHQ/ui/pull/1351)
+- Bump qs from 6.5.2 to 6.5.3 [`#1353`](https://github.com/PrefectHQ/ui/pull/1353)
+- Bump express from 4.17.1 to 4.18.2 [`#1354`](https://github.com/PrefectHQ/ui/pull/1354)
+- Bump minimatch from 3.0.4 to 3.0.8 [`#1348`](https://github.com/PrefectHQ/ui/pull/1348)
+- Enhancement: Add explicit call to log out API route [`#1344`](https://github.com/PrefectHQ/ui/pull/1344)
+
+#### [2022-10-03](https://github.com/PrefectHQ/ui/compare/2022-09-14...2022-10-03)
+
+- Chore: Update Build image to use Circle2.0 image [`#1342`](https://github.com/PrefectHQ/ui/pull/1342)
+- Feature: adapts chatbot to match new SFDC changes [`#1338`](https://github.com/PrefectHQ/ui/pull/1338)
+- BugFix: Make z into Z [`#1336`](https://github.com/PrefectHQ/ui/pull/1336)
+- Chore: Remove font awesome conflict detection [`#1333`](https://github.com/PrefectHQ/ui/pull/1333)
+- Changelog for 2022-09-14 release [`#1332`](https://github.com/PrefectHQ/ui/pull/1332)
+
 #### [2022-09-14](https://github.com/PrefectHQ/ui/compare/2022-06-02...2022-09-14)
 
 - Security:  Update vue cli related packages [`#1328`](https://github.com/PrefectHQ/ui/pull/1328)
