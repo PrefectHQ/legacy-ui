@@ -1,45 +1,32 @@
 <script>
 import { mapGetters } from 'vuex'
+
 export default {
-  components: {},
-  props: {
-    pageScroll: {
-      type: Boolean,
-      required: false,
-      default: () => false
-    }
-  },
-  data() {
-    return {
-      dismissed: false
-    }
-  },
   computed: {
-    ...mapGetters('api', ['isCloud'])
+    ...mapGetters('api', ['isCloud']),
+    ...mapGetters('license', ['planType']),
+    free() {
+      return this.planType('FREE')
+    }
   }
 }
 </script>
 
 <template>
-  <v-banner :value="!dismissed">
+  <v-banner>
     <template #default>
       <div class="d-flex align-center">
-        <v-avatar slot="icon" color="primary" size="40">
+        <v-avatar slot="icon" rounded color="primary" size="40">
           <v-icon color="white"> warning </v-icon>
         </v-avatar>
-        <div class="ml-4"> Prefect Cloud 1 is dying :( </div>
-        <v-btn
-          class="ml-auto"
-          width="40"
-          height="40"
-          icon
-          text
-          dark
-          color="error"
-          @click="dismissed = !dismissed"
-        >
-          <v-icon> close </v-icon>
-        </v-btn>
+        <div v-if="free" class="ml-4">
+          This legacy Prefect Cloud account will be frozen on May 1st, 2023.
+          Click here to learn more or start your migration to Prefect Cloud 2.
+        </div>
+        <div v-else class="ml-4">
+          This legacy Prefect Cloud account will be frozen on July 15th, 2023.
+          Click here to learn more or start your migration to Prefect Cloud 2.
+        </div>
       </div>
     </template>
   </v-banner>

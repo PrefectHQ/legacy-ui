@@ -1,6 +1,7 @@
 import store from '@/store'
 
 const {
+  VUE_APP_ENVIRONMENT,
   VUE_APP_SF_SFCID,
   VUE_APP_SF_TEAM,
   VUE_APP_SF_URL1,
@@ -13,6 +14,10 @@ const {
 } = process.env
 
 export const initializeSalesforceChat = () => {
+  if (VUE_APP_ENVIRONMENT == 'development') {
+    return
+  }
+
   const user = store.getters['user/user']
 
   const initESW = function (gslbBaseURL) {

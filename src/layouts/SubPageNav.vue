@@ -1,9 +1,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import TutorialBanner from '@/components/TutorialBanner'
+import EndOfLifeBanner from '@/components/EndOfLifeBanner'
 
 export default {
-  components: { TutorialBanner },
+  // components: { TutorialBanner },
+  components: { EndOfLifeBanner, TutorialBanner },
   props: {
     hideBanners: {
       type: Boolean,
@@ -29,14 +31,26 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('license', ['license', 'planType']),
+    ...mapGetters('api', ['isCloud']),
     ...mapGetters('data', ['flows']),
-    shouldShowTutorialBanner() {
+    canShowBanners() {
       return (
         !this.hideBanners &&
         !this.$vuetify.breakpoint.smAndDown &&
-        !this.pageScrolled &&
-        this.flows != null &&
-        this.flows.length === 0
+        !this.pageScrolled
+      )
+    },
+    shouldShowTutorialBanner() {
+      return (
+        this.canShowBanners && this.flows != null && this.flows.length === 0
+      )
+    },
+    shouldShowEndOfLifeBanner() {
+      return (
+        this.canShowBanners &&
+        this.isCloud &&
+        (this.planType('FREE') || this.planType('STARTER'))
       )
     }
   },
@@ -66,6 +80,7 @@ export default {
 
 <template>
   <div>
+    <EndOfLifeBanner v-if="shouldShowEndOfLifeBanner" />
     <TutorialBanner v-if="shouldShowTutorialBanner" />
     <v-toolbar
       v-scroll="scrolled"
@@ -77,10 +92,7 @@ export default {
       height="auto"
       color="appBackground"
       class="pb-3"
-      style="
-    position: fixed;
-    width: 100%;
-    z-index: 6;"
+      style="position: fixed; width: 100%; z-index: 6"
     >
       <v-row
         no-gutters
@@ -88,7 +100,7 @@ export default {
         :class="{
           'justify-center': $vuetify.breakpoint.smAndDown
         }"
-        style="height: 64px;"
+        style="height: 64px"
       >
         <v-col :sm="$slots['page-actions'] ? 6 : 12" class="d-flex align-end">
           <div class="mr-2">
@@ -96,7 +108,7 @@ export default {
           </div>
           <div>
             <div>
-              <span v-if="$slots.breadcrumbs" style="font-size: 0.875rem;">
+              <span v-if="$slots.breadcrumbs" style="font-size: 0.875rem">
                 <slot name="breadcrumbs"></slot>
               </span>
               <slot v-if="$slots['page-type']" name="page-type"></slot>
