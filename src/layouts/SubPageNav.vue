@@ -4,7 +4,6 @@ import TutorialBanner from '@/components/TutorialBanner'
 import EndOfLifeBanner from '@/components/EndOfLifeBanner'
 
 export default {
-  // components: { TutorialBanner },
   components: { EndOfLifeBanner, TutorialBanner },
   props: {
     hideBanners: {
