@@ -37,7 +37,6 @@ Strict-Transport-Security = """\
 # img-src
 #   'self' - all images from current origin are permitted
 #   data: - images embedded inline are permitted
-#   https://picsum.photos and https://i.picsum.photos - placeholder images
 # media-src
 #   'none' - no audio or video files are permitted
 # object-src
