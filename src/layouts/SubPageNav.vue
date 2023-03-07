@@ -49,7 +49,9 @@ export default {
       return (
         this.canShowBanners &&
         this.isCloud &&
-        (this.planType('FREE') || this.planType('STARTER'))
+        (this.planType('FREE') ||
+          this.planType('STARTER') ||
+          this.planType('STANDARD'))
       )
     }
   },
