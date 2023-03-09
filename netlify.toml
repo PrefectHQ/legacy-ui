@@ -31,7 +31,7 @@ Content-Security-Policy = """ \
             ; \
 
       script-src \
-            'self' \ 
+            'self' \
             'unsafe-eval' \
             'unsafe-inline' \
             https://cdn.lr-ingest.io \
@@ -58,7 +58,7 @@ Content-Security-Policy = """ \
             ; \
       
       script-src-elem \
-            'self' \ 
+            'self' \
             'unsafe-eval' \
             'unsafe-inline' \
             https://netlify-cdp-loader.netlify.app/netlify.js \
