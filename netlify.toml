@@ -34,6 +34,7 @@ Content-Security-Policy = """ \
             'self' \
             'unsafe-eval' \
             'unsafe-inline' \
+            https://prefect.my.site.com \
             https://cdn.lr-ingest.io \
             https://js.stripe.com \
             https://prefect.my.salesforce.com \
@@ -62,6 +63,7 @@ Content-Security-Policy = """ \
             'unsafe-eval' \
             'unsafe-inline' \
             https://netlify-cdp-loader.netlify.app/netlify.js \
+            https://prefect.my.site.com \
             https://cdn.lr-ingest.io \
             https://js.stripe.com \
             https://prefect.my.salesforce.com \
