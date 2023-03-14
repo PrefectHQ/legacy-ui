@@ -49,7 +49,10 @@ export default {
       return (
         this.canShowBanners &&
         this.isCloud &&
-        (this.planType('FREE') || this.planType('STARTER'))
+        !this.license.terms?.hide_freeze_banner &&
+        (this.planType('FREE') ||
+          this.planType('STARTER') ||
+          this.planType('STANDARD'))
       )
     }
   },
