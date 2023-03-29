@@ -1,10 +1,10 @@
 <script>
 import { mapGetters } from 'vuex'
-import TutorialBanner from '@/components/TutorialBanner'
+import SupportBanner from '@/components/SupportBanner'
 import EndOfLifeBanner from '@/components/EndOfLifeBanner'
 
 export default {
-  components: { EndOfLifeBanner, TutorialBanner },
+  components: { EndOfLifeBanner, SupportBanner },
   props: {
     hideBanners: {
       type: Boolean,
@@ -40,9 +40,10 @@ export default {
         !this.pageScrolled
       )
     },
-    shouldShowTutorialBanner() {
+    shouldShowSupportBanner() {
       return (
-        this.canShowBanners && this.flows != null && this.flows.length === 0
+        !localStorage.getItem('dismissedSupportBanner') &&
+        this.shouldShowEndOfLifeBanner
       )
     },
     shouldShowEndOfLifeBanner() {
@@ -83,7 +84,7 @@ export default {
 <template>
   <div>
     <EndOfLifeBanner v-if="shouldShowEndOfLifeBanner" />
-    <TutorialBanner v-if="shouldShowTutorialBanner" />
+    <SupportBanner v-if="shouldShowSupportBanner" />
     <v-toolbar
       v-scroll="scrolled"
       :elevation="
