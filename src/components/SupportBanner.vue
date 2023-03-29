@@ -3,13 +3,6 @@ import { mapGetters } from 'vuex'
 import ExternalLink from '@/components/ExternalLink'
 export default {
   components: { ExternalLink },
-  props: {
-    pageScroll: {
-      type: Boolean,
-      required: false,
-      default: () => false
-    }
-  },
   data() {
     return {
       dismissed: false
