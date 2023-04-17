@@ -43,9 +43,7 @@ export default {
       serviceAccountID: null,
       // Role maps
       roleMap: ROLE_MAP,
-      roleColorMap: ROLE_COLOR_MAP,
-
-      loading: false
+      roleColorMap: ROLE_COLOR_MAP
     }
   },
   computed: {
