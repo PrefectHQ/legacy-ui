@@ -22,7 +22,7 @@ export default {
           <v-icon color="white"> warning </v-icon>
         </v-avatar>
         <div v-if="free" class="ml-4">
-          This legacy Prefect Cloud account will be frozen on May 1st, 2023.
+          This legacy Prefect Cloud account will be frozen on May 15th, 2023.
           <ExternalLink
             href="https://www.prefect.io/guide/blog/freezing-legacy-prefect-cloud-1-accounts-on-starter-and-standard-plans/"
             >Click here</ExternalLink
