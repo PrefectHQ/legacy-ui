@@ -11,7 +11,7 @@ export default {
       return this.planType('FREE')
     },
     frozen() {
-      return this.license.terms?.frozen
+      return this.license?.terms?.frozen
     }
   }
 }
