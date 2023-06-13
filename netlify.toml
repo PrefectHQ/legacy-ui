@@ -150,6 +150,9 @@ Content-Security-Policy = """ \
             'self' \
             ; \
 
+      frame-ancestors \
+            'self' \
+            ; \
       
       frame-src \
             'self' \
