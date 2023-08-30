@@ -184,9 +184,6 @@ export default {
       this.serviceAccountNameInput = event.firstName
       this.serviceAccountID = event.membershipID
       this.dialogAddServiceAccount = true
-    },
-    onIntersect([entry]) {
-      this.$apollo.queries.roles.skip = !entry.isIntersecting
     }
   },
   apollo: {
@@ -207,7 +204,7 @@ export default {
 </script>
 
 <template>
-  <ManagementLayout v-intersect="{ handler: onIntersect }">
+  <ManagementLayout>
     <template #title>Service Accounts</template>
 
     <template #subtitle>
@@ -224,7 +221,7 @@ export default {
         color="primary"
         class="white--text"
         large
-        :disabled="!roles"
+        :disabled="!roles || roles.length === 0"
         data-cy="invite-service-account"
         @click="dialogAddServiceAccount = true"
       >
