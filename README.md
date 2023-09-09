@@ -74,7 +74,7 @@ For production builds:
 $ npm run build
 ```
 
-Compiled and minified code and assets are placed in the `dist/` folder; `dist/index.html` is the built application's entrypoint.
+Compiled and minified code and assets are placed in the `dist/` folder; `dist/index.html` is the built application's entry point.
 
 ### The Prefect UI Docker image
 
