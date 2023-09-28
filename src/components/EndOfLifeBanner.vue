@@ -32,25 +32,13 @@ export default {
           >
           for more information.
         </div>
-        <div v-else-if="free" class="ml-4">
-          This legacy Prefect Cloud account will be frozen on May 15th, 2023.
+        <div v-else class="ml-4">
+          This legacy Prefect Cloud account will be frozen on October 25th, 2023.
           <ExternalLink
             href="https://www.prefect.io/guide/blog/freezing-legacy-prefect-cloud-1-accounts-on-starter-and-standard-plans/"
             >Click here</ExternalLink
           >
           to learn more or to start your migration to
-          <ExternalLink
-            href="https://www.prefect.io/guide/blog/introducing-prefect-cloud-2-0/"
-            >Prefect Cloud 2</ExternalLink
-          >.
-        </div>
-        <div v-else class="ml-4">
-          This legacy Prefect Cloud account will be frozen on July 15th, 2023.
-          <ExternalLink
-            href="https://www.prefect.io/guide/blog/freezing-legacy-prefect-cloud-1-accounts-on-starter-and-standard-plans/"
-            >Click here</ExternalLink
-          >
-          to learn more or start your migration to
           <ExternalLink
             href="https://www.prefect.io/guide/blog/introducing-prefect-cloud-2-0/"
             >Prefect Cloud 2</ExternalLink
