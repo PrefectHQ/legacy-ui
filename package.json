@@ -78,6 +78,7 @@
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^7.8.0",
     "eslint-plugin-vuetify": "^1.0.0-beta.8",
+    "follow-redirects": "^1.15.3",
     "graphql-tag": ">=2.10.2",
     "html-loader": "^1.3.2",
     "ignore-loader": ">=0.1.2",
