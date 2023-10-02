@@ -33,6 +33,7 @@ export default {
     ...mapGetters('license', ['license', 'planType']),
     ...mapGetters('api', ['isCloud']),
     ...mapGetters('data', ['flows']),
+    ...mapGetters('tenant', ['tenant']),
     canShowBanners() {
       return (
         !this.hideBanners &&
@@ -53,7 +54,8 @@ export default {
         (this.planType('FREE') ||
           this.planType('STARTER') ||
           this.planType('STANDARD'))
-      )
+      ) &&
+      !this.tenant.settings.freeze_oct_2
     }
   },
   async created() {
