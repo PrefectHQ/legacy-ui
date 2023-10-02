@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "node file-downloader.js && export VUE_APP_RELEASE_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ') && vue-cli-service serve --port 8080",
-    "build": "node file-downloader.js && export VUE_APP_RELEASE_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ') && npx -p @vue/cli-service vue-cli-service build",
+    "build": "node file-downloader.js && export VUE_APP_RELEASE_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ') && vue-cli-service build",
     "lint": "vue-cli-service lint",
     "lint:ci": "vue-cli-service lint --no-fix",
     "preinstall": "npx npm-force-resolutions",
