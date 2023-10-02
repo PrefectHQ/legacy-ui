@@ -1,4 +1,4 @@
-const https = require('https')
+const { https } = require('follow-redirects')
 const fs = require('fs')
 
 const downloads = [
@@ -8,11 +8,13 @@ const downloads = [
   },
   {
     filePath: './public/fonts/material-icons.ttf',
-    url: 'https://fonts.gstatic.com/s/materialicons/v76/flUhRq6tzZclQEJ-Vdg-IuiaDsNZ.ttf'
+    url:
+      'https://fonts.gstatic.com/s/materialicons/v76/flUhRq6tzZclQEJ-Vdg-IuiaDsNZ.ttf'
   },
   {
     filePath: './public/fonts/material-icons-outlined.otf',
-    url: 'https://fonts.gstatic.com/s/materialiconsoutlined/v44/gok-H7zzDkdnRel8-DQ6KAXJ69wP1tGnf4ZGhUcd.otf'
+    url:
+      'https://fonts.gstatic.com/s/materialiconsoutlined/v44/gok-H7zzDkdnRel8-DQ6KAXJ69wP1tGnf4ZGhUcd.otf'
   },
   {
     filePath: './public/fonts/roboto-100.ttf',
@@ -36,21 +38,12 @@ const downloads = [
   }
 ]
 
-const httpRequestToFile = function (file, url, options) {
-  return https.get(url, options, function (res) {
-    if (res.statusCode == 302) {
-      return httpRequestToFile(file, res.headers.location, options)
-    }
-
-    const file = fs.createWriteStream(file)
-
+downloads.forEach(loc => {
+  const file = fs.createWriteStream(loc.filePath)
+  https.get(loc.url, loc.options, function(res) {
     res.pipe(file)
-    file.on('finish', function () {
+    file.on('finish', function() {
       file.close()
     })
   })
-}
-
-downloads.forEach((loc) =>
-  httpRequestToFile(loc.filePath, loc.url, loc.options)
-)
+})
