@@ -1,4 +1,4 @@
-const http = require('http')
+const https = require('https')
 const fs = require('fs')
 
 const downloads = [
@@ -37,7 +37,7 @@ const downloads = [
 ]
 
 const httpRequestToFile = function (file, url, options) {
-  return http.get(url, options, function (res) {
+  return https.get(url, options, function (res) {
     if (res.statusCode == 302) {
       return httpRequestToFile(file, res.headers.location, options)
     }
