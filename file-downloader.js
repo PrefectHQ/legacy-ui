@@ -39,7 +39,7 @@ const downloads = [
 const httpRequestToFile = function (file, url, options) {
   return http.get(url, options, function (res) {
     if (res.statusCode == 302) {
-      httpRequestToFile(res.headers.location, options)
+      return httpRequestToFile(file, res.headers.location, options)
     }
 
     const file = fs.createWriteStream(file)
