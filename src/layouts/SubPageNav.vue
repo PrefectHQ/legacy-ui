@@ -48,11 +48,7 @@ export default {
       )
     },
     shouldShowEndOfLifeBanner() {
-      return (
-        this.canShowBanners &&
-        this.isCloud &&
-        (this.tenant.settings.freeze_oct_2 || this.license?.terms?.frozen)
-      )
+      return this.canShowBanners && this.isCloud && this.license?.terms?.frozen
     }
   },
   async created() {
