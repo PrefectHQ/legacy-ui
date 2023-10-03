@@ -51,11 +51,8 @@ export default {
       return (
         this.canShowBanners &&
         this.isCloud &&
-        (this.planType('FREE') ||
-          this.planType('STARTER') ||
-          this.planType('STANDARD'))
-      ) &&
-      !this.tenant.settings.freeze_oct_2
+        (this.tenant.settings.freeze_oct_2 || this.license?.terms?.frozen)
+      )
     }
   },
   async created() {
