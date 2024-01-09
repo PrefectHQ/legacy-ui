@@ -2,6 +2,7 @@ const WorkerPlugin = require('worker-plugin')
 const webpack = require('webpack')
 
 module.exports = {
+  productionSourceMap: false,
   chainWebpack: config => {
     config.module
       .rule('md')
