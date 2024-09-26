@@ -203,7 +203,7 @@ export default {
 
         <div v-else-if="isCloud">
           Having trouble? Check out the
-          <ExternalLink href="https://prefect.status.io/"
+          <ExternalLink href="https://prefect-legacy.status.io/"
             >Prefect Cloud status page</ExternalLink
           >
           for information about upcoming maintenance windows and the current
