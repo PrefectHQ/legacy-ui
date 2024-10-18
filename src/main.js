@@ -65,7 +65,6 @@ export const setStartupTenant = async () => {
 
   if (process.env.VUE_APP_BACKEND === 'CLOUD') {
     await store.dispatch('license/getLicense')
-    initializeSalesforceChat()
   }
 }
 
